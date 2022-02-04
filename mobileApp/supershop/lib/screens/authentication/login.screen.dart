@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:supershop/constants.dart';
+import 'package:supershop/screens/authentication/forgottenPassword.screen.dart';
 import 'package:supershop/screens/authentication/register.screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key key}) : super(key: key);
-static String routeName="/loginScreen";
+  static String routeName = "/loginScreen";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,15 +16,15 @@ static String routeName="/loginScreen";
 
 class MyStatefulWidget extends StatefulWidget {
   const MyStatefulWidget({Key key}) : super(key: key);
- 
+
   @override
   State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
 }
- 
+
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
- 
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -32,7 +33,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           children: <Widget>[
             Container(
                 alignment: Alignment.center,
-                padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height*0.1),
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.1),
                 child: const Text(
                   appName,
                   style: TextStyle(
@@ -70,9 +72,11 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             ),
             TextButton(
               onPressed: () {
-                //forgot password screen
+                Navigator.pushNamed(context, ForgottenPasswrodScreen.routeName);
               },
-              child: const Text('Olvide mi clave',),
+              child: const Text(
+                'Olvide mi clave',
+              ),
             ),
             Container(
                 height: 50,
@@ -83,8 +87,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                     print(nameController.text);
                     print(passwordController.text);
                   },
-                )
-            ),
+                )),
             Row(
               children: <Widget>[
                 const Text('No tienes cuenta?'),
@@ -94,7 +97,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                     style: TextStyle(fontSize: 20),
                   ),
                   onPressed: () {
-                   Navigator.pushNamed(context, RegisterScreen.routeName);
+                    Navigator.pushNamed(context, RegisterScreen.routeName);
                   },
                 )
               ],

@@ -3,7 +3,7 @@ import 'package:supershop/size_config.dart';
 
 // const kPrimaryColor = Color(0xFFFF7643);
 const String appName = "SuperShop";
-const kPrimaryColor = Colors.red;//Color.fromRGBO(209, 115, 0, 1.0);
+const kPrimaryColor = Colors.red; //Color.fromRGBO(209, 115, 0, 1.0);
 const kPrimaryLightColor = Color(0xFFFFECDF);
 const kPrimaryGradientColor = LinearGradient(
   begin: Alignment.topLeft,
@@ -38,6 +38,7 @@ const String twitterSupportLink = 'http://twitter.com';
 const String serverurl = 'http://fluidxtores.somee.com/';
 const String apikey = 'ck_5ae639c798f4319eab05c9c99d928cf330f26366';
 const String secret = 'cs_6136c1cc92fc1d43004ccc2bf0bf057f9da04b94';
+const String authApiUrl = "no appi setted";
 
 const defaultDuration = Duration(milliseconds: 250);
 
