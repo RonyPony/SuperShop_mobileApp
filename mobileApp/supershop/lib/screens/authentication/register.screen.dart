@@ -32,8 +32,10 @@ class RegisterWidget extends StatefulWidget {
 }
  
 class _RegisterWidgetState extends State<RegisterWidget> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _lastName = TextEditingController();
+  TextEditingController _email = TextEditingController();
  
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           children: <Widget>[
             Container(
                 alignment: Alignment.center,
-                padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height*0.1),
+                padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height*0.01),
                 child: const Text(
                   appName,
                   style: TextStyle(
@@ -58,10 +60,54 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   'Registrate',
                   style: TextStyle(fontSize: 20),
                 )),
-            Container(
+            _buildFields(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        
+                        Container(
+                            height: 50,
+                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: ElevatedButton(
+                              child: const Text('Registrar'),
+                              onPressed: () {
+                               //TODO
+                              },
+                            )
+                        ),
+                      ],
+                    ));
+              }
+            
+              _buildFields() {
+                return Column(
+                  children: [
+                    Container(
               padding: const EdgeInsets.all(10),
               child: TextField(
-                controller: nameController,
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Nombre',
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: TextField(
+                obscureText: true,
+                controller: _lastName,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Apellidos',
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: TextField(
+                obscureText: true,
+                controller: _email,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Correo Electronico',
@@ -72,29 +118,25 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: TextField(
                 obscureText: true,
-                controller: passwordController,
+                controller: _passwordController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Clave',
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
-            
             Container(
-                height: 50,
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: ElevatedButton(
-                  child: const Text('Registrar'),
-                  onPressed: () {
-                    print(nameController.text);
-                    print(passwordController.text);
-                  },
-                )
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: TextField(
+                obscureText: true,
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Repetir Clave',
+                ),
+              ),
             ),
-          ],
-        ));
-  }
+                  ],
+                );
+              }
 }

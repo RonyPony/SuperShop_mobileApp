@@ -32,4 +32,10 @@ class AuthenticationService implements AuthServiceContract {
       }
     } catch (e) {}
   }
+
+  @override
+  Future<UserInfo> registerUser(userInfo) {
+    // TODO: implement registerUser
+    throw UnimplementedError();
+  }
 }

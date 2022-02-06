@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supershop/constants.dart';
 import 'package:supershop/screens/authentication/forgottenPassword.screen.dart';
 import 'package:supershop/screens/authentication/register.screen.dart';
+import 'package:supershop/screens/home.screen.dart';
+import 'package:supershop/widgets/customTextField.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key key}) : super(key: key);
@@ -27,62 +30,103 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(10),
+    bool _rememberMe = false;
+    Size screenSize = MediaQuery.of(context).size;
+    return Scaffold(
+      backgroundColor: Colors.cyan.shade400,
+      body: Padding(
+        padding: EdgeInsets.only(top: screenSize.height*0.05,left: screenSize.width*0.1,right:screenSize.width*0.1 ),
         child: ListView(
           children: <Widget>[
             Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.1),
-                child: const Text(
-                  appName,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding:EdgeInsets.symmetric(horizontal:10.0),
+                      child:Container(
+                      height:2.0,
+                      width:40.0,
+                      color:Colors.white,),),
+                     Text(
+                  // appName,                  
+                  "Inicio sesion",
                   style: TextStyle(
-                      color: kPrimaryColor,
+                      color: Colors.white,
                       fontWeight: FontWeight.w500,
                       fontSize: 30),
-                )),
-            Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.all(10),
-                child: const Text(
-                  'Acceder',
-                  style: TextStyle(fontSize: 20),
-                )),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Correo Electronico',
                 ),
-              ),
+                Padding(
+                      padding:EdgeInsets.symmetric(horizontal:10.0,),
+                      child:Container(
+                      height:2.0,
+                      width:40.0,
+                      color:Colors.white,),),
+                  ],
+                )),
+            SizedBox(
+              height: 20,
             ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextField(
-                obscureText: true,
-                controller: passwordController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Clave',
+            CustomTextField(
+              foreColor: Colors.grey,
+              bgColor: Colors.white,
+              controlador: nameController,
+              useIcon: true,
+              svgColor: Colors.black,
+              svgRoute: "assets/user.svg",
+              label: "Correo Electronico",
+            ),
+            CustomTextField(
+              foreColor: Colors.grey,
+              bgColor: Colors.white,
+              controlador: passwordController,
+              useIcon: true,
+              svgRoute: "assets/lock.svg",
+              label: "Clave",
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Checkbox(                  
+                  value: _rememberMe, 
+                  activeColor: Colors.white,
+                  checkColor: Colors.blue,
+                  onChanged: (value){
+                  _rememberMe=value;
+                  setState(() {                    
+                  });
+                }),Text('Recordarme',style: TextStyle(color: Colors.white),),
+                SizedBox(width: 20,),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, ForgottenPasswrodScreen.routeName);
+                  },
+                  child: const Text(
+                    'Olvido su contrasena?',
+                    style: TextStyle(
+                      color: Colors.white
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, ForgottenPasswrodScreen.routeName);
-              },
-              child: const Text(
-                'Olvide mi clave',
-              ),
+              ],
             ),
             Container(
                 height: 50,
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: ElevatedButton(
-                  child: const Text('Acceder'),
+                padding:  EdgeInsets.only(left:screenSize.width*0.1,right: screenSize.width*0.1 ),
+                child: ElevatedButton(                  
+                  style: ButtonStyle(                    
+                    backgroundColor: MaterialStateProperty.all(Colors.black),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(                        
+                        borderRadius: BorderRadius.circular(50),
+                        side: BorderSide(color: Colors.black)
+                      )
+                    )
+                  ),
+                  child: const Text('Continuar'),
                   onPressed: () {
                     print(nameController.text);
                     print(passwordController.text);
@@ -90,11 +134,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 )),
             Row(
               children: <Widget>[
-                const Text('No tienes cuenta?'),
                 TextButton(
                   child: const Text(
                     'Registrate',
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 18,color: Colors.black),
                   ),
                   onPressed: () {
                     Navigator.pushNamed(context, RegisterScreen.routeName);
@@ -103,7 +146,35 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               ],
               mainAxisAlignment: MainAxisAlignment.center,
             ),
+            Padding(
+              padding: EdgeInsets.only(top: screenSize.height*0.2,left: screenSize.width*0.5),
+              child: TextButton(
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(Colors.white)
+                ),
+                onPressed: (){
+                  //TODO
+                },
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.pushAndRemoveUntil(
+                      context,   
+                      MaterialPageRoute(builder: (BuildContext context) => HomeScreen()), 
+                      ModalRoute.withName(HomeScreen.routeName)
+                  );
+                  },
+                  child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text('Saltar'),
+                    SvgPicture.asset("assets/next.svg")
+                  ],
+                ),
+                )
+              ),
+            )
           ],
-        ));
+        )),
+    );
   }
 }

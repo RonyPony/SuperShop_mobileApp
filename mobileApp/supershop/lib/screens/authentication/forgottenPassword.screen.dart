@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supershop/screens/authentication/recoverPassword.screen.dart';
 
 import '../../constants.dart';
 
@@ -55,9 +56,10 @@ class _ForgottenPasswrodScreenState extends State<ForgottenPasswrodScreen> {
                   height: 50,
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: ElevatedButton(
-                    child: const Text('Acceder'),
+                    child: const Text('Recuperar'),
                     onPressed: () {
-                      print(correo.text);
+                     //TODO validar correo
+                     Navigator.pushNamed(context, RecoverPasswordScreen.routeName);
                     },
                   )),
             ],
