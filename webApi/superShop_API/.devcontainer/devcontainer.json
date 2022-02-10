@@ -44,10 +44,10 @@
   //        dotnet dev-certs https --trust; dotnet dev-certs https -ep "${HOME}/.aspnet/https/aspnetapp.pfx" -p "SecurePwdGoesHere"
   //
   // 2. Uncomment these 'remoteEnv' lines:
-     "remoteEnv": {
-  	      "ASPNETCORE_Kestrel__Certificates__Default__Password": "SecurePwdGoesHere",
-         "ASPNETCORE_Kestrel__Certificates__Default__Path": "/home/vscode/.aspnet/https/aspnetapp.pfx",
-     },
+    //  "remoteEnv": {
+  	//       "ASPNETCORE_Kestrel__Certificates__Default__Password": "SecurePwdGoesHere",
+    //      "ASPNETCORE_Kestrel__Certificates__Default__Path": "/home/vscode/.aspnet/https/aspnetapp.pfx",
+    //  },
   //
   // 3. Next, copy your certificate into the container:
   //      1. Start the container

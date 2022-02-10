@@ -102,16 +102,10 @@ public class UserAuthController : BaseAuthorizationController<User>
 
             if (!await _roleManager.RoleExistsAsync(Roles.Admin))
                 await _roleManager.CreateAsync(new Role(Roles.Admin));
-            if (!await _roleManager.RoleExistsAsync(Roles.User))
-                await _roleManager.CreateAsync(new Role(Roles.User));
 
             if (await _roleManager.RoleExistsAsync(Roles.Admin))
             {
                 await _userManager.AddToRoleAsync(user, Roles.Admin);
-            }
-            if (await _roleManager.RoleExistsAsync(Roles.User))
-            {
-                await _userManager.AddToRoleAsync(user, Roles.User);
             }
 
             return Ok(Result.Instance().Success($"User '{userModel.UserName} <{userModel.Email}>' created !"));
@@ -142,6 +136,7 @@ public class UserAuthController : BaseAuthorizationController<User>
             var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userFinded.UserName),
+                    new Claim(ClaimTypes.Email, userFinded.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 

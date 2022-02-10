@@ -6,6 +6,10 @@ namespace superShop_API.Database.Entities;
 
 public class Role : IdentityRole<Guid>, IBaseEntity
 {
+    public Role()
+    {
+
+    }
 
     public Role(string roleName) : base(roleName)
     {

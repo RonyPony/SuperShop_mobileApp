@@ -5,13 +5,16 @@ using Microsoft.IdentityModel.Tokens;
 using superShop_API.Database;
 using superShop_API.Database.Entities;
 using superShop_API.Database.Repositories.Constructor;
+using superShop_API.Database.Services.Constructor;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(configuration.GetConnectionString("Postgres")));
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServer")));
+
+//AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DatabaseContext>().AddDefaultTokenProviders();
 
@@ -40,6 +43,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddHealthChecks();
 builder.Services.AddTransient<IRepositoryConstructor>(factory => new RepositoryConstructor(factory.GetService<DatabaseContext>()));
+builder.Services.AddTransient<IServiceConstructor>(factory => new ServiceConstructor(factory.GetService<IRepositoryConstructor>()));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -55,7 +59,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
