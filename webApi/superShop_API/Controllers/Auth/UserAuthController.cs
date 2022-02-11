@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using superShop_API.Controllers.Base.Auth;
 using superShop_API.Controllers.Base.Auth.DTOs;
-using superShop_API.Database.Entities;
+using superShop_API.Database.Entities.Auth;
 using superShop_API.Database.Services.Constructor;
 using superShop_API.Shared;
 
-namespace superShop_API.Controllers;
+namespace superShop_API.Controllers.Auth;
 
 [Authorize(Roles = Roles.Admin)]
 public class UserAuthController : BaseAuthorizationController<User>

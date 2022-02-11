@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using superShop_API.Controllers.Base.Auth.DTOs;
-using superShop_API.Database.Entities;
+using superShop_API.Database.Entities.Auth;
 using superShop_API.Database.Entities.Base;
 using superShop_API.Database.Services.Constructor;
 using superShop_API.Shared;

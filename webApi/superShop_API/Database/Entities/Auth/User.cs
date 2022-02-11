@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using superShop_API.Database.Entities.Base;
 using superShop_API.Database.Seeders;
 
-namespace superShop_API.Database.Entities;
+namespace superShop_API.Database.Entities.Auth;
 
 public class User : IdentityUser<Guid>, IBaseEntity, ISeeder<User>
 {
@@ -19,7 +19,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, ISeeder<User>
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public Faker<User> SeederDefinition()
+    public Faker<User> SeederDefinition(object? referenceId)
     {
         return new Faker<User>()
         .RuleFor(u => u.Name, f => f.Person.FirstName)

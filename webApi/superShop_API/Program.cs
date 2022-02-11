@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using superShop_API.Database;
-using superShop_API.Database.Entities;
+using superShop_API.Database.Entities.Auth;
 using superShop_API.Database.Repositories.Constructor;
 using superShop_API.Database.Services.Constructor;
 using System.Text;

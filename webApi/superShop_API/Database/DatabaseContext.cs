@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using superShop_API.Database.Entities;
+using superShop_API.Database.Entities.Auth;
 using superShop_API.Database.Entities.Base;
 
 namespace superShop_API.Database;

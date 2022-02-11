@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using superShop_API.Database.Entities.Base;
 using superShop_API.Database.Seeders;
 
@@ -23,6 +24,7 @@ public abstract class BaseDto<Tentity> where Tentity : class, IBaseEntity, ISeed
 
     public DateTime UpdatedAt { get; set; }
 
+    [IgnoreDataMember]
     public Tentity Entity { get { return MakeEntity(); } }
 
     protected abstract Tentity MakeEntity();
