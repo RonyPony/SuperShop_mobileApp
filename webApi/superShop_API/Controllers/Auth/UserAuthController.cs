@@ -68,6 +68,7 @@ public class UserAuthController : BaseAuthorizationController<User>
     }
 
     [HttpPost]
+    [AllowAnonymous]
     [Route("register/admin")]
     public async Task<ActionResult<Result>> RegisterAdmin([FromBody] RegisterUser userModel)
     {

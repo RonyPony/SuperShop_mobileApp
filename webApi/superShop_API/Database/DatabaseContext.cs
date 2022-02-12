@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using superShop_API.Database.Entities;
 using superShop_API.Database.Entities.Auth;
 using superShop_API.Database.Entities.Base;
 
@@ -10,6 +11,16 @@ public class DatabaseContext : IdentityDbContext<User, Role, Guid>
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
         Database.EnsureCreated();
+    }
+
+    public DbSet<Mall> Malls { get; set; }
+    public DbSet<Branch> Branches { get; set; }
+    public DbSet<Product> Products { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity<Mall>().Property(m => m.Coordinates).HasConversion(new CoordinatesCorverter());
+        base.OnModelCreating(builder);
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)

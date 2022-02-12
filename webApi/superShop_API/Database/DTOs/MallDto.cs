@@ -8,7 +8,7 @@ public class MallDto : BaseDto<Mall>
     public string Name { get; set; }
     public Coordinates Coordinates { get; set; }
 
-    public List<Branch> Branches { get; set; }
+    public List<BranchDto>? Branches { get; set; }
 
     public MallDto()
     {
@@ -18,7 +18,7 @@ public class MallDto : BaseDto<Mall>
     {
         Name = entity.Name;
         Coordinates = entity.Coordinates;
-        Branches = entity.Branches.ToList();
+        Branches = entity.Branches != null ? entity.Branches.ToList().ConvertAll(b => new BranchDto(b)) : new List<BranchDto>();
     }
 
     protected override Mall MakeEntity()

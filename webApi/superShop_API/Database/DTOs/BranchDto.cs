@@ -8,6 +8,7 @@ public class BranchDto : BaseDto<Branch>
     public string Name { get; set; }
     public string LocalCode { get; set; }
     public Guid MallId { get; set; }
+    public List<ProductDto>? Products { get; set; }
 
     public BranchDto()
     {
@@ -18,6 +19,7 @@ public class BranchDto : BaseDto<Branch>
         Name = entity.Name;
         LocalCode = entity.LocalCode;
         MallId = entity.MallId;
+        Products = entity.Products != null ? entity.Products.ToList().ConvertAll(p => new ProductDto(p)) : new List<ProductDto>();
     }
 
     protected override Branch MakeEntity()

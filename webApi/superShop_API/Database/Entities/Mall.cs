@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Bogus;
 using superShop_API.Database.Entities.Base;
 using superShop_API.Database.Seeders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Linq.Expressions;
+using Newtonsoft.Json;
 
 namespace superShop_API.Database.Entities;
 
@@ -17,7 +20,7 @@ public class Mall : BaseEntity, ISeeder<Mall>
     [Column("coordinates")]
     public Coordinates Coordinates { get; set; }
 
-    public virtual ICollection<Branch> Branches { get; set; }
+    public virtual ICollection<Branch>? Branches { get; set; }
 
     public Faker<Mall> SeederDefinition(object? referenceId)
     {
@@ -37,4 +40,21 @@ public struct Coordinates
 
     public double Lat { get; set; }
     public double Long { get; set; }
+}
+
+public class CoordinatesCorverter : ValueConverter<Coordinates, string>
+{
+    public CoordinatesCorverter() : base(coords => CoordinatesToJson(coords), str => JsonToCoordinates(str))
+    {
+    }
+
+    public static string CoordinatesToJson(Coordinates value)
+    {
+        return JsonConvert.SerializeObject(value);
+    }
+
+    public static Coordinates JsonToCoordinates(string value)
+    {
+        return JsonConvert.DeserializeObject<Coordinates>(value);
+    }
 }

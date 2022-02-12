@@ -23,7 +23,7 @@
             "name": "Local SQL Server",
             "username": "sa",
             "password": "P@ssw0rd",
-            "database": "master"
+            "database": "superShopDB"
         }
     ]
 }

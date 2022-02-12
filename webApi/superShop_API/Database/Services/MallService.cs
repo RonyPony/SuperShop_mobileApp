@@ -25,7 +25,7 @@ public class MallService : BaseService<Mall>, IMallService
     {
         try
         {
-            var mallFound = await this.Repository.GetAsync(m => m.Name == entity.Name);
+            var mallFound = (await this.Repository.GetAsync(m => m.Name == entity.Name)).FirstOrDefault();
             if (mallFound == null)
             {
                 return Result.Instance().Success("There noting malls in database");

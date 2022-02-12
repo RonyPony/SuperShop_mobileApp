@@ -57,31 +57,31 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     /// <returns>Resultado de la operacion de ingreso/actualizacion de datos</returns>
     [HttpPost]
     [Route("save", Name = "PostSave[controller]")]
-    public async virtual Task<ActionResult<Result>> PostSaveChangesAsync([FromBody] JObject view)
+    public async virtual Task<ActionResult<Result>> PostSaveChangesAsync([FromBody] /*JObject*/ Tview view)
     {
         Result Result = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-        if (view.ToObject<Tview>() is Tview cview)
+        // if (view.ToObject<Tview>() is Tview cview)
+        // {
+        if (view.Id == Guid.Empty)
         {
-            if (cview.Id == Guid.Empty)
-            {
-                Result = await Service.CreateAsync(cview.Entity);
-            }
+            Result = await Service.CreateAsync(view.Entity);
         }
+        // }
         return Result;
     }
 
     [HttpPut]
     [Route("update", Name = "PutUpdate[controller]")]
-    public virtual async Task<ActionResult<Result>> PutUpdateChangesAsync([FromBody] JObject view)
+    public virtual async Task<ActionResult<Result>> PutUpdateChangesAsync([FromBody] /*JObject*/ Tview view)
     {
         Result Result = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-        if (view.ToObject<Tview>() is Tview cview)
+        // if (view.ToObject<Tview>() is Tview cview)
+        // {
+        if (view.Id != Guid.Empty)
         {
-            if (cview.Id != Guid.Empty)
-            {
-                Result = await Service.UpdateAsync(cview.Entity);
-            }
+            Result = await Service.UpdateAsync(view.Entity);
         }
+        // }
         return Result;
     }
 

@@ -24,7 +24,7 @@ namespace superShop_API.Database.Entities
         [ForeignKey("mallId")]
         public Mall Mall { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public ICollection<Product>? Products { get; set; }
 
         public Faker<Branch> SeederDefinition(object? referenceId)
         {

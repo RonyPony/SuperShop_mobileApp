@@ -29,7 +29,8 @@
     "mtxr.sqltools",
     "mtxr.sqltools-driver-pg",
     "mtxr.sqltools-driver-mssql",
-    "tabnine.tabnine-vscode"
+    "tabnine.tabnine-vscode",
+    "rangav.vscode-thunder-client"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
