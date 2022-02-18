@@ -35,82 +35,82 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     return Scaffold(
       backgroundColor: Colors.blue.shade600,
       body: Padding(
-          padding: EdgeInsets.only(
-              top: screenSize.height * 0.05,
-              left: screenSize.width * 0.1,
-              right: screenSize.width * 0.1),
-          child: ListView(
-            children: <Widget>[
-              Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.1),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Container(
-                          height: 2.0,
-                          width: 40.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        // appName,
-                        "Inicio sesion",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 30),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                        ),
-                        child: Container(
-                          height: 2.0,
-                          width: 40.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  )),
-              SizedBox(
-                height: 20,
-              ),
-              CustomTextField(
-                foreColor: Colors.grey,
-                bgColor: Colors.white,
-                controlador: nameController,
-                useIcon: true,
-                svgColor: Colors.black,
-                svgRoute: "assets/user.svg",
-                label: "Correo Electronico",
-              ),
-              CustomTextField(
-                foreColor: Colors.grey,
-                bgColor: Colors.white,
-                controlador: passwordController,
-                useIcon: true,
-                svgRoute: "assets/lock.svg",
-                label: "Clave",
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Checkbox(
-                      value: _rememberMe,
-                      activeColor: Colors.white,
-                      checkColor: Colors.blue,
-                      onChanged: (value) {
-                        _rememberMe = value;
-                        setState(() {});
-                      }),
-                  Text(
-                    'Recordarme',
-                    style: TextStyle(color: Colors.white),
+        padding: EdgeInsets.only(top: screenSize.height*0.05,left: screenSize.width*0.1,right:screenSize.width*0.1 ),
+        child: ListView(
+          children: <Widget>[
+            Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.1),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding:EdgeInsets.symmetric(horizontal:10.0),
+                      child:Container(
+                      height:2.0,
+                      width:40.0,
+                      color:Colors.white,),),
+                     Text(
+                  // appName,                  
+                  "Inicio sesion",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 30),
+                ),
+                Padding(
+                      padding:EdgeInsets.symmetric(horizontal:10.0,),
+                      child:Container(
+                      height:2.0,
+                      width:40.0,
+                      color:Colors.white,),),
+                  ],
+                )),
+            SizedBox(
+              height: 20,
+            ),
+            CustomTextField(
+              foreColor: Colors.grey,
+              bgColor: Colors.white,
+              controlador: nameController,
+              useIcon: true,
+              svgColor: Colors.black,
+              svgRoute: "assets/user.svg",
+              label: "Correo Electronico",
+            ),
+            CustomTextField(
+              foreColor: Colors.grey,
+              bgColor: Colors.white,
+              controlador: passwordController,
+              useIcon: true,
+              svgRoute: "assets/candado-login.svg",
+              label: "Clave",
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Checkbox(                  
+                  value: _rememberMe, 
+                  activeColor: Colors.white,
+                  checkColor: Colors.blue,
+                  onChanged: (value){
+                  _rememberMe=value;
+                  setState(() {                    
+                  });
+                }),Text('Recordarme',style: TextStyle(color: Colors.white),),
+                SizedBox(width: 20,),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, ForgottenPasswrodScreen.routeName);
+                  },
+                  child: const Text(
+                    'Olvido su contrasena?',
+                    style: TextStyle(
+                      color: Colors.white
+                    ),
                   ),
+                ),
                   SizedBox(
                     width: 20,
                   ),
