@@ -3,7 +3,7 @@ import 'package:supershop/size_config.dart';
 
 // const kPrimaryColor = Color(0xFFFF7643);
 const String appName = "SuperShop";
-const kPrimaryColor = Colors.red; //Color.fromRGBO(209, 115, 0, 1.0);
+const kPrimaryColor = Colors.blue; //Color.fromRGBO(209, 115, 0, 1.0);
 const kPrimaryLightColor = Color(0xFFFFECDF);
 const kPrimaryGradientColor = LinearGradient(
   begin: Alignment.topLeft,

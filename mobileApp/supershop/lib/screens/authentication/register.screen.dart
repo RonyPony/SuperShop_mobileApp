@@ -4,7 +4,7 @@ import '../../constants.dart';
 
 class RegisterScreen extends StatefulWidget {
   RegisterScreen({Key key}) : super(key: key);
-  static String routeName="/registerScreen";
+  static String routeName = "/registerScreen";
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
@@ -13,10 +13,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:AppBar(
+      appBar: AppBar(
         elevation: 0,
         toolbarHeight: 80,
-        // backgroundColor: Colors.white,
+        backgroundColor: Colors.blue.shade600,
         title: Text("Volver"),
       ),
       body: RegisterWidget(),
@@ -26,17 +26,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 class RegisterWidget extends StatefulWidget {
   const RegisterWidget({Key key}) : super(key: key);
- 
+
   @override
   State<RegisterWidget> createState() => _RegisterWidgetState();
 }
- 
+
 class _RegisterWidgetState extends State<RegisterWidget> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _lastName = TextEditingController();
   TextEditingController _email = TextEditingController();
- 
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -45,7 +45,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           children: <Widget>[
             Container(
                 alignment: Alignment.center,
-                padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height*0.01),
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.01),
                 child: const Text(
                   appName,
                   style: TextStyle(
@@ -61,82 +62,80 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   style: TextStyle(fontSize: 20),
                 )),
             _buildFields(),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        
-                        Container(
-                            height: 50,
-                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            child: ElevatedButton(
-                              child: const Text('Registrar'),
-                              onPressed: () {
-                               //TODO
-                              },
-                            )
-                        ),
-                      ],
-                    ));
-              }
-            
-              _buildFields() {
-                return Column(
-                  children: [
-                    Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Nombre',
-                ),
-              ),
+            SizedBox(
+              height: 20,
             ),
             Container(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextField(
-                obscureText: true,
-                controller: _lastName,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Apellidos',
-                ),
-              ),
+                height: 50,
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: ElevatedButton(
+                  child: const Text('Registrar'),
+                  onPressed: () {
+                    //TODO
+                  },
+                )),
+          ],
+        ));
+  }
+
+  _buildFields() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          child: TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Nombre',
             ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextField(
-                obscureText: true,
-                controller: _email,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Correo Electronico',
-                ),
-              ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+          child: TextField(
+            obscureText: true,
+            controller: _lastName,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Apellidos',
             ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextField(
-                obscureText: true,
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Clave',
-                ),
-              ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+          child: TextField(
+            obscureText: true,
+            controller: _email,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Correo Electronico',
             ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextField(
-                obscureText: true,
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Repetir Clave',
-                ),
-              ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+          child: TextField(
+            obscureText: true,
+            controller: _passwordController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Clave',
             ),
-                  ],
-                );
-              }
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+          child: TextField(
+            obscureText: true,
+            controller: _passwordController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Repetir Clave',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
