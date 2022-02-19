@@ -111,19 +111,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                     ),
                   ),
                 ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                          context, ForgottenPasswrodScreen.routeName);
-                    },
-                    child: const Text(
-                      'Olvido su contrasena?',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
                 ],
               ),
               Container(
@@ -162,7 +149,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               ),
               Padding(
                 padding: EdgeInsets.only(
-                    top: screenSize.height * 0.3, left: screenSize.width * 0.5),
+                    top: screenSize.height * 0.2, left: screenSize.width * 0.5),
                 child: TextButton(
                     style: ButtonStyle(
                         foregroundColor:

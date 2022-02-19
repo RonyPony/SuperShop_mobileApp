@@ -87,8 +87,8 @@ class _StoresScreenState extends State<StoresScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SvgPicture.asset(
-                  "assets/filter.svg",
-                  height: 30,
+                  "assets/filtro-icon.svg",
+                  height: 20,
                 ),
                 GestureDetector(
                   onTap: () {
@@ -103,7 +103,9 @@ class _StoresScreenState extends State<StoresScreen> {
             ),
             CustomTextField(
               controlador: searchTxt,
-              useIcon: false,
+              useIcon: true,
+              svgRoute: "assets/lupa-icon.svg",
+              
               bgColor: Colors.white,
               label: "Buscar",
             ),
