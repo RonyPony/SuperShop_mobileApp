@@ -14,9 +14,8 @@ class StoresScreen extends StatefulWidget {
 class _StoresScreenState extends State<StoresScreen> {
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
     TextEditingController searchTxt;
-
+    Size screenSize = MediaQuery.of(context).size;
     _showPopupMenu() async {
       final RenderBox overlay = Overlay.of(context).context.findRenderObject();
 
@@ -105,52 +104,84 @@ class _StoresScreenState extends State<StoresScreen> {
               controlador: searchTxt,
               useIcon: true,
               svgRoute: "assets/lupa-icon.svg",
-              
               bgColor: Colors.white,
               label: "Buscar",
             ),
             SizedBox(
               height: screenSize.height * 0.05,
             ),
-            Container(
-                padding: EdgeInsets.only(
-                    top: screenSize.height * 0.01,
-                    bottom: screenSize.height * 0.01,
-                    right: screenSize.width * 0.3,
-                    left: screenSize.width * 0.3),
-                decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(50)),
-                child: Text(
-                  "Vestimenta",
-                  style: TextStyle(color: Colors.white, fontSize: 28),
-                )),
+            _buildTitle("Vestimenta"),
             SizedBox(
               height: 15,
             ),
-            Container(
-                padding: EdgeInsets.only(
-                    top: screenSize.height * 0.01,
-                    bottom: screenSize.height * 0.01,
-                    right: screenSize.width * 0.28,
-                    left: screenSize.width * 0.28),
-                decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black, width: 0.1),
-                    borderRadius: BorderRadius.circular(50)),
-                child: Text(
-                  "Vestimenta",
-                  style: TextStyle(color: Colors.black, fontSize: 28),
-                )),
+            _buildSubtitle("SportLine America"),
+            SizedBox(
+              height: 15,
+            ),
+            _buildSubtitle("MegaModa"),
+            SizedBox(
+              height: 15,
+            ),
+            _buildSubtitle("Anthony's"),
+            SizedBox(
+              height: screenSize.height * 0.05,
+            ),
+            _buildTitle("Comida"),
+            SizedBox(
+              height: 15,
+            ),
+            _buildSubtitle("Pollos Victorina"),
+            SizedBox(
+              height: 15,
+            ),
+            _buildSubtitle("Burger King"),
+            SizedBox(
+              height: 15,
+            ),
+            _buildSubtitle("Jade Teriyaki"),
           ],
+        ));
+  }
+
+  _buildTitle(String title) {
+    Size screenSize = MediaQuery.of(context).size;
+    return Container(
+        padding: EdgeInsets.only(
+            top: screenSize.height * 0.01,
+            bottom: screenSize.height * 0.01,
+            right: screenSize.width * 0.3,
+            left: screenSize.width * 0.3),
+        decoration: BoxDecoration(
+            color: Colors.blue, borderRadius: BorderRadius.circular(50)),
+        child: Text(
+          title,
+          style: TextStyle(color: Colors.white, fontSize: 28),
+        ));
+  }
+
+  _buildSubtitle(String title) {
+    Size screenSize = MediaQuery.of(context).size;
+    return Container(
+        padding: EdgeInsets.only(
+            top: screenSize.height * 0.01,
+            bottom: screenSize.height * 0.01,
+            right: screenSize.width * 0.20,
+            left: screenSize.width * 0.20 /*  */),
+        decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+            color: Colors.white,
+            border: Border.all(color: Colors.black, width: 0.1),
+            borderRadius: BorderRadius.circular(50)),
+        child: Text(
+          title,
+          style: TextStyle(color: Colors.black, fontSize: 20),
         ));
   }
 }

@@ -44,11 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
          SizedBox(height: 20,),
          StoreLogo(
            onTap: (){
-             Navigator.pushAndRemoveUntil(
-                      context,   
-                      MaterialPageRoute(builder: (BuildContext context) => StoresScreen()), 
-                      ModalRoute.withName(StoresScreen.routeName)
-                  );
+             Navigator.pushNamed(context, StoresScreen.routeName);
+            //  Navigator.pushAndRemoveUntil(
+            //           context,   
+            //           MaterialPageRoute(builder: (BuildContext context) => StoresScreen()), 
+            //           ModalRoute.withName(StoresScreen.routeName)
+            //       );
            },
            storeName: "Megacentro",
            storeLogo: "assets/logos/mega.png",
