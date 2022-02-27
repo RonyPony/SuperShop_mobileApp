@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:supershop/screens/storeDetails.screen.dart';
 import 'package:supershop/widgets/customTextField.dart';
 import 'package:supershop/widgets/sideMenuDrawer.dart';
 
@@ -53,8 +54,11 @@ class _StoresScreenState extends State<StoresScreen> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
         ),
-        body: Column(
-          children: [
+        body:SingleChildScrollView(
+          // controller: controller,
+          child: Column(
+            children: [
+              
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -139,8 +143,9 @@ class _StoresScreenState extends State<StoresScreen> {
               height: 15,
             ),
             _buildSubtitle("Jade Teriyaki"),
-          ],
-        ));
+            ],
+          ),
+        ),);
   }
 
   _buildTitle(String title) {
@@ -161,27 +166,32 @@ class _StoresScreenState extends State<StoresScreen> {
 
   _buildSubtitle(String title) {
     Size screenSize = MediaQuery.of(context).size;
-    return Container(
-        padding: EdgeInsets.only(
-            top: screenSize.height * 0.01,
-            bottom: screenSize.height * 0.01,
-            right: screenSize.width * 0.20,
-            left: screenSize.width * 0.20 /*  */),
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
-              ),
-            ],
-            color: Colors.white,
-            border: Border.all(color: Colors.black, width: 0.1),
-            borderRadius: BorderRadius.circular(50)),
-        child: Text(
-          title,
-          style: TextStyle(color: Colors.black, fontSize: 20),
-        ));
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, StoreDetailsScreen.routeName,arguments: title);
+      },
+          child: Container(
+          padding: EdgeInsets.only(
+              top: screenSize.height * 0.01,
+              bottom: screenSize.height * 0.01,
+              right: screenSize.width * 0.20,
+              left: screenSize.width * 0.20 /*  */),
+          decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
+              color: Colors.white,
+              border: Border.all(color: Colors.black, width: 0.1),
+              borderRadius: BorderRadius.circular(50)),
+          child: Text(
+            title,
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          )),
+    );
   }
 }

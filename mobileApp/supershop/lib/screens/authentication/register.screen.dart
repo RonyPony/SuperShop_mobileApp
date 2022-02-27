@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supershop/models/userInfo.model.dart';
+import 'package:supershop/models/userToRegisterInfo.model.dart';
+import 'package:supershop/providers/authProvider.dart';
+import 'package:supershop/widgets/customTextField.dart';
 
 import '../../constants.dart';
 
@@ -32,10 +37,15 @@ class RegisterWidget extends StatefulWidget {
 }
 
 class _RegisterWidgetState extends State<RegisterWidget> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _lastName = TextEditingController();
-  TextEditingController _email = TextEditingController();
+  TextEditingController _nameController = TextEditingController(text: "ronel");
+  TextEditingController _passwordController =
+      TextEditingController(text: "123");
+  TextEditingController _confirmPasswordController =
+      TextEditingController(text: "123");
+  TextEditingController _lastName = TextEditingController(text: "Cruz");
+  TextEditingController _email =
+      TextEditingController(text: "ronel.cruz.a8@gmail.com");
+  TextEditingController _errorMessage = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +71,12 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   'Registrate',
                   style: TextStyle(fontSize: 20),
                 )),
+            Container(
+              child: Text(
+                _errorMessage.text,
+                style: TextStyle(color: Colors.red, fontSize: 18),
+              ),
+            ),
             _buildFields(),
             SizedBox(
               height: 20,
@@ -71,7 +87,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 child: ElevatedButton(
                   child: const Text('Registrar'),
                   onPressed: () {
-                    //TODO
+                    registerUser();
                   },
                 )),
           ],
@@ -81,61 +97,97 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   _buildFields() {
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          child: TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Nombre',
-            ),
-          ),
+        CustomTextField(
+          foreColor: Colors.white,
+          bgColor: Colors.blue,
+          controlador: _nameController,
+          useIcon: true,
+          svgColor: Colors.white,
+          svgRoute: "assets/user.svg",
+          label: "Nombre",
         ),
-        Container(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: TextField(
-            obscureText: true,
-            controller: _lastName,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Apellidos',
-            ),
-          ),
+        CustomTextField(
+          foreColor: Colors.white,
+          bgColor: Colors.blue,
+          controlador: _lastName,
+          useIcon: true,
+          svgColor: Colors.white,
+          svgRoute: "assets/family.svg",
+          label: "Apellidos",
         ),
-        Container(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: TextField(
-            obscureText: true,
-            controller: _email,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Correo Electronico',
-            ),
-          ),
+        CustomTextField(
+          foreColor: Colors.white,
+          bgColor: Colors.blue,
+          controlador: _email,
+          useIcon: true,
+          svgColor: Colors.white,
+          svgRoute: "assets/email.svg",
+          label: "Correo Electronico",
         ),
-        Container(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: TextField(
-            obscureText: true,
-            controller: _passwordController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Clave',
-            ),
-          ),
+        CustomTextField(
+          foreColor: Colors.white,
+          bgColor: Colors.blue,
+          controlador: _passwordController,
+          useIcon: true,
+          svgColor: Colors.white,
+          svgRoute: "assets/password.svg",
+          label: "Clave",
         ),
-        Container(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: TextField(
-            obscureText: true,
-            controller: _passwordController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Repetir Clave',
-            ),
-          ),
+        CustomTextField(
+          foreColor: Colors.white,
+          bgColor: Colors.blue,
+          controlador: _confirmPasswordController,
+          useIcon: true,
+          svgColor: Colors.white,
+          svgRoute: "assets/password.svg",
+          label: "Repetir Clave",
         ),
       ],
     );
+  }
+
+  void registerUser() async {
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      UserToRegisterInfo tmpUsr = UserToRegisterInfo();
+      tmpUsr.email = _email.text;
+      tmpUsr.name = _nameController.text;
+      tmpUsr.lastName = _lastName.text;
+      tmpUsr.password = _passwordController.text;
+      if (validateUser(tmpUsr)) {
+        UserInfo response = await authProvider.registerUser(tmpUsr);
+        print(response);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  bool validateUser(UserToRegisterInfo user) {
+    _errorMessage.text = "";
+    setState(() {
+      
+    });
+    if (user.name != "") {
+      if (user.lastName != "") {
+        if (user.password != "") {
+          if (user.password==_confirmPasswordController.text) {
+          return true;
+        } else {
+          _errorMessage.text = "Las claves  no coinciden";
+          setState(() {});
+        }
+        } else {
+          _errorMessage.text = "La clave  no es valida";
+          setState(() {});
+        }
+      } else {
+        _errorMessage.text = "El apellido no es valido";
+        setState(() {});
+      }
+    } else {
+      _errorMessage.text = "El nombre no es valido";
+      setState(() {});
+    }
   }
 }
