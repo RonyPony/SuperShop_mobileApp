@@ -1,8 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supershop/contracts/auth_service.contract.dart';
 import 'package:supershop/helpers/requestsManager.dart';
 import 'package:supershop/models/userInfo.model.dart';
 import 'package:supershop/models/userCredentials.model.dart';
+import 'package:supershop/models/userToRegisterInfo.model.dart';
 
 class AuthenticationService implements AuthServiceContract {
   @override
@@ -34,8 +36,13 @@ class AuthenticationService implements AuthServiceContract {
   }
 
   @override
-  Future<UserInfo> registerUser(userInfo) {
-    // TODO: implement registerUser
-    throw UnimplementedError();
+  Future<UserInfo> registerUser(UserToRegisterInfo userInfo) async {
+    try {
+      Dio cliente = RequestsManager.createRequester();
+      Response resp = await cliente.post("");
+      print(resp);
+    } catch (e) {
+        throw e;
+    }
   }
 }

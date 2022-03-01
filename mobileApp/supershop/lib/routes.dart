@@ -1,13 +1,21 @@
 // We use name route
 // All our routes will be available here
 
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:supershop/screens/authentication/forgottenPassword.screen.dart';
 import 'package:supershop/screens/authentication/login.screen.dart';
 import 'package:supershop/screens/authentication/recoverPassword.screen.dart';
 import 'package:supershop/screens/authentication/register.screen.dart';
+import 'package:supershop/screens/cart.screen.dart';
 import 'package:supershop/screens/home.screen.dart';
+import 'package:supershop/screens/info.screen.dart';
+import 'package:supershop/screens/malls.screen.dart';
+import 'package:supershop/screens/productDetails.screen.dart';
+import 'package:supershop/screens/storeDetails.screen.dart';
 import 'package:supershop/screens/stores.dart';
+import 'package:supershop/screens/tiendas.screen.dart';
 
 final Map<String, WidgetBuilder> routes = {
   LoginScreen.routeName: (context) => LoginScreen(),
@@ -16,4 +24,10 @@ final Map<String, WidgetBuilder> routes = {
   RecoverPasswordScreen.routeName:(context)=>RecoverPasswordScreen(),
   HomeScreen.routeName:(context)=>HomeScreen(),
   StoresScreen.routeName:(context)=>StoresScreen(),
+  StoreDetailsScreen.routeName:(context)=>StoreDetailsScreen(),
+  ProductDetailsScreen.routeName:(context)=>ProductDetailsScreen(),
+  CartScreen.routeName:(context)=>CartScreen(),
+  MallsScreen.routeName:(context)=>MallsScreen(),
+  TiendasScreen.routeName:(context)=>TiendasScreen(),
+  InfoScreen.routeName:(context)=>InfoScreen(),
 };

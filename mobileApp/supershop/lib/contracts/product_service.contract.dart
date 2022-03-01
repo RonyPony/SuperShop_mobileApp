@@ -1,0 +1,6 @@
+import 'package:supershop/models/product.model.dart';
+
+abstract class ProductServiceContract {
+  Future<bool>addToCart(Product productToAdd);
+  Future<List<Product>>getCart();
+}

@@ -33,7 +33,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     bool _rememberMe = false;
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.cyan.shade400,
+      backgroundColor: Colors.blue.shade600,
       body: Padding(
         padding: EdgeInsets.only(top: screenSize.height*0.05,left: screenSize.width*0.1,right:screenSize.width*0.1 ),
         child: ListView(
@@ -84,7 +84,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               bgColor: Colors.white,
               controlador: passwordController,
               useIcon: true,
-              svgRoute: "assets/lock.svg",
+              svgRoute: "assets/candado-login.svg",
               label: "Clave",
             ),
             Row(
@@ -111,70 +111,72 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                     ),
                   ),
                 ),
-              ],
-            ),
-            Container(
-                height: 50,
-                padding:  EdgeInsets.only(left:screenSize.width*0.1,right: screenSize.width*0.1 ),
-                child: ElevatedButton(                  
-                  style: ButtonStyle(                    
-                    backgroundColor: MaterialStateProperty.all(Colors.black),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(                        
-                        borderRadius: BorderRadius.circular(50),
-                        side: BorderSide(color: Colors.black)
-                      )
-                    )
-                  ),
-                  child: const Text('Continuar'),
-                  onPressed: () {
-                    print(nameController.text);
-                    print(passwordController.text);
-                  },
-                )),
-            Row(
-              children: <Widget>[
-                TextButton(
-                  child: const Text(
-                    'Registrate',
-                    style: TextStyle(fontSize: 18,color: Colors.black),
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, RegisterScreen.routeName);
-                  },
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.center,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: screenSize.height*0.2,left: screenSize.width*0.5),
-              child: TextButton(
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(Colors.white)
-                ),
-                onPressed: (){
-                  //TODO
-                },
-                child: GestureDetector(
-                  onTap: (){
-                    Navigator.pushAndRemoveUntil(
-                      context,   
-                      MaterialPageRoute(builder: (BuildContext context) => HomeScreen()), 
-                      ModalRoute.withName(HomeScreen.routeName)
-                  );
-                  },
-                  child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text('Saltar'),
-                    SvgPicture.asset("assets/next.svg")
-                  ],
-                ),
-                )
+                ],
               ),
-            )
-          ],
-        )),
+              Container(
+                  height: 50,
+                  padding: EdgeInsets.only(
+                      left: screenSize.width * 0.1,
+                      right: screenSize.width * 0.1),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.black),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                    side: BorderSide(color: Colors.black)))),
+                    child: const Text('Continuar'),
+                    onPressed: () {
+                      print(nameController.text);
+                      print(passwordController.text);
+                    },
+                  )),
+              Row(
+                children: <Widget>[
+                  TextButton(
+                    child: const Text(
+                      'Registrate',
+                      style: TextStyle(fontSize: 18, color: Colors.black),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, RegisterScreen.routeName);
+                    },
+                  )
+                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    top: screenSize.height * 0.2, left: screenSize.width * 0.5),
+                child: TextButton(
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white)),
+                    onPressed: () {
+                      //TODO
+                    },
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    HomeScreen()),
+                            ModalRoute.withName(HomeScreen.routeName));
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text('Saltar'),
+                          SvgPicture.asset("assets/next.svg")
+                        ],
+                      ),
+                    )),
+              )
+            ],
+          )),
     );
   }
 }
