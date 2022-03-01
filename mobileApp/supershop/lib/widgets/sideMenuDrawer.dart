@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supershop/screens/home.screen.dart';
 import 'package:supershop/screens/authentication/login.screen.dart';
+import 'package:supershop/screens/info.screen.dart';
+import 'package:supershop/screens/malls.screen.dart';
+import 'package:supershop/screens/tiendas.screen.dart';
 
 class SideMenuDrawer extends StatelessWidget {
   const SideMenuDrawer({Key key}) : super(key: key);
@@ -52,16 +55,16 @@ class SideMenuDrawer extends StatelessWidget {
                     HomeScreen.routeName, context),
                 _createSplitter(),
                 _createMenuItem(
-                    "Malls", "assets/malls-icon.svg", "routename", context),
+                    "Malls", "assets/malls-icon.svg", MallsScreen.routeName, context),
                 _createSplitter(),
                 _createMenuItem(
-                    "Tiendas", "assets/tienda-icon.svg", "routename", context),
+                    "Tiendas", "assets/tienda-icon.svg", TiendasScreen.routeName, context),
                 _createSplitter(),
                 _createMenuItem(
                     "Perfil", "assets/user.svg", "routename", context),
                 _createSplitter(),
                 _createMenuItem("Informacion", "assets/info-icon.svg",
-                    "routename", context),
+                    InfoScreen.routeName, context),
                 _createSplitter(),
               ],
             ),

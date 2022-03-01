@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:supershop/models/product.model.dart';
+import 'package:supershop/providers/productProvider.dart';
 import 'package:supershop/screens/home.screen.dart';
 import 'package:supershop/widgets/cartItem.dart';
 import 'package:supershop/widgets/sideMenuDrawer.dart';
@@ -15,6 +18,9 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
+    final _productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
+    Future<List<Product>> _cartItems = _productProvider.getCart();
     return Scaffold(
       drawer: SideMenuDrawer(),
       appBar: AppBar(),
@@ -37,6 +43,30 @@ class _CartScreenState extends State<CartScreen> {
                   )
                 ],
               ),
+            ),
+            FutureBuilder(
+              future: _cartItems,
+              builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+                if (snapshot.hasError) {
+                  return Text('error');
+                }
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasData) {
+                    // return Container(
+                    //     child: ListView.builder(
+                    //         itemCount: snapshot.data.length,
+                    //         scrollDirection: Axis.horizontal,
+                    //         itemBuilder: (BuildContext context, int index) {
+                    //           return Text('${snapshot.data[index].name}');
+                    //         }));
+                  } else {
+                    return Text('No products yet');
+                  }
+                } else {
+                  return CircularProgressIndicator();
+                }
+                return Text('');
+              },
             ),
             CartItem(
               productName: "Zapato rojo",
