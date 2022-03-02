@@ -10,21 +10,43 @@ class ProductService implements ProductServiceContract {
   List<Product> _cartItems = new List<Product>();
 
   @override
-  Future<bool> addToCart(Product productToAdd)async{
+  Future<bool> addToCart(Product productToAdd) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _cartItems.add(productToAdd);
     String data = json.encode(_cartItems);
-    bool saved = await prefs.setString(SAVED_PRODUCT_KEY,data );
+    bool saved = await prefs.setString(SAVED_PRODUCT_KEY, data);
     return saved;
   }
 
   @override
-  Future<List<Product>> getCart()async{
+  Future<List<Product>> getCart() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String jsonedCart = prefs.getString(SAVED_PRODUCT_KEY);
-    List<dynamic> parsedListJson = jsonDecode(jsonedCart);
-    List<Product> itemsList = List<Product>.from(parsedListJson.map((i) => Product.fromJson(i)));
-    return itemsList;
+    if (jsonedCart != null) {
+      List<dynamic> parsedListJson = jsonDecode(jsonedCart);
+      List<Product> itemsList =
+          List<Product>.from(parsedListJson.map((i) => Product.fromJson(i)));
+      return itemsList;
+    } else {
+      return null;
+    }
   }
-  
+
+  @override
+  Future<bool> deleteFromCart(int productId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String jsonedCart = prefs.getString(SAVED_PRODUCT_KEY);
+    if (jsonedCart != null) {
+      List<dynamic> parsedListJson = jsonDecode(jsonedCart);
+      List<Product> itemsList =
+          List<Product>.from(parsedListJson.map((i) => Product.fromJson(i)));
+      final index = itemsList.indexWhere((element) => element.id == productId);
+      itemsList.removeAt(index);
+      String data = json.encode(itemsList);
+      bool saved = await prefs.setString(SAVED_PRODUCT_KEY, data);
+      return saved;
+    } else {
+      return null;
+    }
+  }
 }

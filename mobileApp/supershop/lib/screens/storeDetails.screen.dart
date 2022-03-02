@@ -13,14 +13,14 @@ class StoreDetailsScreen extends StatefulWidget {
 
 class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
   TextEditingController searchTxt;
-
+int prodIdCounter = 0;
   String _testProductName = 'Pantalon Jean';
   int _testProductPrice = 800;
   String _testProductImage = 'https://shop.loisjeans.com/13500-thickbox_default/jeans-coty-pantalon-denim-rotos.jpg';
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context).settings.arguments as String;
-
+    
     return Scaffold(
       // drawer: SideMenuDrawer(),
       appBar: AppBar(
@@ -71,6 +71,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
   }
 
   _buildProductIcon() {
+    prodIdCounter++;
     return Padding(
         padding: const EdgeInsets.only(top: 15, bottom: 15, left: 5, right: 5),
         child: Column(
@@ -78,6 +79,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
             GestureDetector(
               onTap: () {
                 Product producto = Product();
+                producto.id = prodIdCounter;
                 producto.name=_testProductName;
                 producto.price = _testProductPrice;
                 producto.imageUrl = _testProductImage;

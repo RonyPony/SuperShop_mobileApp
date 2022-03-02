@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:supershop/providers/productProvider.dart';
 import 'package:supershop/screens/productDetails.screen.dart';
 
 class CartItem extends StatelessWidget {
   const CartItem(
-      {Key key, this.productName, this.productPrice, this.productImage})
+      {Key key,
+      this.productId,
+      this.productName,
+      this.productPrice,
+      this.productImage})
       : super(key: key);
+  final productId;
   final productName;
   final productPrice;
   final productImage;
@@ -51,16 +58,25 @@ class CartItem extends StatelessWidget {
             SizedBox(
               width: 40,
             ),
-            Container(
-                // color: Colors.white,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(7)),
-                child: Icon(
-                  Icons.delete_forever_rounded,
-                  color: Colors.red,
-                  size: 30,
-                )),
+            GestureDetector(
+              onTap: () async {
+                final _productProvider =
+                    Provider.of<ProductProvider>(context, listen: false);
+                    var response = await _productProvider.deleteCart(productId);
+                    print(response);
+                    Navigator.pop(context);
+              },
+              child: Container(
+                  // color: Colors.white,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(7)),
+                  child: Icon(
+                    Icons.delete_forever_rounded,
+                    color: Colors.red,
+                    size: 30,
+                  )),
+            ),
             SizedBox(
               width: 30,
             ),
