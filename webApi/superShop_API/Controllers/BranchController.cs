@@ -24,5 +24,5 @@ public class BranchController : BaseController<BranchService, BranchDto, Branch>
     [HttpGet]
     [Authorize(Roles = Roles.User)]
     [Route("Id", Name = "GetBranchsByID")]
-    public virtual async Task<ActionResult<BranchDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
+    public override async Task<ActionResult<BranchDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
 }

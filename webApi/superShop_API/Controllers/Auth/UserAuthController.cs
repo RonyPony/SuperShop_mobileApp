@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace superShop_API.Controllers.Auth;
 [Authorize(Roles = Roles.Admin)]
 public class UserAuthController : BaseAuthorizationController<User>
 {
-    public UserAuthController(IServiceConstructor _constructor, UserManager<User> userManager, RoleManager<Role> roleManager, IConfiguration configuration) : base(_constructor, userManager, roleManager, configuration)
+    public UserAuthController(IServiceConstructor _constructor, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<Role> roleManager, IConfiguration configuration) : base(_constructor, userManager, signInManager, roleManager, configuration)
     {
     }
 
@@ -64,7 +65,7 @@ public class UserAuthController : BaseAuthorizationController<User>
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail($"User not created. Check the provided information and try again !.", data: result.Errors));
+                return StatusCode(StatusCodes.Status403Forbidden, Result.Instance().Fail($"User not created. Check the provided information and try again !.", data: result.Errors));
             }
         }
         catch (Exception e)
@@ -120,12 +121,78 @@ public class UserAuthController : BaseAuthorizationController<User>
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("User not created. Check the provided information and try again !", data: result.Errors));
+                return StatusCode(StatusCodes.Status403Forbidden, Result.Instance().Fail("User not created. Check the provided information and try again !", data: result.Errors));
             }
         }
         catch (Exception e)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("There an internal error in the server, User not created. Check the provided information and try again !", exception: e));
+        }
+    }
+
+    [HttpDelete]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
+    [Route("remove")]
+    public async Task<ActionResult<Result>> DeleteUser()
+    {
+        try
+        {
+            if (_signInManager.IsSignedIn(this.User))
+            {
+                var userFinded = await _userManager.FindByEmailAsync(this.User.FindFirst(c => c.Type == ClaimTypes.Email).Value);
+
+                var result = await _userManager.DeleteAsync(userFinded);
+
+                if (result.Succeeded)
+                {
+                    return Result.Instance().Success($"User <{userFinded.Email}> deleted !");
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, Result.Instance().Fail("Theres an error when trying to delete the user", data: result.Errors));
+                }
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status401Unauthorized, Result.Instance().Fail("You don't logged in !"));
+            }
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("Unable to delete the user", exception: e));
+        }
+    }
+
+    [HttpDelete]
+    [Authorize(Roles = Roles.Admin)]
+    [Route("remove/{userId}")]
+    public async Task<ActionResult<Result>> DeleteByID([FromRoute] string userId)
+    {
+        try
+        {
+            var userFinded = await _userManager.FindByIdAsync(userId);
+
+            if (userFinded != null)
+            {
+                var result = await _userManager.DeleteAsync(userFinded);
+
+                if (result.Succeeded)
+                {
+                    return Result.Instance().Success($"User <{userFinded.Email}> deleted !");
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, Result.Instance().Fail("Theres an error when trying to delete the user", data: result.Errors));
+                }
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status404NotFound, Result.Instance().Fail("The requested user was't found !"));
+            }
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("Unable to delete the user", exception: e));
         }
     }
 
@@ -159,6 +226,8 @@ public class UserAuthController : BaseAuthorizationController<User>
 
             var token = GetToken(authClaims);
 
+            await _signInManager.SignInWithClaimsAsync(userFinded, new AuthenticationProperties { ExpiresUtc = DateTimeOffset.FromUnixTimeMilliseconds(token.ValidTo.Millisecond), IssuedUtc = DateTimeOffset.FromUnixTimeMilliseconds(token.ValidFrom.Millisecond), IsPersistent = credentials.RememberMe }, authClaims);
+
             return (result: Result.Instance().Success("Login successful !"), entity: userFinded, jwt: new JwtSecurityTokenHandler().WriteToken(token), expiration: token.ValidTo);
         }
         return (result: Result.Instance().Fail("Login failed !"), entity: null, jwt: String.Empty, expiration: DateTime.Now);
@@ -174,9 +243,10 @@ public class UserAuthController : BaseAuthorizationController<User>
         throw new NotImplementedException();
     }
 
-    protected override Task<Result> LogOut(string token)
+    protected override async Task<Result> LogOut(string token)
     {
-        throw new NotImplementedException();
+        await _signInManager.SignOutAsync();
+        return Result.Instance().Success("User Logout !");
     }
 
     protected override Task<(Result result, User? entity, string confirmationToken)> RequestEmailValidation(string email)

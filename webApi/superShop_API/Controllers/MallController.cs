@@ -24,5 +24,5 @@ public class MallController : BaseController<MallService, MallDto, Mall>
     [HttpGet]
     [Authorize(Roles = Roles.User)]
     [Route("Id", Name = "GetMallsByID")]
-    public virtual async Task<ActionResult<MallDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
+    public override async Task<ActionResult<MallDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
 }

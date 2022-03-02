@@ -9,4 +9,7 @@ public class Credentials
 
     [Required(ErrorMessage = "Password is required")]
     public string Password { get; set; }
+
+    [Required(ErrorMessage = "RememberMe is required")]
+    public bool RememberMe { get; set; }
 }

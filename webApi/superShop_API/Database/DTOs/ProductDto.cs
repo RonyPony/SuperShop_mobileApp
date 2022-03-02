@@ -10,6 +10,7 @@ public class ProductDto : BaseDto<Product>
     public string Description { get; set; }
     public decimal Price { get; set; }
     public int Stock { get; set; }
+    public string ImageUrl { get; set; }
     public Guid BranchId { get; set; }
 
     public ProductDto()
@@ -23,6 +24,7 @@ public class ProductDto : BaseDto<Product>
         Description = entity.Description;
         Price = entity.Price;
         Stock = entity.Stock;
+        ImageUrl = entity.ImageUrl;
         BranchId = entity.BranchId;
     }
 
@@ -35,6 +37,7 @@ public class ProductDto : BaseDto<Product>
             Description = Description,
             Price = Price,
             Stock = Stock,
+            ImageUrl = ImageUrl,
             BranchId = BranchId
         };
     }

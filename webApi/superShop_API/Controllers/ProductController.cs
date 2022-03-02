@@ -24,5 +24,5 @@ public class ProductController : BaseController<ProductService, ProductDto, Prod
     [HttpGet]
     [Authorize(Roles = Roles.User)]
     [Route("Id", Name = "GetProductsByID")]
-    public virtual async Task<ActionResult<ProductDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
+    public override async Task<ActionResult<ProductDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
 }
