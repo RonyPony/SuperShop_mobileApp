@@ -25,45 +25,51 @@ public class UserAuthController : BaseAuthorizationController<User>
     [Route("register")]
     public async Task<ActionResult<Result>> Register([FromBody] RegisterUser userModel)
     {
-        User userExists;
-
-        if (new EmailAddressAttribute().IsValid(userModel.UserName))
+        try
         {
-            userExists = await _userManager.FindByEmailAsync(userModel.UserName);
-        }
-        else
-        {
-            userExists = await _userManager.FindByNameAsync(userModel.UserName);
-        }
+            User userExists;
 
-        if (userExists != null)
-            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("User already exists!"));
-
-        var user = new User()
-        {
-            Name = userModel.Name,
-            LastName = userModel.LastName,
-            Email = userModel.Email,
-            UserName = userModel.UserName,
-            BirthDate = userModel.BirthDate,
-            RegistrationDate = DateTime.Now
-        };
-
-        var result = await _userManager.CreateAsync(user, userModel.Password);
-
-        if (result.Succeeded)
-        {
-            if (!await _roleManager.RoleExistsAsync(Roles.User))
-                await _roleManager.CreateAsync(new Role(Roles.User));
-            if (await _roleManager.RoleExistsAsync(Roles.User))
+            if (new EmailAddressAttribute().IsValid(userModel.UserName))
             {
-                await _userManager.AddToRoleAsync(user, Roles.User);
+                userExists = await _userManager.FindByEmailAsync(userModel.UserName);
             }
-            return Ok(Result.Instance().Success($"User '{userModel.UserName} <{userModel.Email}>' created !"));
+            else
+            {
+                userExists = await _userManager.FindByNameAsync(userModel.UserName);
+            }
+
+            if (userExists != null)
+                return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("User already exists!"));
+
+            var user = new User()
+            {
+                Name = userModel.Name,
+                LastName = userModel.LastName,
+                Email = userModel.Email,
+                UserName = userModel.UserName,
+                RegistrationDate = DateTime.Now
+            };
+
+            var result = await _userManager.CreateAsync(user, userModel.Password);
+
+            if (result.Succeeded)
+            {
+                if (!await _roleManager.RoleExistsAsync(Roles.User))
+                    await _roleManager.CreateAsync(new Role(Roles.User));
+                if (await _roleManager.RoleExistsAsync(Roles.User))
+                {
+                    await _userManager.AddToRoleAsync(user, Roles.User);
+                }
+                return Ok(Result.Instance().Success($"User '{userModel.UserName} <{userModel.Email}>' created !"));
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail($"User not created. Check the provided information and try again !.", data: result.Errors));
+            }
         }
-        else
+        catch (Exception e)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("User not created. Check the provided information and try again !"));
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("There an internal error in the server, User not created. Check the provided information and try again !", exception: e));
         }
     }
 
@@ -72,48 +78,54 @@ public class UserAuthController : BaseAuthorizationController<User>
     [Route("register/admin")]
     public async Task<ActionResult<Result>> RegisterAdmin([FromBody] RegisterUser userModel)
     {
-        User userExists;
-
-        if (new EmailAddressAttribute().IsValid(userModel.UserName))
+        try
         {
-            userExists = await _userManager.FindByEmailAsync(userModel.UserName);
-        }
-        else
-        {
-            userExists = await _userManager.FindByNameAsync(userModel.UserName);
-        }
+            User userExists;
 
-        if (userExists != null)
-            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("User already exists!"));
-
-        var user = new User()
-        {
-            Name = userModel.Name,
-            LastName = userModel.LastName,
-            Email = userModel.Email,
-            UserName = userModel.UserName,
-            BirthDate = userModel.BirthDate,
-            RegistrationDate = DateTime.Now
-        };
-
-        var result = await _userManager.CreateAsync(user, userModel.Password);
-
-        if (result.Succeeded)
-        {
-
-            if (!await _roleManager.RoleExistsAsync(Roles.Admin))
-                await _roleManager.CreateAsync(new Role(Roles.Admin));
-
-            if (await _roleManager.RoleExistsAsync(Roles.Admin))
+            if (new EmailAddressAttribute().IsValid(userModel.UserName))
             {
-                await _userManager.AddToRoleAsync(user, Roles.Admin);
+                userExists = await _userManager.FindByEmailAsync(userModel.UserName);
+            }
+            else
+            {
+                userExists = await _userManager.FindByNameAsync(userModel.UserName);
             }
 
-            return Ok(Result.Instance().Success($"User '{userModel.UserName} <{userModel.Email}>' created !"));
+            if (userExists != null)
+                return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("User already exists!"));
+
+            var user = new User()
+            {
+                Name = userModel.Name,
+                LastName = userModel.LastName,
+                Email = userModel.Email,
+                UserName = userModel.UserName,
+                RegistrationDate = DateTime.Now
+            };
+
+            var result = await _userManager.CreateAsync(user, userModel.Password);
+
+            if (result.Succeeded)
+            {
+
+                if (!await _roleManager.RoleExistsAsync(Roles.Admin))
+                    await _roleManager.CreateAsync(new Role(Roles.Admin));
+
+                if (await _roleManager.RoleExistsAsync(Roles.Admin))
+                {
+                    await _userManager.AddToRoleAsync(user, Roles.Admin);
+                }
+
+                return Ok(Result.Instance().Success($"User '{userModel.UserName} <{userModel.Email}>' created !"));
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("User not created. Check the provided information and try again !", data: result.Errors));
+            }
         }
-        else
+        catch (Exception e)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("User not created. Check the provided information and try again !"));
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("There an internal error in the server, User not created. Check the provided information and try again !", exception: e));
         }
     }
 
@@ -140,7 +152,6 @@ public class UserAuthController : BaseAuthorizationController<User>
                     new Claim(ClaimTypes.Email, userFinded.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
-
             foreach (var userRole in userRoles)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole));
