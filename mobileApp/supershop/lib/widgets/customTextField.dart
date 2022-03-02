@@ -4,7 +4,8 @@ import 'package:flutter_svg/svg.dart';
 
 class CustomTextField extends StatelessWidget {
 
-  const CustomTextField({this.svgColor,this.foreColor,this.bgColor, @required this.controlador,@required this.useIcon,this.svgRoute,this.label,Key key}) : super(key: key);
+  const CustomTextField({this.svgColor,this.foreColor,this.bgColor, @required this.controlador,@required this.useIcon,this.svgRoute,this.label,this.isPassword=false,Key key}) : super(key: key);
+  
   final TextEditingController controlador;
   final String label;
   final String svgRoute;
@@ -12,11 +13,13 @@ class CustomTextField extends StatelessWidget {
   final Color bgColor;
   final Color svgColor;
   final Color foreColor;
+  final bool isPassword;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
+        obscureText: isPassword,
         style: TextStyle(
           // fontSize: 18
           // height: 2,

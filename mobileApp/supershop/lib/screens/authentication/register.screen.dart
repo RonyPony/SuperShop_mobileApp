@@ -39,9 +39,9 @@ class RegisterWidget extends StatefulWidget {
 class _RegisterWidgetState extends State<RegisterWidget> {
   TextEditingController _nameController = TextEditingController(text: "ronel");
   TextEditingController _passwordController =
-      TextEditingController(text: "123");
+      TextEditingController(text: "Ronel08!");
   TextEditingController _confirmPasswordController =
-      TextEditingController(text: "123");
+      TextEditingController(text: "Ronel08!");
   TextEditingController _lastName = TextEditingController(text: "Cruz");
   TextEditingController _email =
       TextEditingController(text: "ronel.cruz.a8@gmail.com");
@@ -129,12 +129,14 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           bgColor: Colors.blue,
           controlador: _passwordController,
           useIcon: true,
+          isPassword: true,
           svgColor: Colors.white,
           svgRoute: "assets/password.svg",
           label: "Clave",
         ),
         CustomTextField(
           foreColor: Colors.white,
+          isPassword: true,
           bgColor: Colors.blue,
           controlador: _confirmPasswordController,
           useIcon: true,

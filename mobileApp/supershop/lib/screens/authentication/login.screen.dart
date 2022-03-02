@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:supershop/constants.dart';
+import 'package:supershop/models/loginResponse.model.dart';
+import 'package:supershop/models/userCredentials.model.dart';
+import 'package:supershop/providers/authProvider.dart';
 import 'package:supershop/screens/authentication/forgottenPassword.screen.dart';
 import 'package:supershop/screens/authentication/register.screen.dart';
 import 'package:supershop/screens/home.screen.dart';
@@ -25,8 +29,8 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController _emailController = TextEditingController(text: "ronel.cruz.a8@gmail.com");
+  TextEditingController _passwordController = TextEditingController(text: "Ronel08!");
 
   @override
   Widget build(BuildContext context) {
@@ -73,17 +77,18 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             CustomTextField(
               foreColor: Colors.grey,
               bgColor: Colors.white,
-              controlador: nameController,
+              controlador: _emailController,
               useIcon: true,
               svgColor: Colors.black,
               svgRoute: "assets/user.svg",
               label: "Correo Electronico",
             ),
             CustomTextField(
+              isPassword: true,
               foreColor: Colors.grey,
               bgColor: Colors.white,
-              controlador: passwordController,
-              useIcon: true,
+              controlador: _passwordController,
+              useIcon: true,              
               svgRoute: "assets/candado-login.svg",
               label: "Clave",
             ),
@@ -128,9 +133,13 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                                     borderRadius: BorderRadius.circular(50),
                                     side: BorderSide(color: Colors.black)))),
                     child: const Text('Continuar'),
-                    onPressed: () {
-                      print(nameController.text);
-                      print(passwordController.text);
+                    onPressed: ()async{
+                      final _authProvider = Provider.of<AuthProvider>(context,listen: false);
+                      UserCredentials cred = UserCredentials();
+                      cred.email=_emailController.text;
+                      cred.password = _passwordController.text;
+                       LoginResponse response =await  _authProvider.login(cred);
+                      print(response);
                     },
                   )),
               Row(
@@ -154,7 +163,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                     style: ButtonStyle(
                         foregroundColor:
                             MaterialStateProperty.all(Colors.white)),
-                    onPressed: () {
+                    onPressed: (){
                       //TODO
                     },
                     child: GestureDetector(
