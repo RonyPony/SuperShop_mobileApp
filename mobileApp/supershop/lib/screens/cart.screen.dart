@@ -24,104 +24,46 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       drawer: SideMenuDrawer(),
       appBar: AppBar(),
-      body: SingleChildScrollView(
-        // controller: controller,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    "assets/carrito-negro.svg",
-                    width: 30,
-                  ),
-                  Text(
-                    "Carrito",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  )
-                ],
-              ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  "assets/carrito-negro.svg",
+                  width: 30,
+                ),
+                Text(
+                  "Carrito",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                )
+              ],
             ),
-            FutureBuilder(
-              future: _cartItems,
-              builder: (context, AsyncSnapshot<List<Product>> snapshot) {
-                if (snapshot.hasError) {
-                  return Text('error');
-                }
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    // return Container(
-                    //     child: ListView.builder(
-                    //         itemCount: snapshot.data.length,
-                    //         scrollDirection: Axis.horizontal,
-                    //         itemBuilder: (BuildContext context, int index) {
-                    //           return Text('${snapshot.data[index].name}');
-                    //         }));
-                  } else {
-                    return Text('No products yet');
-                  }
-                } else {
-                  return CircularProgressIndicator();
-                }
-                return Text('');
-              },
+          ),
+          _buildProducts(_cartItems),
+          Padding(
+            padding: const EdgeInsets.only(right: 50, top: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'Total:',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                Text(
+                  'RD 1000',
+                  style: TextStyle(fontSize: 18),
+                )
+              ],
             ),
-            CartItem(
-              productName: "Zapato rojo",
-              productPrice: 800,
-              productImage:
-                  "https://media.revistagq.com/photos/5ca5e52ec57c5b6f74c53c2c/16:9/w_2580,c_limit/tipos_corte_camisa_hombre_regular_fit_slim_fit_110345264.jpg",
-            ),
-            CartItem(
-              productName: "Zapato rojo",
-              productPrice: 800,
-              productImage:
-                  "https://media.revistagq.com/photos/5ca5e52ec57c5b6f74c53c2c/16:9/w_2580,c_limit/tipos_corte_camisa_hombre_regular_fit_slim_fit_110345264.jpg",
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 50, top: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    'Total:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                  Text(
-                    'RD 1000',
-                    style: TextStyle(fontSize: 18),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 30),
-              child: ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.white),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                            side: BorderSide(color: Colors.black)))),
-                child: Container(
-                    width: 150,
-                    child: Center(
-                      child: Text(
-                        'Comprar todo',
-                        style: TextStyle(color: Colors.blue, fontSize: 17),
-                      ),
-                    )),
-                onPressed: () {
-                  // print(nameController.text);
-                  // print(passwordController.text);
-                },
-              ),
-            ),
-            ElevatedButton(
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 30),
+            child: ElevatedButton(
               style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                  backgroundColor: MaterialStateProperty.all(Colors.white),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
@@ -130,17 +72,82 @@ class _CartScreenState extends State<CartScreen> {
                   width: 150,
                   child: Center(
                     child: Text(
-                      'Regresar',
-                      style: TextStyle(color: Colors.white, fontSize: 17),
+                      'Comprar todo',
+                      style: TextStyle(color: Colors.blue, fontSize: 17),
                     ),
                   )),
               onPressed: () {
-                Navigator.pushNamed(context, HomeScreen.routeName);
+                // print(nameController.text);
+                // print(passwordController.text);
               },
             ),
-          ],
-        ),
+          ),
+          ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        side: BorderSide(color: Colors.black)))),
+            child: Container(
+                width: 150,
+                child: Center(
+                  child: Text(
+                    'Regresar',
+                    style: TextStyle(color: Colors.white, fontSize: 17),
+                  ),
+                )),
+            onPressed: () {
+              Navigator.pushNamed(context, HomeScreen.routeName);
+            },
+          ),
+        ],
       ),
+    );
+  }
+
+  _buildProducts(Future<List<Product>> futuro) {
+    Size screenSize = MediaQuery.of(context).size;
+    return FutureBuilder<List<Product>>(
+      future: futuro,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<Product> orderItems = snapshot.data;
+          ScrollController _scrollController = ScrollController();
+if (snapshot.data.length == 0) {
+                    return Text('No hay items en el carrito');
+                  }
+          return Container(
+            height: screenSize.height * 0.5,
+            child: Scrollbar(
+              isAlwaysShown: true,
+              radius: Radius.circular(50),
+              thickness: 15,
+              controller: _scrollController,
+              child: ListView.builder(
+                controller: _scrollController,
+                shrinkWrap: true,
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                 
+                    return CartItem(
+                        productId: snapshot.data[index].id,
+                        productName: snapshot.data[index].name,
+                        productPrice: snapshot.data[index].price,
+                        productImage: snapshot.data[index].imageUrl);
+                  
+                },
+              ),
+            ),
+          );
+        } else {
+          if (snapshot.hasError) {
+            return Text('loadingErrorShort');
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        }
+      },
     );
   }
 }

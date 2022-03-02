@@ -15,6 +15,15 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
+    Future<bool> deleteCart(int productId) async {
+    try {
+      bool resp = await _productContract.deleteFromCart(productId);
+      return resp;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<List<Product>>getCart()async{
     List<Product> list = await _productContract.getCart();
     return list;
