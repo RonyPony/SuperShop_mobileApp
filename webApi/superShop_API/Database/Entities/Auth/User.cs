@@ -12,8 +12,6 @@ public class User : IdentityUser<Guid>, IBaseEntity, ISeeder<User>
 
     public string LastName { get; set; }
 
-    public DateTime BirthDate { get; set; }
-
     public DateTime RegistrationDate { get; set; }
 
     public DateTime CreatedAt { get; set; }
@@ -24,7 +22,6 @@ public class User : IdentityUser<Guid>, IBaseEntity, ISeeder<User>
         return new Faker<User>()
         .RuleFor(u => u.Name, f => f.Person.FirstName)
         .RuleFor(u => u.LastName, f => f.Person.LastName)
-        .RuleFor(u => u.BirthDate, f => f.Person.DateOfBirth)
         .RuleFor(u => u.Email, f => f.Person.Email)
         .RuleFor(u => u.RegistrationDate, f => f.Date.Recent());
     }
