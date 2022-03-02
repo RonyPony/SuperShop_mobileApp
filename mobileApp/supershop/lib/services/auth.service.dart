@@ -1,14 +1,17 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart' as prefix ;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supershop/contracts/auth_service.contract.dart';
 import 'package:supershop/helpers/requestsManager.dart';
+import 'package:supershop/models/loginResponse.model.dart';
 import 'package:supershop/models/userInfo.model.dart';
 import 'package:supershop/models/userCredentials.model.dart';
 import 'package:supershop/models/userToRegisterInfo.model.dart';
 
 class AuthenticationService implements AuthServiceContract {
   @override
-  Future<UserInfo> login(UserCredentials credentialsInfo) async {
+  Future<LoginResponse> login(UserCredentials credentialsInfo) async {
     final sharedPreferenses = await SharedPreferences.getInstance();
     if (credentialsInfo.isGuest) {
       //TODO login Guest User
@@ -17,32 +20,45 @@ class AuthenticationService implements AuthServiceContract {
     }
   }
 
-  Future<UserInfo> loginNotGuestUser(SharedPreferences sharedPreferenses,
+  Future<LoginResponse> loginNotGuestUser(SharedPreferences sharedPreferenses,
       UserCredentials credentialsInfo) async {
     String result = "";
     try {
       final client = RequestsManager.requester();
       final queryParam = {
-        'email': credentialsInfo.email,
+        'userName': credentialsInfo.email,
         'password': credentialsInfo.password
       };
-      final token = await client.get("token", queryParameters: queryParam);
-      if (token.statusCode < 400) {
+      final response = await client.post("/auth/UserAuth/login",
+          data: queryParam);
+      if (response.statusCode < 400) {
         //TODO
       } else {
         //TODO
       }
-    } catch (e) {}
+    } catch (e) {
+      throw e;
+    }
   }
 
   @override
   Future<UserInfo> registerUser(UserToRegisterInfo userInfo) async {
-    try {
+  try {
+    
+      userInfo.userName = "tmpUsername";
+
       Dio cliente = RequestsManager.createRequester();
-      Response resp = await cliente.post("");
+      Response resp = await cliente.post("auth/UserAuth/register", data: {
+        'name': userInfo.name,
+        'lastName': userInfo.lastName,
+        'email': userInfo.email,
+        'userName': userInfo.userName,
+        'password': userInfo.password
+      });
       print(resp);
-    } catch (e) {
-        throw e;
-    }
+  } catch (e) {
+    throw e;
+  }
+   
   }
 }
