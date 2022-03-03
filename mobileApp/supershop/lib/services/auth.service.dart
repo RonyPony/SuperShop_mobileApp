@@ -32,7 +32,8 @@ class AuthenticationService implements AuthServiceContract {
       final response = await client.post("/auth/UserAuth/login",
           data: queryParam);
       if (response.statusCode < 400) {
-        //TODO
+        LoginResponse loginInfo = LoginResponse.fromJson(response.data);
+        return loginInfo;
       } else {
         //TODO
       }

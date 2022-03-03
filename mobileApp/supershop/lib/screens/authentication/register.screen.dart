@@ -1,3 +1,4 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supershop/models/userInfo.model.dart';
@@ -161,24 +162,22 @@ class _RegisterWidgetState extends State<RegisterWidget> {
         print(response);
       }
     } catch (e) {
-      throw e;
+      CoolAlert.show(context: context, type: CoolAlertType.error,text: e.response.data.message);
     }
   }
 
   bool validateUser(UserToRegisterInfo user) {
     _errorMessage.text = "";
-    setState(() {
-      
-    });
+    setState(() {});
     if (user.name != "") {
       if (user.lastName != "") {
         if (user.password != "") {
-          if (user.password==_confirmPasswordController.text) {
-          return true;
-        } else {
-          _errorMessage.text = "Las claves  no coinciden";
-          setState(() {});
-        }
+          if (user.password == _confirmPasswordController.text) {
+            return true;
+          } else {
+            _errorMessage.text = "Las claves  no coinciden";
+            setState(() {});
+          }
         } else {
           _errorMessage.text = "La clave  no es valida";
           setState(() {});
