@@ -30,6 +30,10 @@ namespace superShop_API.Database.Entities
         public int Stock { get; set; }
 
         [Required]
+        [Column("imageUrl", TypeName = "text")]
+        public string ImageUrl { get; set; }
+
+        [Required]
         [Column("branchId")]
         public Guid BranchId { get; set; }
 

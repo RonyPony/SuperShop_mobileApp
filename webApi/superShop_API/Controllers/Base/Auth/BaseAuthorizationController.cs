@@ -25,6 +25,7 @@ public abstract class BaseAuthorizationController<Tentity> : ControllerBase wher
     protected IServiceConstructor Constructor { get; set; }
 
     protected readonly UserManager<User> _userManager;
+    protected readonly SignInManager<User> _signInManager;
     protected readonly RoleManager<Role> _roleManager;
     protected readonly IConfiguration _configuration;
 
@@ -37,11 +38,13 @@ public abstract class BaseAuthorizationController<Tentity> : ControllerBase wher
     protected BaseAuthorizationController(
         IServiceConstructor _constructor,
         UserManager<User> userManager,
+        SignInManager<User> signInManager,
         RoleManager<Role> roleManager,
         IConfiguration configuration)
     {
         Constructor = _constructor;
         _userManager = userManager;
+        _signInManager = signInManager;
         _roleManager = roleManager;
         _configuration = configuration;
     }
