@@ -4,6 +4,8 @@ import 'package:supershop/screens/productDetails.screen.dart';
 import 'package:supershop/widgets/customTextField.dart';
 import 'package:supershop/widgets/sideMenuDrawer.dart';
 
+import 'cart.screen.dart';
+
 class StoreDetailsScreen extends StatefulWidget {
   StoreDetailsScreen({Key key}) : super(key: key);
   static String routeName = "/storedetailsscreen";
@@ -24,6 +26,13 @@ int prodIdCounter = 0;
     return Scaffold(
       // drawer: SideMenuDrawer(),
       appBar: AppBar(
+        actions: [
+           GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, CartScreen.routeName);
+              },
+            child: Icon(Icons.shopping_cart_rounded))
+        ],
         title: Text(args),
       ),
       body: SingleChildScrollView(

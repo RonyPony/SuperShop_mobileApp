@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:supershop/contracts/product_service.contract.dart';
+import 'package:supershop/models/malls.model.dart';
 import 'package:supershop/models/product.model.dart';
 
 class ProductProvider with ChangeNotifier {
@@ -19,6 +20,15 @@ class ProductProvider with ChangeNotifier {
     try {
       bool resp = await _productContract.deleteFromCart(productId);
       return resp;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<List<Malls>>getMalls()async{
+    try {
+      List<Malls> malls = await _productContract.getAllMalls();
+      return malls;
     } catch (e) {
       throw e;
     }

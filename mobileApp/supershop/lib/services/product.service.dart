@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supershop/contracts/product_service.contract.dart';
+import 'package:supershop/helpers/requestsManager.dart';
+import 'package:supershop/models/loginResponse.model.dart';
+import 'package:supershop/models/malls.model.dart';
 import 'package:supershop/models/product.model.dart';
 import 'package:supershop/widgets/cartItem.dart';
 
@@ -48,5 +51,20 @@ class ProductService implements ProductServiceContract {
     } else {
       return null;
     }
+  }
+
+  @override
+  Future<List<Malls>> getAllMalls() async {
+    final client = RequestsManager.requester();
+      final response = await client.get("/Mall/All",);
+      if (response.statusCode < 400) {
+        
+        List<Malls> mallsList;
+         Malls xx= Malls.fromJson(response.data);
+        
+        return mallsList;
+      } else {
+        //TODO
+      }
   }
 }
