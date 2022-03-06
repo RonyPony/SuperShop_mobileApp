@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supershop/models/mall.model.dart';
 import 'package:supershop/models/product.model.dart';
 import 'package:supershop/screens/productDetails.screen.dart';
 import 'package:supershop/widgets/customTextField.dart';
@@ -21,7 +22,7 @@ int prodIdCounter = 0;
   String _testProductImage = 'https://shop.loisjeans.com/13500-thickbox_default/jeans-coty-pantalon-denim-rotos.jpg';
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context).settings.arguments as String;
+    final args = ModalRoute.of(context).settings.arguments as Mall;
     
     return Scaffold(
       // drawer: SideMenuDrawer(),
@@ -33,7 +34,7 @@ int prodIdCounter = 0;
               },
             child: Icon(Icons.shopping_cart_rounded))
         ],
-        title: Text(args),
+        title: Text(args.name),
       ),
       body: SingleChildScrollView(
         // controller: controller,

@@ -1,71 +1,4 @@
-class Malls {
-  String id;
-  String createdAt;
-  String updatedAt;
-  String name;
-  Coordinates coordinates;
-  List<Branches> branches;
-
-  Malls(
-      {this.id,
-      this.createdAt,
-      this.updatedAt,
-      this.name,
-      this.coordinates,
-      this.branches});
-
-  Malls.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    name = json['name'];
-    coordinates = json['coordinates'] != null
-        ? new Coordinates.fromJson(json['coordinates'])
-        : null;
-    if (json['branches'] != null) {
-      branches = <Branches>[];
-      json['branches'].forEach((v) {
-        branches.add(new Branches.fromJson(v));
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['name'] = this.name;
-    if (this.coordinates != null) {
-      data['coordinates'] = this.coordinates.toJson();
-    }
-    if (this.branches != null) {
-      data['branches'] = this.branches.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
-}
-
-class Coordinates {
-  int lat;
-  int long;
-
-  Coordinates({this.lat, this.long});
-
-  Coordinates.fromJson(Map<String, dynamic> json) {
-    lat = json['lat'];
-    long = json['long'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['lat'] = this.lat;
-    data['long'] = this.long;
-    return data;
-  }
-}
-
-class Branches {
+class Branch {
   String id;
   String createdAt;
   String updatedAt;
@@ -74,7 +7,7 @@ class Branches {
   String mallId;
   List<Products> products;
 
-  Branches(
+  Branch(
       {this.id,
       this.createdAt,
       this.updatedAt,
@@ -83,7 +16,7 @@ class Branches {
       this.mallId,
       this.products});
 
-  Branches.fromJson(Map<String, dynamic> json) {
+  Branch.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];

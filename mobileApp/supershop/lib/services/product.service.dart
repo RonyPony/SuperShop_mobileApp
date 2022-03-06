@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supershop/contracts/product_service.contract.dart';
 import 'package:supershop/helpers/requestsManager.dart';
+import 'package:supershop/models/branch.model.dart';
 import 'package:supershop/models/loginResponse.model.dart';
-import 'package:supershop/models/malls.model.dart';
+import 'package:supershop/models/mall.model.dart';
 import 'package:supershop/models/product.model.dart';
 import 'package:supershop/widgets/cartItem.dart';
 
@@ -54,17 +55,38 @@ class ProductService implements ProductServiceContract {
   }
 
   @override
-  Future<List<Malls>> getAllMalls() async {
+  Future<List<Mall>> getAllMalls() async {
     final client = RequestsManager.requester();
-      final response = await client.get("/Mall/All",);
-      if (response.statusCode < 400) {
-        
-        List<Malls> mallsList;
-         Malls xx= Malls.fromJson(response.data);
-        
-        return mallsList;
-      } else {
-        //TODO
-      }
+    final response = await client.get(
+      "/Mall/All",
+    );
+
+    if (response.statusCode < 400) {
+      List<dynamic> parsedListJson = response.data;
+      List<Mall> mallsList;
+      mallsList =
+          List<Mall>.from(parsedListJson.map((i) => Mall.fromJson(i)));
+      return mallsList;
+    } else {
+      //TODO
+    }
+  }
+
+  @override
+  Future<List<Branch>> getStores(Mall mall) async {
+    final client = RequestsManager.requester();
+    final response = await client.get(
+      "/Branch/All",
+    );
+
+    if (response.statusCode < 400) {
+      List<dynamic> parsedListJson = response.data;
+      List<Branch> branchList;
+      branchList =
+          List<Branch>.from(parsedListJson.map((i) => Branch.fromJson(i)));
+      return branchList;
+    } else {
+      //TODO
+    }
   }
 }

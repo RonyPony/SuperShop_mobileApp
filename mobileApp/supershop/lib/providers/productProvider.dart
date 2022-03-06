@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:supershop/contracts/product_service.contract.dart';
-import 'package:supershop/models/malls.model.dart';
+import 'package:supershop/models/branch.model.dart';
+import 'package:supershop/models/mall.model.dart';
 import 'package:supershop/models/product.model.dart';
 
 class ProductProvider with ChangeNotifier {
@@ -25,14 +26,25 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  Future<List<Malls>>getMalls()async{
+  Future<List<Branch>>getMallStores(Mall mall) async {
+try {
+  List<Branch> lista = await _productContract.getStores(mall);
+  return lista;
+} catch (e) {
+  throw e;
+}
+  }
+
+  Future<List<Mall>>getMalls()async{
     try {
-      List<Malls> malls = await _productContract.getAllMalls();
+      List<Mall> malls = await _productContract.getAllMalls();
       return malls;
     } catch (e) {
       throw e;
     }
   }
+
+  
 
   Future<List<Product>>getCart()async{
     List<Product> list = await _productContract.getCart();

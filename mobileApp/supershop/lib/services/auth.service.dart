@@ -27,7 +27,8 @@ class AuthenticationService implements AuthServiceContract {
       final client = RequestsManager.requester();
       final queryParam = {
         'userName': credentialsInfo.email,
-        'password': credentialsInfo.password
+        'password': credentialsInfo.password,
+        'rememberMe':credentialsInfo.remember
       };
       final response = await client.post("/auth/UserAuth/login",
           data: queryParam);

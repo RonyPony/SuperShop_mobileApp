@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:supershop/models/mall.model.dart';
 import 'package:supershop/screens/storeDetails.screen.dart';
 import 'package:supershop/widgets/customTextField.dart';
 import 'package:supershop/widgets/sideMenuDrawer.dart';
@@ -15,8 +16,12 @@ class StoresScreen extends StatefulWidget {
 }
 
 class _StoresScreenState extends State<StoresScreen> {
+
+  Mall currentMall;
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context).settings.arguments as Mall;
+    currentMall = args;
     TextEditingController searchTxt;
     Size screenSize = MediaQuery.of(context).size;
     _showPopupMenu() async {
@@ -54,6 +59,7 @@ class _StoresScreenState extends State<StoresScreen> {
     return Scaffold(
         drawer: SideMenuDrawer(),
         appBar: AppBar(
+          title: Text("Tiendas en "+args.name),
           actions: [
              GestureDetector(
               onTap: () {
@@ -81,11 +87,11 @@ class _StoresScreenState extends State<StoresScreen> {
                     ),
                     child: Row(
                       children: [
-                        Image.asset(
-                          "assets/logos/mega.png",
-                          width: 70,
+                        Image.network(
+                          args.imageUrl,
+                          width: screenSize.height*0.3,
                         ),
-                        Text("Megacentro")
+                        
                       ],
                     ),
                   ),
@@ -123,6 +129,7 @@ class _StoresScreenState extends State<StoresScreen> {
             SizedBox(
               height: screenSize.height * 0.05,
             ),
+            
             _buildTitle("Vestimenta"),
             SizedBox(
               height: 15,
@@ -177,7 +184,7 @@ class _StoresScreenState extends State<StoresScreen> {
     Size screenSize = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, StoreDetailsScreen.routeName,arguments: title);
+        Navigator.pushNamed(context, StoreDetailsScreen.routeName,arguments: currentMall);
       },
           child: Container(
           padding: EdgeInsets.only(

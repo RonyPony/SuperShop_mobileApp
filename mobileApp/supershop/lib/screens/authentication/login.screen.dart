@@ -34,10 +34,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       TextEditingController(text: "ronel.cruz.a8@gmail.com");
   TextEditingController _passwordController =
       TextEditingController(text: "Ronel08!");
-
+  bool _rememberMe = false;
   @override
   Widget build(BuildContext context) {
-    bool _rememberMe = false;
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.blue.shade600,
@@ -112,8 +111,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                       activeColor: Colors.white,
                       checkColor: Colors.blue,
                       onChanged: (value) {
-                        _rememberMe = value;
-                        setState(() {});
+                        setState(() {
+                          _rememberMe = value;
+                        });
                       }),
                   Text(
                     'Recordarme',
@@ -155,6 +155,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                       UserCredentials cred = UserCredentials();
                       cred.email = _emailController.text;
                       cred.password = _passwordController.text;
+                      cred.remember = _rememberMe;
                       LoginResponse response = await _authProvider.login(cred);
                       if (response.result.isSuccess == true) {
                         Navigator.pushNamedAndRemoveUntil(

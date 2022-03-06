@@ -1,4 +1,5 @@
 import 'package:cool_alert/cool_alert.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supershop/models/userInfo.model.dart';
@@ -150,6 +151,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   }
 
   void registerUser() async {
+    Size screenSize = MediaQuery.of(context).size;
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       UserToRegisterInfo tmpUsr = UserToRegisterInfo();
@@ -162,7 +164,43 @@ class _RegisterWidgetState extends State<RegisterWidget> {
         print(response);
       }
     } catch (e) {
-      CoolAlert.show(context: context, type: CoolAlertType.error,text: e.response.data.message);
+    DioError p = e as DioError;
+
+    return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Ha ocurrido un error'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('Por favor intente registrarse mas tarde.'),
+              Text("("+p.response.data["message"].toString()+")"),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aceptar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+      // showDialog(
+      //     context: context,
+      //     child: Container(
+      //       height: screenSize.height*0.5,
+      //       width: screenSize.width*0.5,
+      //       color: Colors.red,
+      //       child: Text('ss'),
+      //     ));
+
+      // CoolAlert.show(context: context, type: CoolAlertType.error,text: e.response.data.message);
     }
   }
 
