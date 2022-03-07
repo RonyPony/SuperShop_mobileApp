@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:supershop/models/product.model.dart';
 import 'package:supershop/providers/productProvider.dart';
 import 'package:supershop/screens/cart.screen.dart';
+import 'package:supershop/screens/shippingDetails.screen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   ProductDetailsScreen({Key key}) : super(key: key);
@@ -69,8 +70,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             child: Text('Comprar'),
                           )),
                       onPressed: () {
-                        // print(nameController.text);
-                        // print(passwordController.text);
+                        Navigator.pushNamed(context, ShoppingDetailScreen.routeName);
                       },
                     ),
                     ElevatedButton(
