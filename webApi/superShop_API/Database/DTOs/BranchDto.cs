@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using superShop_API.Database.DTOs.Base;
 using superShop_API.Database.Entities;
 
@@ -5,8 +6,12 @@ namespace superShop_API.Database.DTOs;
 
 public class BranchDto : BaseDto<Branch>
 {
+    [Required]
+    [MaxLength(80, ErrorMessage = "The name of the branch must be longer than 80 characters")]
     public string Name { get; set; }
+    [Required]
     public string LocalCode { get; set; }
+    [Required]
     public Guid MallId { get; set; }
     public List<ProductDto>? Products { get; set; }
 

@@ -22,7 +22,7 @@ namespace superShop_API.Database.Entities
         public Guid MallId { get; set; }
 
         [ForeignKey("mallId")]
-        public Mall Mall { get; set; }
+        public Mall? Mall { get; set; }
 
         public ICollection<Product>? Products { get; set; }
 

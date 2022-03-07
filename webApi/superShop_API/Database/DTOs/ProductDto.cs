@@ -3,7 +3,7 @@ using superShop_API.Database.Entities;
 
 namespace superShop_API.Database.DTOs;
 
-public class ProductDto : BaseDto<Product>
+public class ProductDto : BaseDto<Product, ProductSeedParams>
 {
     public string Name { get; set; }
     public string Code { get; set; }

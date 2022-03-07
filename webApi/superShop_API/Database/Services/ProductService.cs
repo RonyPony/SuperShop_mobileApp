@@ -5,12 +5,12 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
-public interface IProductService : IBaseService<Product>
+public interface IProductService : IBaseService<Product, ProductSeedParams>
 {
     Task<Product> GetByCode(string code);
 }
 
-public class ProductService : BaseService<Product>, IProductService
+public class ProductService : BaseService<Product, ProductSeedParams>, IProductService
 {
     public ProductService(IRepositoryConstructor constructor) : base(constructor)
     {
@@ -29,9 +29,9 @@ public class ProductService : BaseService<Product>, IProductService
             }
             return Result.Instance().Fail("The requested product to create exists in database !");
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail("An error occurred while making the requested operation", e);
         }
     }
 }

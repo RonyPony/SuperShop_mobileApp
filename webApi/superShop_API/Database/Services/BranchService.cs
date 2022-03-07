@@ -32,9 +32,9 @@ public class BranchService : BaseService<Branch>, IBranchesService
             }
             return Result.Instance().Fail("The requested branch to create exists in database !");
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail("An error occurred while making the requested operation", e);
         }
     }
 }

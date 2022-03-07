@@ -9,7 +9,7 @@ using superShop_API.Database.Services.Constructor;
 namespace superShop_API.Controllers;
 
 [Authorize(Roles = Roles.Admin)]
-public class ProductController : BaseController<ProductService, ProductDto, Product>
+public class ProductController : BaseController<ProductService, ProductDto, Product, ProductSeedParams>
 {
     public ProductController(IServiceConstructor _constructor) : base(_constructor)
     {

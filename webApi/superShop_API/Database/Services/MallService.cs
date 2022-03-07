@@ -32,9 +32,9 @@ public class MallService : BaseService<Mall>, IMallService
             }
             return Result.Instance().Fail("The requested mall to create exists in database !");
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail("An error occurred while making the requested operation", e);
         }
     }
 }
