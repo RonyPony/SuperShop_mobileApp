@@ -1,4 +1,5 @@
 import 'package:cool_alert/cool_alert.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -31,9 +32,9 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   TextEditingController _emailController =
-      TextEditingController(text: "ronel.cruz.a8@gmail.com");
+      TextEditingController(text: "");
   TextEditingController _passwordController =
-      TextEditingController(text: "Ronel08!");
+      TextEditingController(text: "");
   bool _rememberMe = false;
   @override
   Widget build(BuildContext context) {
@@ -161,11 +162,33 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                         Navigator.pushNamedAndRemoveUntil(
                             context, HomeScreen.routeName, (route) => false);
                       } else {
-                        print(response.result.message);
-                        CoolAlert.show(
+                        return showDialog<void>(
                           context: context,
-                          type: CoolAlertType.error,
-                          text: response.result.message,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Ha ocurrido un error'),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text(
+                                        'Por favor intente  mas tarde.'),
+                                    Text("(" +
+                                    response.result.message+
+                                        ")"),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Aceptar'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
                         );
                       }
                     },

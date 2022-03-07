@@ -6,6 +6,8 @@ import 'package:supershop/models/userToRegisterInfo.model.dart';
 abstract class AuthServiceContract {
   Future<LoginResponse> login(UserCredentials credentialsInfo);
   Future<UserInfo>registerUser(UserToRegisterInfo userInfo);
+  Future<UserInfo>getLocalActiveUser();
+  Future<UserInfo>getUserInfo(String email);
   }
   
  
