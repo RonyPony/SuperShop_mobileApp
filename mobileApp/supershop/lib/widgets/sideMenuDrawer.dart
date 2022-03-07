@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:supershop/models/userInfo.model.dart';
+import 'package:supershop/providers/authProvider.dart';
 import 'package:supershop/screens/authentication/register.screen.dart';
 import 'package:supershop/screens/home.screen.dart';
 import 'package:supershop/screens/authentication/login.screen.dart';
 import 'package:supershop/screens/info.screen.dart';
 import 'package:supershop/screens/malls.screen.dart';
 import 'package:supershop/screens/tiendas.screen.dart';
+import 'package:provider/provider.dart';
 
 class SideMenuDrawer extends StatelessWidget {
   const SideMenuDrawer({Key key}) : super(key: key);
@@ -14,6 +18,7 @@ class SideMenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+
     return Drawer(
       // semanticLabel: 'sss',
       elevation: 0,
@@ -53,19 +58,19 @@ class SideMenuDrawer extends StatelessWidget {
                   ),
                 ),
                 _createMenuItem("Inicio", "assets/casita.svg",
-                    HomeScreen.routeName,true, context),
+                    HomeScreen.routeName, true, context),
                 _createSplitter(),
                 _createMenuItem("Malls", "assets/malls-icon.svg",
-                    MallsScreen.routeName,true, context),
+                    MallsScreen.routeName, true, context),
                 _createSplitter(),
                 _createMenuItem("Tiendas", "assets/tienda-icon.svg",
-                    TiendasScreen.routeName,true, context),
+                    TiendasScreen.routeName, true, context),
                 _createSplitter(),
                 _createMenuItem("Perfil", "assets/user.svg",
-                    RegisterScreen.routeName,false, context),
+                    RegisterScreen.routeName, false, context,getCurrentUser(context)),
                 _createSplitter(),
                 _createMenuItem("Informacion", "assets/info-icon.svg",
-                    InfoScreen.routeName, true,context),
+                    InfoScreen.routeName, true, context),
                 _createSplitter(),
               ],
             ),
@@ -94,7 +99,7 @@ class SideMenuDrawer extends StatelessWidget {
 
   _createMenuItem(String label, String iconRoute, String route,
       bool removePreviousPages, BuildContext context,
-      [String routeArgs = ""]) {
+      [dynamic routeArgs = ""]) {
     return Container(
       height: 50,
       child: ListTile(
@@ -111,8 +116,9 @@ class SideMenuDrawer extends StatelessWidget {
         onTap: () {
           removePreviousPages
               ? Navigator.pushNamedAndRemoveUntil(
-                  context, route, (route) => false, arguments: routeArgs)
-              : Navigator.pushNamed(context, route,arguments: routeArgs);
+                  context, route, (route) => false,
+                  arguments: routeArgs)
+              : Navigator.pushNamed(context, route, arguments: routeArgs);
         },
       ),
     );
@@ -127,5 +133,12 @@ class SideMenuDrawer extends StatelessWidget {
         color: Colors.blue,
       ),
     );
+  }
+
+  Future<UserInfo> getCurrentUser(BuildContext context) async {
+    UserInfo _currentUser = UserInfo();
+    final _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    UserInfo usuario = await _authProvider.getLocalActiveUser();
+    return usuario;
   }
 }

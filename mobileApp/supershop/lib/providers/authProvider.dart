@@ -19,6 +19,24 @@ class AuthProvider with ChangeNotifier {
       throw e;
     }
   }
+
+  Future<UserInfo>getUserInfo(String email) async {
+    try {
+      final response = await _authContract.getUserInfo(email);
+      return response;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<UserInfo>getLocalActiveUser() async {
+    try {
+      final response = await _authContract.getLocalActiveUser();
+      return response;
+    } catch (e) {
+      return null;
+    }
+  }
   
   Future<UserInfo> registerUser(UserToRegisterInfo userToRegister) async {
     try {
