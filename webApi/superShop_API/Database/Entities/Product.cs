@@ -40,6 +40,8 @@ namespace superShop_API.Database.Entities
         [ForeignKey("branchId")]
         public Branch Branch { get; set; }
 
+        public IList<ProductOrder> ProductOrders { get; set; }
+
         public Faker<Product> SeederDefinition(object? referenceId)
         {
             return new Faker<Product>()

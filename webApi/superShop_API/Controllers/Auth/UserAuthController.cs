@@ -130,6 +130,31 @@ public class UserAuthController : BaseAuthorizationController<User>
         }
     }
 
+    [HttpGet]
+    [AllowAnonymous]
+    //[Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
+    [Route("user/{email}")]
+    public async Task<ActionResult<Result>> GetUser([FromQuery] string email)
+    {
+        try
+        {
+            var userFinded = await _userManager.FindByEmailAsync(email);
+
+            if (userFinded != null)
+            {
+                return Result.Instance().Success("user fined", userFinded);
+            }
+            else
+            {
+                return Result.Instance().Fail($"User not finded. Please check your email");
+            }
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("Unable to get the user", exception: e));
+        }
+    }
+
     [HttpDelete]
     [Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
     [Route("remove")]

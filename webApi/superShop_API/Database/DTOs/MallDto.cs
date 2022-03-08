@@ -8,6 +8,8 @@ public class MallDto : BaseDto<Mall>
     public string Name { get; set; }
     public Coordinates Coordinates { get; set; }
 
+    public string ImageUrl { get; set; }
+
     public List<BranchDto>? Branches { get; set; }
 
     public MallDto()
@@ -17,6 +19,7 @@ public class MallDto : BaseDto<Mall>
     public MallDto(Mall entity) : base(entity)
     {
         Name = entity.Name;
+        ImageUrl = entity.ImageUrl;
         Coordinates = entity.Coordinates;
         Branches = entity.Branches != null ? entity.Branches.ToList().ConvertAll(b => new BranchDto(b)) : new List<BranchDto>();
     }
@@ -26,6 +29,7 @@ public class MallDto : BaseDto<Mall>
         return new Mall
         {
             Name = Name,
+            ImageUrl = ImageUrl,
             Coordinates = Coordinates
         };
     }

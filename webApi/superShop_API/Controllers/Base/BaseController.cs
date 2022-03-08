@@ -91,6 +91,6 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     /// <param name="ID">Identificador unico del modelo a eliminar</param>
     /// <returns>Resultado de la operacion de eliminacion de datos</returns>
     [HttpDelete]
-    [Route("remove", Name = "Delete[controller]")]
+    [Route("remove/{Id}", Name = "Delete[controller]")]
     public async virtual Task<ActionResult<Result>> DeleteRemoveChangesAsync([FromRoute] Guid Id) => await Service.DeleteAsync(Id);
 }
