@@ -1,8 +1,11 @@
+import 'package:cool_alert/cool_alert.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supershop/models/userInfo.model.dart';
 import 'package:supershop/models/userToRegisterInfo.model.dart';
 import 'package:supershop/providers/authProvider.dart';
+import 'package:supershop/screens/authentication/login.screen.dart';
 import 'package:supershop/widgets/customTextField.dart';
 
 import '../../constants.dart';
@@ -15,8 +18,16 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  bool isProfile = false;
+  Future<UserInfo> _userInfo;
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context).settings.arguments as Future<UserInfo>;
+    if (args != null) {
+      isProfile = true;
+      _userInfo = args;
+    }
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -37,14 +48,14 @@ class RegisterWidget extends StatefulWidget {
 }
 
 class _RegisterWidgetState extends State<RegisterWidget> {
-  TextEditingController _nameController = TextEditingController(text: "ronel");
+  TextEditingController _nameController = TextEditingController(text: "");
   TextEditingController _passwordController =
-      TextEditingController(text: "Ronel08!");
+      TextEditingController(text: "");
   TextEditingController _confirmPasswordController =
-      TextEditingController(text: "Ronel08!");
-  TextEditingController _lastName = TextEditingController(text: "Cruz");
+      TextEditingController(text: "");
+  TextEditingController _lastName = TextEditingController(text: "");
   TextEditingController _email =
-      TextEditingController(text: "ronel.cruz.a8@gmail.com");
+      TextEditingController(text: "");
   TextEditingController _errorMessage = TextEditingController();
 
   @override
@@ -149,6 +160,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   }
 
   void registerUser() async {
+    Size screenSize = MediaQuery.of(context).size;
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       UserToRegisterInfo tmpUsr = UserToRegisterInfo();
@@ -158,27 +170,68 @@ class _RegisterWidgetState extends State<RegisterWidget> {
       tmpUsr.password = _passwordController.text;
       if (validateUser(tmpUsr)) {
         UserInfo response = await authProvider.registerUser(tmpUsr);
-        print(response);
+        CoolAlert.show(
+            context: context,
+            onConfirmBtnTap: (){
+              Navigator.pushNamedAndRemoveUntil(context, LoginScreen.routeName, (route) => false);
+            },
+            type: CoolAlertType.success,
+            title: "Exito!",
+            text: "Registrado correctamente");
       }
     } catch (e) {
-      throw e;
+      DioError p = e as DioError;
+
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Ha ocurrido un error'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('Por favor intente registrarse mas tarde.'),
+                  Text("(" + p.response.data["message"].toString() + ")"),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      // showDialog(
+      //     context: context,
+      //     child: Container(
+      //       height: screenSize.height*0.5,
+      //       width: screenSize.width*0.5,
+      //       color: Colors.red,
+      //       child: Text('ss'),
+      //     ));
+
+      // CoolAlert.show(context: context, type: CoolAlertType.error,text: e.response.data.message);
     }
   }
 
   bool validateUser(UserToRegisterInfo user) {
     _errorMessage.text = "";
-    setState(() {
-      
-    });
+    setState(() {});
     if (user.name != "") {
       if (user.lastName != "") {
         if (user.password != "") {
-          if (user.password==_confirmPasswordController.text) {
-          return true;
-        } else {
-          _errorMessage.text = "Las claves  no coinciden";
-          setState(() {});
-        }
+          if (user.password == _confirmPasswordController.text) {
+            return true;
+          } else {
+            _errorMessage.text = "Las claves  no coinciden";
+            setState(() {});
+          }
         } else {
           _errorMessage.text = "La clave  no es valida";
           setState(() {});

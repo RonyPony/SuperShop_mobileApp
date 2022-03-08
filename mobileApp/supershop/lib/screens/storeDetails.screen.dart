@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:supershop/models/mall.model.dart';
 import 'package:supershop/models/product.model.dart';
 import 'package:supershop/screens/productDetails.screen.dart';
 import 'package:supershop/widgets/customTextField.dart';
 import 'package:supershop/widgets/sideMenuDrawer.dart';
+
+import 'cart.screen.dart';
 
 class StoreDetailsScreen extends StatefulWidget {
   StoreDetailsScreen({Key key}) : super(key: key);
@@ -19,12 +22,19 @@ int prodIdCounter = 0;
   String _testProductImage = 'https://shop.loisjeans.com/13500-thickbox_default/jeans-coty-pantalon-denim-rotos.jpg';
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context).settings.arguments as String;
+    final args = ModalRoute.of(context).settings.arguments as Mall;
     
     return Scaffold(
       // drawer: SideMenuDrawer(),
       appBar: AppBar(
-        title: Text(args),
+        actions: [
+           GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, CartScreen.routeName);
+              },
+            child: Icon(Icons.shopping_cart_rounded))
+        ],
+        title: Text(args.name),
       ),
       body: SingleChildScrollView(
         // controller: controller,

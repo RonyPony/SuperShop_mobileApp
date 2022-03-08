@@ -18,6 +18,15 @@ public interface IServiceConstructor : IDisposable, IAsyncDisposable
     /// <typeparam name="Tentity">modelo del cual se ha creado el servicio a inicializar</typeparam>
     /// <returns>Retorna el servicio del cual se ha hecho solicitud de una nueva instancia</returns>
     Tservice GetService<Tservice, Tentity>() where Tservice : IBaseService<Tentity> where Tentity : class, IBaseEntity, ISeeder<Tentity>;
+
+    /// <summary>
+    /// Obtiene una instancia del servicio que se solicite
+    /// </summary>
+    /// <typeparam name="Tservice">interface del servicio que implementa IServicioBase<Tmodel> del cual se desea obtener una nueva instancia del mismo</typeparam>
+    /// <typeparam name="Tentity">modelo del cual se ha creado el servicio a inicializar</typeparam>
+    /// <typeparam name="T">tipo genérico de nuestro seeder customizados</typeparam>
+    /// <returns>Retorna el servicio del cual se ha hecho solicitud de una nueva instancia</returns>
+    Tservice GetService<Tservice, Tentity, T>() where Tservice : IBaseService<Tentity, T> where Tentity : class, IBaseEntity, ISeeder<Tentity, T>;
 }
 public class ServiceConstructor : IServiceConstructor
 {
@@ -44,6 +53,19 @@ public class ServiceConstructor : IServiceConstructor
     }
 
     Tservice IServiceConstructor.GetService<Tservice, Tmodel>()
+    {
+        Type? tConcreteService = null;
+        Assembly.GetExecutingAssembly().GetTypes().ToList().ForEach(t =>
+        {
+            if (typeof(Tservice).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
+            {
+                tConcreteService = t;
+            }
+        });
+        return (Tservice)Activator.CreateInstance(tConcreteService, Constructor);
+    }
+
+    Tservice IServiceConstructor.GetService<Tservice, Tmodel, T>()
     {
         Type? tConcreteService = null;
         Assembly.GetExecutingAssembly().GetTypes().ToList().ForEach(t =>

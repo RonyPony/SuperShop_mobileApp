@@ -1,8 +1,11 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:supershop/models/product.model.dart';
 import 'package:supershop/providers/productProvider.dart';
+import 'package:supershop/screens/cart.screen.dart';
+import 'package:supershop/screens/shippingDetails.screen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   ProductDetailsScreen({Key key}) : super(key: key);
@@ -25,7 +28,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         // controller: controller,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Column(          
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -33,12 +36,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 children: [
                   Container(
                       height: screenSize.height * 0.6,
-                      child: Image.network(
-                          productArgs.imageUrl)),
+                      child: Image.network(productArgs.imageUrl)),
                 ],
               ),
               Text(productArgs.name),
-              Text("RD"+productArgs.price.toString()),
+              Text("RD" + productArgs.price.toString()),
               SizedBox(
                 height: 10,
               ),
@@ -55,7 +57,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   children: [
                     ElevatedButton(
                       style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.blue),
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.blue),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
@@ -67,8 +70,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             child: Text('Comprar'),
                           )),
                       onPressed: () {
-                        // print(nameController.text);
-                        // print(passwordController.text);
+                        Navigator.pushNamed(context, ShoppingDetailScreen.routeName);
                       },
                     ),
                     ElevatedButton(
@@ -99,11 +101,25 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             ],
                           ))),
-                      onPressed: ()async{
-                        final _productProvider = Provider.of<ProductProvider>(context,listen: false);
-                        bool response = await _productProvider.addToCart(productArgs);
+                      onPressed: () async {
+                        final _productProvider = Provider.of<ProductProvider>(
+                            context,
+                            listen: false);
+                        bool response =
+                            await _productProvider.addToCart(productArgs);
                         if (response) {
-                          //TODO alert success
+                          CoolAlert.show(
+                            backgroundColor: Colors.blue,
+                              context: context,
+                              cancelBtnText: "Ir al carrito",
+                              showCancelBtn: true,
+                              onCancelBtnTap: () {
+                                Navigator.pushNamed(context, CartScreen.routeName);
+                              },
+                              type: CoolAlertType.success,
+                              text: productArgs.name +
+                                  " ha sido agregado con exito a tu carrito, ve al carrito para ver mas detalles de la compra ",
+                              title: "Producto Agregado al Carrito");
                         }
                       },
                     )

@@ -18,7 +18,8 @@ class StoreLogo extends StatelessWidget {
           ),
           Container(
             width: 200,
-            child: Image.asset(
+            child: 
+            Image.network(
               storeLogo,
               height: 100,
             ),

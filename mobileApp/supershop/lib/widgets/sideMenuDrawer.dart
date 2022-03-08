@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:supershop/models/userInfo.model.dart';
+import 'package:supershop/providers/authProvider.dart';
+import 'package:supershop/screens/authentication/register.screen.dart';
 import 'package:supershop/screens/home.screen.dart';
 import 'package:supershop/screens/authentication/login.screen.dart';
 import 'package:supershop/screens/info.screen.dart';
 import 'package:supershop/screens/malls.screen.dart';
 import 'package:supershop/screens/tiendas.screen.dart';
+import 'package:provider/provider.dart';
 
 class SideMenuDrawer extends StatelessWidget {
   const SideMenuDrawer({Key key}) : super(key: key);
@@ -13,6 +18,7 @@ class SideMenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+
     return Drawer(
       // semanticLabel: 'sss',
       elevation: 0,
@@ -52,19 +58,19 @@ class SideMenuDrawer extends StatelessWidget {
                   ),
                 ),
                 _createMenuItem("Inicio", "assets/casita.svg",
-                    HomeScreen.routeName, context),
+                    HomeScreen.routeName, true, context),
                 _createSplitter(),
-                _createMenuItem(
-                    "Malls", "assets/malls-icon.svg", MallsScreen.routeName, context),
+                _createMenuItem("Malls", "assets/malls-icon.svg",
+                    MallsScreen.routeName, true, context),
                 _createSplitter(),
-                _createMenuItem(
-                    "Tiendas", "assets/tienda-icon.svg", TiendasScreen.routeName, context),
+                _createMenuItem("Tiendas", "assets/tienda-icon.svg",
+                    TiendasScreen.routeName, true, context),
                 _createSplitter(),
-                _createMenuItem(
-                    "Perfil", "assets/user.svg", "routename", context),
+                _createMenuItem("Perfil", "assets/user.svg",
+                    RegisterScreen.routeName, false, context,getCurrentUser(context)),
                 _createSplitter(),
                 _createMenuItem("Informacion", "assets/info-icon.svg",
-                    InfoScreen.routeName, context),
+                    InfoScreen.routeName, true, context),
                 _createSplitter(),
               ],
             ),
@@ -73,7 +79,8 @@ class SideMenuDrawer extends StatelessWidget {
             padding: const EdgeInsets.only(left: 20),
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamedAndRemoveUntil(context, LoginScreen.routeName, (route) => false);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, LoginScreen.routeName, (route) => false);
               },
               child: Row(
                 children: [
@@ -90,8 +97,9 @@ class SideMenuDrawer extends StatelessWidget {
     );
   }
 
-  _createMenuItem(
-      String label, String iconRoute, String route, BuildContext context) {
+  _createMenuItem(String label, String iconRoute, String route,
+      bool removePreviousPages, BuildContext context,
+      [dynamic routeArgs = ""]) {
     return Container(
       height: 50,
       child: ListTile(
@@ -106,10 +114,15 @@ class SideMenuDrawer extends StatelessWidget {
           style: TextStyle(color: Colors.blue, fontSize: 18),
         ),
         onTap: () {
-          Navigator.pushNamedAndRemoveUntil(context, route, (route) => false);
+          removePreviousPages
+              ? Navigator.pushNamedAndRemoveUntil(
+                  context, route, (route) => false,
+                  arguments: routeArgs)
+              : Navigator.pushNamed(context, route, arguments: routeArgs);
         },
       ),
     );
+    {}
   }
 
   _createSplitter() {
@@ -120,5 +133,12 @@ class SideMenuDrawer extends StatelessWidget {
         color: Colors.blue,
       ),
     );
+  }
+
+  Future<UserInfo> getCurrentUser(BuildContext context) async {
+    UserInfo _currentUser = UserInfo();
+    final _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    UserInfo usuario = await _authProvider.getLocalActiveUser();
+    return usuario;
   }
 }
