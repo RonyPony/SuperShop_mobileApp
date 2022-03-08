@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supershop/contracts/product_service.contract.dart';
 import 'package:supershop/helpers/requestsManager.dart';
+import 'package:supershop/models/Address.model.dart';
 import 'package:supershop/models/branch.model.dart';
 import 'package:supershop/models/loginResponse.model.dart';
 import 'package:supershop/models/mall.model.dart';
@@ -11,7 +12,9 @@ import 'package:supershop/widgets/cartItem.dart';
 
 class ProductService implements ProductServiceContract {
   String SAVED_PRODUCT_KEY = "ProductosdeSuperShop";
+  String SAVED_Address_KEY = "DireccionesdeSuperShop";
   List<Product> _cartItems = new List<Product>();
+  List<Address> _addresses = new List<Address>();
 
   @override
   Future<bool> addToCart(Product productToAdd) async {
@@ -64,8 +67,7 @@ class ProductService implements ProductServiceContract {
     if (response.statusCode < 400) {
       List<dynamic> parsedListJson = response.data;
       List<Mall> mallsList;
-      mallsList =
-          List<Mall>.from(parsedListJson.map((i) => Mall.fromJson(i)));
+      mallsList = List<Mall>.from(parsedListJson.map((i) => Mall.fromJson(i)));
       return mallsList;
     } else {
       //TODO
@@ -87,6 +89,47 @@ class ProductService implements ProductServiceContract {
       return branchList;
     } else {
       //TODO
+    }
+  }
+
+  @override
+  Future<bool> addToAddress(Address address) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _addresses.add(address);
+    String data = json.encode(_addresses);
+    bool saved = await prefs.setString(SAVED_Address_KEY, data);
+    return saved;
+  }
+
+  @override
+  Future<bool> deleteFromAddresses(String addressAlias) async {
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+    String jsonedAddresses = prefs.getString(SAVED_Address_KEY);
+    if (jsonedAddresses != null) {
+      List<dynamic> parsedListJson = jsonDecode(jsonedAddresses);
+      List<Address> itemsList =
+          List<Address>.from(parsedListJson.map((i) => Address.fromJson(i)));
+      final index = itemsList.indexWhere((element) => element.addressAlias == addressAlias);
+      itemsList.removeAt(index);
+      String data = json.encode(itemsList);
+      bool saved = await prefs.setString(SAVED_Address_KEY, data);
+      return saved;
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<List<Address>> getAddresses() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String jsonedAddresses = prefs.getString(SAVED_Address_KEY);
+    if (jsonedAddresses != null) {
+      List<dynamic> parsedListJson = jsonDecode(jsonedAddresses);
+      List<Address> itemsList =
+          List<Address>.from(parsedListJson.map((i) => Address.fromJson(i)));
+      return itemsList;
+    } else {
+      return null;
     }
   }
 }
