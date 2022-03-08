@@ -13,6 +13,7 @@ public class BranchDto : BaseDto<Branch>
     public string LocalCode { get; set; }
     [Required]
     public Guid MallId { get; set; }
+
     public List<ProductDto>? Products { get; set; }
 
     public BranchDto()
