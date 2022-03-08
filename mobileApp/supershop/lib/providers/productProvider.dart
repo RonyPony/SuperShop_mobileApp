@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:supershop/contracts/product_service.contract.dart';
+import 'package:supershop/models/Address.model.dart';
 import 'package:supershop/models/branch.model.dart';
 import 'package:supershop/models/mall.model.dart';
 import 'package:supershop/models/product.model.dart';
@@ -17,9 +18,28 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> addToAddress(Address address) async {
+    try {
+      bool resp = await _productContract.addToAddress(address);
+      return resp;
+    } catch (e) {
+      throw e;
+    }
+  }
+
     Future<bool> deleteCart(int productId) async {
     try {
       bool resp = await _productContract.deleteFromCart(productId);
+      return resp;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+
+   Future<bool> deleteAddress(String addressAlias) async {
+    try {
+      bool resp = await _productContract.deleteFromAddresses(addressAlias);
       return resp;
     } catch (e) {
       throw e;
@@ -43,7 +63,10 @@ try {
       throw e;
     }
   }
-
+  Future<List<Address>>getAddresses()async{
+    List<Address> list = await _productContract.getAddresses();
+    return list;
+  }
   
 
   Future<List<Product>>getCart()async{

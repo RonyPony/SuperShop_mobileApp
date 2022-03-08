@@ -12,6 +12,7 @@ class RequestsManager {
         .add(LogInterceptor(requestBody: true, responseBody: true));
     return returningDio;
   }
+  
 
   static Dio createRequester() {
     String apiURL = authApiUrl;
