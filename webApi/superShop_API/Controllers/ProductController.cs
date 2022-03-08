@@ -16,13 +16,15 @@ public class ProductController : BaseController<ProductService, ProductDto, Prod
     }
 
     [HttpGet]
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [Route("All", Name = "GetAllProducts")]
     public override async Task<ActionResult<IList<ProductDto>>> GetAllAsync() => await base.GetAllAsync();
 
 
     [HttpGet]
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [Route("Id", Name = "GetProductsByID")]
     public override async Task<ActionResult<ProductDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
 }

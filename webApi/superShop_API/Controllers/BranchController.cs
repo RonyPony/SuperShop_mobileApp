@@ -16,13 +16,15 @@ public class BranchController : BaseController<BranchService, BranchDto, Branch>
     }
 
     [HttpGet]
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [Route("All", Name = "GetAllBranches")]
     public override async Task<ActionResult<IList<BranchDto>>> GetAllAsync() => await base.GetAllAsync();
 
 
     [HttpGet]
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [Route("Id", Name = "GetBranchsByID")]
     public override async Task<ActionResult<BranchDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
 }

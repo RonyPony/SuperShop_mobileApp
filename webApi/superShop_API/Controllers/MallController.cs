@@ -23,7 +23,8 @@ public class MallController : BaseController<MallService, MallDto, Mall>
 
 
     [HttpGet]
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [Route("Id", Name = "GetMallsByID")]
     public override async Task<ActionResult<MallDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
 }
