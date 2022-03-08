@@ -16,7 +16,8 @@ public class MallController : BaseController<MallService, MallDto, Mall>
     }
 
     [HttpGet]
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [Route("All", Name = "GetAllMalls")]
     public override async Task<ActionResult<IList<MallDto>>> GetAllAsync() => await base.GetAllAsync();
 
