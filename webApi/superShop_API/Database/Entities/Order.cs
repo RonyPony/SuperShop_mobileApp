@@ -7,7 +7,13 @@ using superShop_API.Database.Seeders;
 
 namespace superShop_API.Database.Entities;
 
-public class Order : BaseEntity, ISeeder<Order>
+public class OrderSeedParams
+{
+    public Guid BranchId { get; set; }
+    public Guid UserId { get; set; }
+}
+
+public class Order : BaseEntity, ISeeder<Order, OrderSeedParams>
 {
     [Required]
     [Column("branchId")]
@@ -36,8 +42,14 @@ public class Order : BaseEntity, ISeeder<Order>
     public User User { get; set; }
 
     public IList<ProductOrder> ProductOrders { get; set; }
-    public Faker<Order> SeederDefinition(object? referenceId)
+
+    public Faker<Order> SeederDefinition(OrderSeedParams data)
     {
-        throw new NotImplementedException();
+        return new Faker<Order>()
+        .RuleFor(o => o.BranchId, data.BranchId)
+        .RuleFor(o => o.UserId, data.UserId)
+        .RuleFor(o => o.Address, f => f.Address.Direction())
+        .RuleFor(o => o.Total, f => Convert.ToDouble(f.Commerce.Price()))
+        .RuleFor(o => o.Completed, f => f.Random.Bool());
     }
 }

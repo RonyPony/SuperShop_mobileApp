@@ -54,17 +54,17 @@ public class Product : BaseEntity, ISeeder<Product, ProductSeedParams>
     [ForeignKey("categoryId")]
     public Category? Category { get; set; }
 
-    public IList<ProductOrder> ProductOrders { get; set; }
+    public IList<ProductOrder>? ProductOrders { get; set; }
 
     public Faker<Product> SeederDefinition(ProductSeedParams data)
     {
-            return new Faker<Product>()
-            .RuleFor(p => p.Name, f => f.Commerce.ProductName())
-            .RuleFor(p => p.Code, Nanoid.Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyz", 32))
-            .RuleFor(p => p.Description, f => f.Commerce.ProductDescription())
-            .RuleFor(p => p.Price, f => Convert.ToDecimal(f.Commerce.Price()))
-            .RuleFor(p => p.Stock, f => f.Commerce.Random.Int(1, 9999))
-            .RuleFor(p => p.BranchId, data.BranchId)
-            .RuleFor(p => p.CategoryId, data.Category);
+        return new Faker<Product>()
+        .RuleFor(p => p.Name, f => f.Commerce.ProductName())
+        .RuleFor(p => p.Code, Nanoid.Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyz", 32))
+        .RuleFor(p => p.Description, f => f.Commerce.ProductDescription())
+        .RuleFor(p => p.Price, f => Convert.ToDecimal(f.Commerce.Price()))
+        .RuleFor(p => p.Stock, f => f.Commerce.Random.Int(1, 9999))
+        .RuleFor(p => p.BranchId, data.BranchId)
+        .RuleFor(p => p.CategoryId, data.CategoryId);
     }
 }

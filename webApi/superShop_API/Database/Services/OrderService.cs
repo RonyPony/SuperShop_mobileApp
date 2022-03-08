@@ -5,7 +5,7 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
-public class OrderService : BaseService<Order>
+public class OrderService : BaseService<Order, OrderSeedParams>
 {
     public OrderService(IRepositoryConstructor constructor) : base(constructor)
     {

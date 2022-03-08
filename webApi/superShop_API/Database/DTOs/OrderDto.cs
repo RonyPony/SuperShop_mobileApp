@@ -3,7 +3,7 @@ using superShop_API.Database.Entities;
 
 namespace superShop_API.Database.DTOs;
 
-public class OrderDto : BaseDto<Order>
+public class OrderDto : BaseDto<Order, OrderSeedParams>
 {
     public OrderDto()
     {
