@@ -18,11 +18,11 @@ public class ProductService : BaseService<Product, ProductSeedParams>, IProductS
 
     public async Task<Product> GetByCode(string code) => (await this.Repository.GetAsync(p => p.Code == code)).FirstOrDefault();
 
-    public async override Task<Result> ValidateOnCreateAsync(Product entity)
+    public async override Task<Result<Object>> ValidateOnCreateAsync(Product entity)
     {
         try
         {
-            var mallFound = await this.Repository.GetAsync(m => m.Name == entity.Name);
+            var mallFound = (await this.Repository.GetAsync(m => m.Name == entity.Name)).FirstOrDefault();
             if (mallFound == null)
             {
                 return Result.Instance().Success("There noting products in database");

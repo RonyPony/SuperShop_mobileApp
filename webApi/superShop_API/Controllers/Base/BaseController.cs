@@ -57,32 +57,32 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     /// <returns>Resultado de la operacion de ingreso/actualizacion de datos</returns>
     [HttpPost]
     [Route("save", Name = "PostSave[controller]")]
-    public async virtual Task<ActionResult<Result>> PostSaveChangesAsync([FromBody] /*JObject*/ Tview view)
+    public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ Tview view)
     {
-        Result Result = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
+        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
         // if (view.ToObject<Tview>() is Tview cview)
         // {
         if (view.Id == Guid.Empty)
         {
-            Result = await Service.CreateAsync(view.Entity);
+            R = await Service.CreateAsync(view.Entity);
         }
         // }
-        return Result;
+        return R;
     }
 
     [HttpPut]
     [Route("update", Name = "PutUpdate[controller]")]
-    public virtual async Task<ActionResult<Result>> PutUpdateChangesAsync([FromBody] /*JObject*/ Tview view)
+    public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ Tview view)
     {
-        Result Result = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
+        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
         // if (view.ToObject<Tview>() is Tview cview)
         // {
         if (view.Id != Guid.Empty)
         {
-            Result = await Service.UpdateAsync(view.Entity);
+            R = await Service.UpdateAsync(view.Entity);
         }
         // }
-        return Result;
+        return R;
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     /// <returns>Resultado de la operacion de eliminacion de datos</returns>
     [HttpDelete]
     [Route("remove/{Id}", Name = "Delete[controller]")]
-    public async virtual Task<ActionResult<Result>> DeleteRemoveChangesAsync([FromRoute] Guid Id) => await Service.DeleteAsync(Id);
+    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute] Guid Id) => await Service.DeleteAsync(Id);
 }
 
 /// <summary>
@@ -142,32 +142,32 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     /// <returns>Resultado de la operacion de ingreso/actualizacion de datos</returns>
     [HttpPost]
     [Route("save", Name = "PostSave[controller]")]
-    public async virtual Task<ActionResult<Result>> PostSaveChangesAsync([FromBody] /*JObject*/ Tview view)
+    public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ Tview view)
     {
-        Result Result = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
+        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
         // if (view.ToObject<Tview>() is Tview cview)
         // {
         if (view.Id == Guid.Empty)
         {
-            Result = await Service.CreateAsync(view.Entity);
+            R = await Service.CreateAsync(view.Entity);
         }
         // }
-        return Result;
+        return R;
     }
 
     [HttpPut]
     [Route("update", Name = "PutUpdate[controller]")]
-    public virtual async Task<ActionResult<Result>> PutUpdateChangesAsync([FromBody] /*JObject*/ Tview view)
+    public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ Tview view)
     {
-        Result Result = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
+        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
         // if (view.ToObject<Tview>() is Tview cview)
         // {
         if (view.Id != Guid.Empty)
         {
-            Result = await Service.UpdateAsync(view.Entity);
+            R = await Service.UpdateAsync(view.Entity);
         }
         // }
-        return Result;
+        return R;
     }
 
     /// <summary>
@@ -177,5 +177,5 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     /// <returns>Resultado de la operacion de eliminacion de datos</returns>
     [HttpDelete]
     [Route("remove", Name = "Delete[controller]")]
-    public async virtual Task<ActionResult<Result>> DeleteRemoveChangesAsync([FromRoute] Guid Id) => await Service.DeleteAsync(Id);
+    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute] Guid Id) => await Service.DeleteAsync(Id);
 }

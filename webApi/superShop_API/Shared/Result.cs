@@ -1,6 +1,6 @@
 namespace superShop_API.Shared;
 
-public class Result
+public class Result<T>
 {
     /// <summary>
     /// Determine if a Task has been executed Succesfully
@@ -17,24 +17,19 @@ public class Result
     /// </summary>
     public Exception? Exception { get; set; }
 
-    private object? _Data { get; set; }
+    private T? Data { get; set; }
 
-    private Result()
+    internal Result()
     {
         IsSuccess = true;
         Message = string.Empty;
     }
 
-    public Result Fail(string errorMessage, Exception? exception = null, object? data = null)
+    public Result<T> Fail(string errorMessage, Exception? exception = null)
     {
         if (exception != null)
         {
             Exception = exception;
-        }
-
-        if (data != null)
-        {
-            _Data = data;
         }
 
         Message = errorMessage;
@@ -43,35 +38,58 @@ public class Result
         return this;
     }
 
-    public Result Success(string message, object? data = null)
+    public Result<T> Fail(string errorMessage, T data, Exception? exception = null)
+    {
+        if (exception != null)
+        {
+            Exception = exception;
+        }
+
+        if (data != null)
+        {
+            Data = data;
+        }
+
+        Message = errorMessage;
+
+        IsSuccess = false;
+        return this;
+    }
+
+    public Result<T> Success(string message)
+    {
+        IsSuccess = true;
+        Message = message;
+        return this;
+    }
+
+    public Result<T> Success(string message, T data)
     {
         if (data != null)
         {
-            _Data = data;
+            Data = data;
         }
 
         IsSuccess = true;
         Message = message;
         return this;
     }
+}
 
-    public object? Data()
+public class Result
+{
+    public static Result<T> Instance<T>(T instanceType)
     {
-        return _Data;
+        return new Result<T>();
     }
 
-    public T? Data<T>()
+    public static Result<T> Instance<T>()
     {
-        return (T?)_Data;
+        return new Result<T>();
     }
 
-    public Tt? Data<Tt>(Tt pbj)
+    public static Result<Object> Instance()
     {
-        return (Tt?)_Data;
-    }
-
-    public static Result Instance()
-    {
-        return new Result();
+        return new Result<Object>();
     }
 }

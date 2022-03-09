@@ -9,9 +9,12 @@ public class BranchDto : BaseDto<Branch>
     [Required]
     [MaxLength(80, ErrorMessage = "The name of the branch must be longer than 80 characters")]
     public string Name { get; set; }
+
     [Required]
+    [MaxLength(30, ErrorMessage = "The local code of the branch must be at least 30 characters")]
     public string LocalCode { get; set; }
-    [Required]
+
+    [Required(ErrorMessage = "The mall id is required")]
     public Guid MallId { get; set; }
 
     public List<ProductDto>? Products { get; set; }

@@ -70,7 +70,7 @@ public abstract class BaseAuthorizationController<Tentity> : ControllerBase wher
     /// <returns>retorna el resultado del proceso de cierre de session del usuario actualmente en uso</returns>
     [HttpGet]
     [Route("exit", Name = "Get[controller]LogOut")]
-    public virtual async Task<ActionResult<Result>> GetLogOut()
+    public virtual async Task<ActionResult<Result<Object>>> GetLogOut()
     {
         return await LogOut(User.FindFirst("access_token").Value);
     }
@@ -170,14 +170,14 @@ public abstract class BaseAuthorizationController<Tentity> : ControllerBase wher
     /// </summary>
     /// <param name="credentials">Instancia de credenciales de acceso del usuario a validar</param>
     /// <returns>Retorna el resultado de la operacion, la entidad del usuario resultante y el token de acceso de este usuario</returns>
-    protected abstract Task<(Result result, Tentity? entity, string jwt, DateTime expiration)> AuthorizeAccess(Credentials credentials);
+    protected abstract Task<(Result<Object> result, Tentity? entity, string jwt, DateTime expiration)> AuthorizeAccess(Credentials credentials);
 
     /// <summary>
     /// Ejecuta el proceso de solicitud de confirmacion de credenciales de acceso al usuario registrado bajo el correo electronico suministrado
     /// </summary>
     /// <param name="email">Correo del usuario por confirmar</param>
     /// <returns>Retorna el resultado de la operacion y ademas devuelve el usuario registrado por el correo electronico recibido</returns>
-    protected abstract Task<(Result result, Tentity? entity, string confirmationToken)> RequestEmailValidation(string email);
+    protected abstract Task<(Result<Object> result, Tentity? entity, string confirmationToken)> RequestEmailValidation(string email);
 
     /// <summary>
     /// Ejecuta el proceso de validacion de usuario mediante el codigo de confirmacion enviada a su correo electronico
@@ -185,7 +185,7 @@ public abstract class BaseAuthorizationController<Tentity> : ControllerBase wher
     /// <param name="email">Correo electronice del usuario a validar</param>
     /// <param name="confirmationToken">Codigo de confirmacion recibido por el usuario a validar</param>
     /// <returns>Retorna el resultado de la operacion como ademas el usuario afectado por el mismo</returns>
-    protected abstract Task<(Result result, Tentity? entity)> ValidateEmail(string email, string confirmationToken);
+    protected abstract Task<(Result<Object> result, Tentity? entity)> ValidateEmail(string email, string confirmationToken);
 
     /// <summary>
     /// Retorna los roles pertenecientes al usuario solicitado
@@ -199,7 +199,7 @@ public abstract class BaseAuthorizationController<Tentity> : ControllerBase wher
     /// </summary>
     /// <param name="token">token de usuario actual del usuario</param>
     /// <returns>Retorna el resultado de deslogueo del usuario actual</returns>
-    protected abstract Task<Result> LogOut(string token);
+    protected abstract Task<Result<Object>> LogOut(string token);
 
     /// <summary>
     /// Ejecuta el procedimiento de requisicion de recuperacion de credenciales de usuarios
@@ -207,7 +207,7 @@ public abstract class BaseAuthorizationController<Tentity> : ControllerBase wher
     /// <param name="username">Nombre de usuario o correo electronico a recuperar</param>
     /// <param name="ip">direccion IP del cliente HTTP el cual ha invocado este metodo</param>
     /// <returns>Retorna el resultado de la operacion de recuperacion, la entidad de usuario resultante y el token de recuperacion para este usuario</returns>
-    protected abstract Task<(Result result, Tentity? entity, string requestToken)> RequestPasswordRecovery(string username, IPAddress ip = null);
+    protected abstract Task<(Result<Object> result, Tentity? entity, string requestToken)> RequestPasswordRecovery(string username, IPAddress ip = null);
 
     /// <summary>
     /// Ejecuta el proceso de cambio de credenciales de un usuario
@@ -218,5 +218,5 @@ public abstract class BaseAuthorizationController<Tentity> : ControllerBase wher
     /// <param name="resetToken">Token de recuperacion enviado al usuario</param>
     /// <param name="recoverable">Indica si el token de autorizacion actual es temporal o no</param>
     /// <returns>Retorna el resultado de la operacion y la entidad resultante de esta operacion</returns>
-    protected abstract Task<(Result result, Tentity? entity)> ChangePassword(string email, string newPassword, string actualPassword = null, string resetToken = null);
+    protected abstract Task<(Result<Object> result, Tentity? entity)> ChangePassword(string email, string newPassword, string actualPassword = null, string resetToken = null);
 }

@@ -25,7 +25,7 @@ public class Product : BaseEntity, ISeeder<Product, ProductSeedParams>
     public string Code { get; set; }
 
     [Required]
-    [Column("description", TypeName = "varchar(250)")]
+    [Column("description", TypeName = "varchar(256)")]
     public string Description { get; set; }
 
     [Required]

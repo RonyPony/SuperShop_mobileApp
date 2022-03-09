@@ -18,7 +18,7 @@ public class CategoryService : BaseService<Category>, ICategoryService
 
     public async Task<Category?> GetByName(string name) => (await this.Repository.GetAsync(c => c.Name == name)).FirstOrDefault();
 
-    public async override Task<Result> ValidateOnCreateAsync(Category entity)
+    public async override Task<Result<Object>> ValidateOnCreateAsync(Category entity)
     {
         try
         {

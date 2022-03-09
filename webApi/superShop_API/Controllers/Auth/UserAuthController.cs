@@ -24,7 +24,7 @@ public class UserAuthController : BaseAuthorizationController<User>
     [AllowAnonymous]
     [HttpPost]
     [Route("register")]
-    public async Task<ActionResult<Result>> Register([FromBody] RegisterUser userModel)
+    public async Task<ActionResult<Result<Object>>> Register([FromBody] RegisterUser userModel)
     {
         try
         {
@@ -77,7 +77,7 @@ public class UserAuthController : BaseAuthorizationController<User>
     [HttpPost]
     [AllowAnonymous]
     [Route("register/admin")]
-    public async Task<ActionResult<Result>> RegisterAdmin([FromBody] RegisterUser userModel)
+    public async Task<ActionResult<Result<Object>>> RegisterAdmin([FromBody] RegisterUser userModel)
     {
         try
         {
@@ -134,7 +134,7 @@ public class UserAuthController : BaseAuthorizationController<User>
     [AllowAnonymous]
     //[Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
     [Route("user/{email}")]
-    public async Task<ActionResult<Result>> GetUser([FromQuery] string email)
+    public async Task<ActionResult<Result<User>>> GetUser([FromQuery] string email)
     {
         try
         {
@@ -142,23 +142,42 @@ public class UserAuthController : BaseAuthorizationController<User>
 
             if (userFinded != null)
             {
-                return Result.Instance().Success("user fined", userFinded);
+                return Result.Instance<User>().Success("user fined", userFinded);
             }
             else
             {
-                return Result.Instance().Fail($"User not finded. Please check your email");
+                return Result.Instance<User>().Fail($"User not finded. Please check your email");
             }
         }
         catch (Exception e)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("Unable to get the user", exception: e));
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance<Object>().Fail("Unable to get the user", exception: e));
         }
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    //[Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
+    [Route("users")]
+    public async Task<ActionResult<Result<Object>>> GetUsers()
+    {
+        return await Task.Run<ActionResult<Result<Object>>>(() =>
+        {
+            try
+            {
+                return Result.Instance().Success("Users list obtained", _userManager.Users.ToList());
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("Unable to get the user list", exception: e));
+            }
+        });
     }
 
     [HttpDelete]
     [Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
     [Route("remove")]
-    public async Task<ActionResult<Result>> DeleteUser()
+    public async Task<ActionResult<Result<Object>>> DeleteUser()
     {
         try
         {
@@ -191,7 +210,7 @@ public class UserAuthController : BaseAuthorizationController<User>
     [HttpDelete]
     [Authorize(Roles = Roles.Admin)]
     [Route("remove/{userId}")]
-    public async Task<ActionResult<Result>> DeleteByID([FromRoute] string userId)
+    public async Task<ActionResult<Result<Object>>> DeleteByID([FromRoute] string userId)
     {
         try
         {
@@ -221,7 +240,7 @@ public class UserAuthController : BaseAuthorizationController<User>
         }
     }
 
-    protected override async Task<(Result result, User? entity, string jwt, DateTime expiration)> AuthorizeAccess(Credentials credentials)
+    protected override async Task<(Result<Object> result, User? entity, string jwt, DateTime expiration)> AuthorizeAccess(Credentials credentials)
     {
         User userFinded;
 
@@ -258,7 +277,7 @@ public class UserAuthController : BaseAuthorizationController<User>
         return (result: Result.Instance().Fail("Login failed !"), entity: null, jwt: String.Empty, expiration: DateTime.Now);
     }
 
-    protected override Task<(Result result, User? entity)> ChangePassword(string email, string newPassword, string actualPassword = null, string resetToken = null)
+    protected override Task<(Result<Object> result, User? entity)> ChangePassword(string email, string newPassword, string actualPassword = null, string resetToken = null)
     {
         throw new NotImplementedException();
     }
@@ -268,23 +287,23 @@ public class UserAuthController : BaseAuthorizationController<User>
         throw new NotImplementedException();
     }
 
-    protected override async Task<Result> LogOut(string token)
+    protected override async Task<Result<Object>> LogOut(string token)
     {
         await _signInManager.SignOutAsync();
         return Result.Instance().Success("User Logout !");
     }
 
-    protected override Task<(Result result, User? entity, string confirmationToken)> RequestEmailValidation(string email)
+    protected override Task<(Result<Object> result, User? entity, string confirmationToken)> RequestEmailValidation(string email)
     {
         throw new NotImplementedException();
     }
 
-    protected override Task<(Result result, User? entity, string requestToken)> RequestPasswordRecovery(string username, IPAddress ip = null)
+    protected override Task<(Result<Object> result, User? entity, string requestToken)> RequestPasswordRecovery(string username, IPAddress ip = null)
     {
         throw new NotImplementedException();
     }
 
-    protected override Task<(Result result, User? entity)> ValidateEmail(string email, string confirmationToken)
+    protected override Task<(Result<Object> result, User? entity)> ValidateEmail(string email, string confirmationToken)
     {
         throw new NotImplementedException();
     }

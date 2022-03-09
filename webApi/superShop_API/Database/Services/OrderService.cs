@@ -11,7 +11,7 @@ public class OrderService : BaseService<Order, OrderSeedParams>
     {
     }
 
-    public async override Task<Result> ValidateOnCreateAsync(Order entity)
+    public async override Task<Result<Object>> ValidateOnCreateAsync(Order entity)
     {
         try
         {

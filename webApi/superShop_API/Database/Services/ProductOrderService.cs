@@ -11,7 +11,7 @@ public class ProductOrderService : BaseService<ProductOrder>
     {
     }
 
-    public async override Task<Result> ValidateOnCreateAsync(ProductOrder entity)
+    public async override Task<Result<Object>> ValidateOnCreateAsync(ProductOrder entity)
     {
         return await Task.Run(() => Result.Instance().Success("Valid !"));
     }
