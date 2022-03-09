@@ -39,6 +39,8 @@ const String serverurl = 'http://fluidxtores.somee.com/';
 const String apikey = 'ck_5ae639c798f4319eab05c9c99d928cf330f26366';
 const String secret = 'cs_6136c1cc92fc1d43004ccc2bf0bf057f9da04b94';
 const String authApiUrl = "https://super-shop-api.herokuapp.com";
+// const String authApiUrl = "https://supershop-85486.herokuapp.com/";
+
 
 const defaultDuration = Duration(milliseconds: 250);
 

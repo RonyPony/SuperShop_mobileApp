@@ -19,10 +19,10 @@ class StoreLogo extends StatelessWidget {
           Container(
             width: 200,
             child: 
-            Image.network(
+            storeLogo!=null?Image.network(
               storeLogo,
               height: 100,
-            ),
+            ):SizedBox(),
             decoration: BoxDecoration(
                 border: Border.all(width: 1, color: Colors.blue),
                 borderRadius: BorderRadius.circular(10)),
