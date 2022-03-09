@@ -53,7 +53,8 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
     {
         try
         {
-            if ((await ValidateOnCreateAsync(entity)).IsSuccess)
+            var result = await ValidateOnCreateAsync(entity);
+            if (result.IsSuccess)
             {
                 await Repository.InsertAsync(entity);
                 await Repository.CommitChangesAsync();
@@ -61,7 +62,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
             }
             else
             {
-                return Result.Instance().Fail($"Fail on creating the new {typeof(Tentity).Name}");
+                return Result.Instance().Fail($"Fail on creating the new {typeof(Tentity).Name}", result);
             }
         }
         catch (Exception ex)
@@ -72,20 +73,21 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
 
     public virtual async Task<Result<Object>> CreateRangeAsync(IEnumerable<Tentity> entities)
     {
-        var errorFounds = 0;
+        var errorList = new List<Result<Object>>();
         try
         {
             foreach (var model in entities)
             {
-                if ((await ValidateOnCreateAsync(model)).IsSuccess)
+                var result = await ValidateOnCreateAsync(model);
+                if (!result.IsSuccess)
                 {
-                    errorFounds++;
+                    errorList.Add(result);
                 }
             }
 
-            if (errorFounds > 0)
+            if (errorList.Count > 0)
             {
-                return Result.Instance().Fail($"Error in data for insert: {errorFounds}");
+                return Result.Instance().Fail($"Error in data for insert: {errorList.Count}", errorList);
             }
             else
             {
