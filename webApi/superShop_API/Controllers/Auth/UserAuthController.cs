@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using superShop_API.Controllers.Base.Auth;
 using superShop_API.Controllers.Base.Auth.DTOs;
 using superShop_API.Database.Entities.Auth;
+using superShop_API.Database.Services;
 using superShop_API.Database.Services.Constructor;
 using superShop_API.Shared;
 
@@ -159,19 +160,16 @@ public class UserAuthController : BaseAuthorizationController<User>
     [AllowAnonymous]
     //[Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
     [Route("users")]
-    public async Task<ActionResult<Result<Object>>> GetUsers()
+    public async Task<ActionResult<Result<List<User>>>> GetUsers()
     {
-        return await Task.Run<ActionResult<Result<Object>>>(() =>
+        try
         {
-            try
-            {
-                return Result.Instance().Success("Users list obtained", _userManager.Users.ToList());
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("Unable to get the user list", exception: e));
-            }
-        });
+            return Result.Instance<List<User>>().Success("Users list obtained", await this.Constructor.GetService<UserService, User>().GetAllAsync());
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("Unable to get the user list", exception: e));
+        }
     }
 
     [HttpDelete]
