@@ -18,12 +18,6 @@ public class ProductController : BaseController<ProductService, ProductDto, Prod
 
     [HttpGet]
     [Authorize(Roles = Roles.User)]
-    [Route("All", Name = "GetAllProducts")]
-    public override async Task<ActionResult<IList<ProductDto>>> GetAllAsync() => await base.GetAllAsync();
-
-
-    [HttpGet]
-    [Authorize(Roles = Roles.User)]
-    [Route("Id", Name = "GetProductsByID")]
-    public override async Task<ActionResult<ProductDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
+    [Route("by-branch/{branchId}")]
+    public async Task<ActionResult<IList<ProductDto>>> GetAllByBranchId(Guid branchId) => (await this.Service.GetAllByBranchId(branchId)).ConvertAll(p => new ProductDto(p));
 }

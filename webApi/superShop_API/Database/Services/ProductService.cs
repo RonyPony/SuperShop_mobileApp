@@ -8,6 +8,7 @@ namespace superShop_API.Database.Services;
 public interface IProductService : IBaseService<Product, ProductSeedParams>
 {
     Task<Product> GetByCode(string code);
+    Task<List<Product>> GetAllByBranchId(Guid branchId);
 }
 
 public class ProductService : BaseService<Product, ProductSeedParams>, IProductService
@@ -15,6 +16,8 @@ public class ProductService : BaseService<Product, ProductSeedParams>, IProductS
     public ProductService(IRepositoryConstructor constructor) : base(constructor)
     {
     }
+
+    public async Task<List<Product>> GetAllByBranchId(Guid branchId) => (await this.Repository.GetAsync(m => m.BranchId == branchId)).ToList();
 
     public async Task<Product> GetByCode(string code) => (await this.Repository.GetAsync(p => p.Code == code)).FirstOrDefault();
 

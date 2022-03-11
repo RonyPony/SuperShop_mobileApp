@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using superShop_API.Database.DTOs.Base;
 using superShop_API.Database.Entities.Base;
 using superShop_API.Database.Seeders;
@@ -47,8 +46,8 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     /// <param name="id">Identificador unico de la entidad a consultar</param>
     /// <returns>Vista de la entidad de modelo resultante</returns>
     [HttpGet]
-    [Route("Id", Name = "Get[controller]ByID")]
-    public virtual async Task<ActionResult<Tview>> GetByIDAsync(Guid id) => (Tview)Activator.CreateInstance(typeof(Tview), await Service.GetByIDAsync(id));
+    [Route("{Id}", Name = "Get[controller]ByID")]
+    public virtual async Task<ActionResult<Tview>> GetByIDAsync([FromRoute] Guid Id) => (Tview)Activator.CreateInstance(typeof(Tview), await Service.GetByIDAsync(Id));
 
     /// <summary>
     /// Actualiza una entidad de modelo o en su defecto crea el mismo en el sistema
@@ -60,13 +59,10 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ Tview view)
     {
         var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-        // if (view.ToObject<Tview>() is Tview cview)
-        // {
         if (view.Id == Guid.Empty)
         {
             R = await Service.CreateAsync(view.Entity);
         }
-        // }
         return R;
     }
 
@@ -75,13 +71,10 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ Tview view)
     {
         var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-        // if (view.ToObject<Tview>() is Tview cview)
-        // {
         if (view.Id != Guid.Empty)
         {
             R = await Service.UpdateAsync(view.Entity);
         }
-        // }
         return R;
     }
 
@@ -145,13 +138,10 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ Tview view)
     {
         var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-        // if (view.ToObject<Tview>() is Tview cview)
-        // {
         if (view.Id == Guid.Empty)
         {
             R = await Service.CreateAsync(view.Entity);
         }
-        // }
         return R;
     }
 
@@ -160,13 +150,10 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ Tview view)
     {
         var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-        // if (view.ToObject<Tview>() is Tview cview)
-        // {
         if (view.Id != Guid.Empty)
         {
             R = await Service.UpdateAsync(view.Entity);
         }
-        // }
         return R;
     }
 

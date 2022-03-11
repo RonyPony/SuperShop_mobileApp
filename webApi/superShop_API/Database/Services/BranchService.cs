@@ -9,6 +9,7 @@ public interface IBranchesService : IBaseService<Branch>
 {
     Task<Branch> GetByLocalCode(string localCode);
     Task<Branch> GetbyName(string name);
+    Task<List<Branch>> GetAllByMallId(Guid mallId);
 }
 
 public class BranchService : BaseService<Branch>, IBranchesService
@@ -20,6 +21,8 @@ public class BranchService : BaseService<Branch>, IBranchesService
     public async Task<Branch> GetByLocalCode(string localCode) => (await this.Repository.GetAsync(b => b.LocalCode == localCode)).FirstOrDefault();
 
     public async Task<Branch> GetbyName(string name) => (await this.Repository.GetAsync(b => b.Name == name)).FirstOrDefault();
+
+    public async Task<List<Branch>> GetAllByMallId(Guid mallId) => (await this.Repository.GetAsync(b => b.MallId == mallId)).ToList();
 
     public async override Task<Result<Object>> ValidateOnCreateAsync(Branch entity)
     {

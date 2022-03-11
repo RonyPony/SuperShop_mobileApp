@@ -18,12 +18,6 @@ public class BranchController : BaseController<BranchService, BranchDto, Branch>
 
     [HttpGet]
     [Authorize(Roles = Roles.User)]
-    [Route("All", Name = "GetAllBranches")]
-    public override async Task<ActionResult<IList<BranchDto>>> GetAllAsync() => await base.GetAllAsync();
-
-
-    [HttpGet]
-    [Authorize(Roles = Roles.User)]
-    [Route("Id", Name = "GetBranchsByID")]
-    public override async Task<ActionResult<BranchDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
+    [Route("by-mall/{mallId}")]
+    public async Task<ActionResult<IList<BranchDto>>> GetAllByMallId([FromRoute] Guid mallId) => (await this.Service.GetAllByMallId(mallId)).ConvertAll(b => new BranchDto(b));
 }
