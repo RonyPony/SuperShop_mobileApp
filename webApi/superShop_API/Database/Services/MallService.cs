@@ -21,7 +21,7 @@ public class MallService : BaseService<Mall>, IMallService
         return (await this.Repository.GetAsync(m => m.Name == name)).ToList();
     }
 
-    public async override Task<Result> ValidateOnCreateAsync(Mall entity)
+    public async override Task<Result<Object>> ValidateOnCreateAsync(Mall entity)
     {
         try
         {

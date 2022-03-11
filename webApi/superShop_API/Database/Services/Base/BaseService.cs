@@ -8,23 +8,23 @@ namespace superShop_API.Database.Services.Base;
 
 public interface IBaseService<Tentity> where Tentity : class, IBaseEntity, ISeeder<Tentity>
 {
-    Task<Result> ValidateOnCreateAsync(Tentity entity);
-    Task<Result> ValidateOnUpdateAsync(Tentity entity);
-    Task<Result> ValidateOnDeleteAsync(Tentity entity);
+    Task<Result<Object>> ValidateOnCreateAsync(Tentity entity);
+    Task<Result<Object>> ValidateOnUpdateAsync(Tentity entity);
+    Task<Result<Object>> ValidateOnDeleteAsync(Tentity entity);
 
     Task<List<Tentity>> GetAllAsync();
     Task<Tentity> GetByIDAsync(object id);
-    Task<Result> UpdateAsync(Tentity entity);
-    Task<Result> UpdateRangeAsync(IEnumerable<Tentity> entities);
-    Task<Result> CreateAsync(Tentity entity);
-    Task<Result> CreateRangeAsync(IEnumerable<Tentity> entities);
-    Task<Result> DeleteAsync(object id);
-    Task<Result> DeleteAsync(Tentity entity);
-    Task<Result> DeleteRangeAsync(IEnumerable<Tentity> entities);
+    Task<Result<Object>> UpdateAsync(Tentity entity);
+    Task<Result<Object>> UpdateRangeAsync(IEnumerable<Tentity> entities);
+    Task<Result<Object>> CreateAsync(Tentity entity);
+    Task<Result<Object>> CreateRangeAsync(IEnumerable<Tentity> entities);
+    Task<Result<Object>> DeleteAsync(object id);
+    Task<Result<Object>> DeleteAsync(Tentity entity);
+    Task<Result<Object>> DeleteRangeAsync(IEnumerable<Tentity> entities);
 
-    Task<Result> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result>> operation) where TResult : class;
+    Task<Result<TResult>> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result<TResult>>> operation) where TResult : class;
 
-    Task<Result> GenerateSeeders(int amount, object? referenceId);
+    Task<Result<Object>> GenerateSeeders(int amount, object? referenceId);
 }
 
 public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity : class, IBaseEntity, ISeeder<Tentity>
@@ -37,7 +37,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         Constructor = constructor;
     }
 
-    public virtual async Task<Result> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result>> operation) where TResult : class => await operation(Constructor);
+    public virtual async Task<Result<TResult>> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result<TResult>>> operation) where TResult : class => await operation(Constructor);
 
     public virtual async Task<Tentity> GetByIDAsync(object id)
     {
@@ -49,11 +49,12 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         return (await Repository.GetAllAsync()).ToList();
     }
 
-    public virtual async Task<Result> CreateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> CreateAsync(Tentity entity)
     {
         try
         {
-            if ((await ValidateOnCreateAsync(entity)).IsSuccess)
+            var result = await ValidateOnCreateAsync(entity);
+            if (result.IsSuccess)
             {
                 await Repository.InsertAsync(entity);
                 await Repository.CommitChangesAsync();
@@ -61,31 +62,32 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
             }
             else
             {
-                return Result.Instance().Fail("Fail ");
+                return Result.Instance().Fail($"Fail on creating the new {typeof(Tentity).Name}", result);
             }
         }
         catch (Exception ex)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail($"These occurred an error while creating the new {typeof(Tentity).Name}", ex);
         }
     }
 
-    public virtual async Task<Result> CreateRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> CreateRangeAsync(IEnumerable<Tentity> entities)
     {
-        var errorFounds = 0;
+        var errorList = new List<Result<Object>>();
         try
         {
             foreach (var model in entities)
             {
-                if ((await ValidateOnCreateAsync(model)).IsSuccess)
+                var result = await ValidateOnCreateAsync(model);
+                if (!result.IsSuccess)
                 {
-                    errorFounds++;
+                    errorList.Add(result);
                 }
             }
 
-            if (errorFounds > 0)
+            if (errorList.Count > 0)
             {
-                return Result.Instance().Fail($"Error in data for insert: {errorFounds}");
+                return Result.Instance().Fail($"Error in data for insert: {errorList.Count}", errorList);
             }
             else
             {
@@ -100,7 +102,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         }
     }
 
-    public virtual async Task<Result> DeleteAsync(object id)
+    public virtual async Task<Result<Object>> DeleteAsync(object id)
     {
         try
         {
@@ -117,7 +119,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
                 }
                 else
                 {
-                    r = Result.Instance().Fail("", null, result);
+                    r = Result.Instance().Fail("", result);
 
                 }
             }
@@ -129,7 +131,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         }
     }
 
-    public virtual async Task<Result> DeleteAsync(Tentity entity)
+    public virtual async Task<Result<Object>> DeleteAsync(Tentity entity)
     {
         try
         {
@@ -142,7 +144,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
             }
             else
             {
-                return Result.Instance().Fail("", null, result);
+                return Result.Instance().Fail("", result);
             }
         }
         catch (Exception ex)
@@ -151,7 +153,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         }
     }
 
-    public virtual async Task<Result> DeleteRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> DeleteRangeAsync(IEnumerable<Tentity> entities)
     {
         try
         {
@@ -172,7 +174,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
             }
             else
             {
-                return Result.Instance().Fail("", null, result);
+                return Result.Instance().Fail("", result);
             }
         }
         catch (Exception ex)
@@ -181,7 +183,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         }
     }
 
-    public virtual async Task<Result> UpdateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> UpdateAsync(Tentity entity)
     {
         try
         {
@@ -195,7 +197,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
             }
             else
             {
-                r = Result.Instance().Fail($"", null, result);
+                r = Result.Instance().Fail($"", result);
             }
             return r;
         }
@@ -205,7 +207,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         }
     }
 
-    public virtual async Task<Result> UpdateRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> UpdateRangeAsync(IEnumerable<Tentity> entities)
     {
         try
         {
@@ -220,7 +222,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
             }
             if (!result.IsSuccess)
             {
-                result = Result.Instance().Fail($"error when try to eliminate {typeof(Tentity).Name} entity list", null, result);
+                result = Result.Instance().Fail($"error when try to eliminate {typeof(Tentity).Name} entity list", result);
             }
             else
             {
@@ -236,7 +238,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         }
     }
 
-    public virtual async Task<Result> GenerateSeeders(int amount, object? referenceId)
+    public virtual async Task<Result<Object>> GenerateSeeders(int amount, object? referenceId)
     {
         var e = (ISeeder<Tentity>)Activator.CreateInstance<Tentity>();
 
@@ -245,7 +247,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         return await CreateRangeAsync(generatedData);
     }
 
-    public virtual async Task<Result> ValidateOnDeleteAsync(Tentity entity)
+    public virtual async Task<Result<Object>> ValidateOnDeleteAsync(Tentity entity)
     {
         var found = await GetByIDAsync(entity);
         if (found == null)
@@ -258,7 +260,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         }
     }
 
-    public virtual async Task<Result> ValidateOnUpdateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> ValidateOnUpdateAsync(Tentity entity)
     {
         var found = await GetByIDAsync(entity);
         if (found == null)
@@ -271,7 +273,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
         }
     }
 
-    public abstract Task<Result> ValidateOnCreateAsync(Tentity entity);
+    public abstract Task<Result<Object>> ValidateOnCreateAsync(Tentity entity);
 }
 
 
@@ -286,7 +288,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
 
     protected TRepository Repository { get => Constructor.GetRepositoryImplementation<TRepository, Tentity>(); }
 
-    public virtual async Task<Result> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result>> operation) where TResult : class => await operation(Constructor);
+    public virtual async Task<Result<TResult>> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result<TResult>>> operation) where TResult : class => await operation(Constructor);
 
     public virtual async Task<Tentity> GetByIDAsync(object id)
     {
@@ -298,7 +300,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         return (await Repository.GetAllAsync()).ToList();
     }
 
-    public virtual async Task<Result> CreateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> CreateAsync(Tentity entity)
     {
         try
         {
@@ -319,7 +321,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         }
     }
 
-    public virtual async Task<Result> CreateRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> CreateRangeAsync(IEnumerable<Tentity> entities)
     {
         var errorFounds = 0;
         try
@@ -349,7 +351,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         }
     }
 
-    public virtual async Task<Result> DeleteAsync(object id)
+    public virtual async Task<Result<Object>> DeleteAsync(object id)
     {
         try
         {
@@ -366,7 +368,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
                 }
                 else
                 {
-                    r = Result.Instance().Fail("", null, result);
+                    r = Result.Instance().Fail("", result);
 
                 }
             }
@@ -378,7 +380,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         }
     }
 
-    public virtual async Task<Result> DeleteAsync(Tentity entity)
+    public virtual async Task<Result<Object>> DeleteAsync(Tentity entity)
     {
         try
         {
@@ -391,7 +393,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
             }
             else
             {
-                return Result.Instance().Fail("", null, result);
+                return Result.Instance().Fail("", result);
             }
         }
         catch (Exception ex)
@@ -400,7 +402,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         }
     }
 
-    public virtual async Task<Result> DeleteRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> DeleteRangeAsync(IEnumerable<Tentity> entities)
     {
         try
         {
@@ -421,7 +423,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
             }
             else
             {
-                return Result.Instance().Fail("", null, result);
+                return Result.Instance().Fail("", result);
             }
         }
         catch (Exception ex)
@@ -430,7 +432,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         }
     }
 
-    public virtual async Task<Result> UpdateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> UpdateAsync(Tentity entity)
     {
         try
         {
@@ -444,7 +446,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
             }
             else
             {
-                r = Result.Instance().Fail($"", null, result);
+                r = Result.Instance().Fail($"", result);
             }
             return r;
         }
@@ -454,7 +456,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         }
     }
 
-    public virtual async Task<Result> UpdateRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> UpdateRangeAsync(IEnumerable<Tentity> entities)
     {
         try
         {
@@ -469,7 +471,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
             }
             if (!result.IsSuccess)
             {
-                result = Result.Instance().Fail($"error when try to eliminate {typeof(Tentity).Name} entity list", null, result);
+                result = Result.Instance().Fail($"error when try to eliminate {typeof(Tentity).Name} entity list", result);
             }
             else
             {
@@ -485,7 +487,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         }
 
     }
-    public async Task<Result> GenerateSeeders(int amount, object? referenceId)
+    public async Task<Result<Object>> GenerateSeeders(int amount, object? referenceId)
     {
 
         var generatedData = Activator.CreateInstance<Tentity>().SeederDefinition(referenceId).Generate(amount);
@@ -493,7 +495,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         return await CreateRangeAsync(generatedData);
     }
 
-    public virtual async Task<Result> ValidateOnDeleteAsync(Tentity entity)
+    public virtual async Task<Result<Object>> ValidateOnDeleteAsync(Tentity entity)
     {
         var found = await GetByIDAsync(entity);
         if (found == null)
@@ -506,7 +508,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         }
     }
 
-    public virtual async Task<Result> ValidateOnUpdateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> ValidateOnUpdateAsync(Tentity entity)
     {
         var found = await GetByIDAsync(entity);
         if (found == null)
@@ -519,28 +521,28 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         }
     }
 
-    public abstract Task<Result> ValidateOnCreateAsync(Tentity entity);
+    public abstract Task<Result<Object>> ValidateOnCreateAsync(Tentity entity);
 }
 
 public interface IBaseService<Tentity, T> where Tentity : class, IBaseEntity, ISeeder<Tentity, T>
 {
-    Task<Result> ValidateOnCreateAsync(Tentity entity);
-    Task<Result> ValidateOnUpdateAsync(Tentity entity);
-    Task<Result> ValidateOnDeleteAsync(Tentity entity);
+    Task<Result<Object>> ValidateOnCreateAsync(Tentity entity);
+    Task<Result<Object>> ValidateOnUpdateAsync(Tentity entity);
+    Task<Result<Object>> ValidateOnDeleteAsync(Tentity entity);
 
     Task<List<Tentity>> GetAllAsync();
     Task<Tentity> GetByIDAsync(object id);
-    Task<Result> UpdateAsync(Tentity entity);
-    Task<Result> UpdateRangeAsync(IEnumerable<Tentity> entities);
-    Task<Result> CreateAsync(Tentity entity);
-    Task<Result> CreateRangeAsync(IEnumerable<Tentity> entities);
-    Task<Result> DeleteAsync(object id);
-    Task<Result> DeleteAsync(Tentity entity);
-    Task<Result> DeleteRangeAsync(IEnumerable<Tentity> entities);
+    Task<Result<Object>> UpdateAsync(Tentity entity);
+    Task<Result<Object>> UpdateRangeAsync(IEnumerable<Tentity> entities);
+    Task<Result<Object>> CreateAsync(Tentity entity);
+    Task<Result<Object>> CreateRangeAsync(IEnumerable<Tentity> entities);
+    Task<Result<Object>> DeleteAsync(object id);
+    Task<Result<Object>> DeleteAsync(Tentity entity);
+    Task<Result<Object>> DeleteRangeAsync(IEnumerable<Tentity> entities);
 
-    Task<Result> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result>> operation) where TResult : class;
+    Task<Result<TResult>> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result<TResult>>> operation) where TResult : class;
 
-    Task<Result> GenerateSeeders(int amount, T data);
+    Task<Result<Object>> GenerateSeeders(int amount, T data);
 }
 
 public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where Tentity : class, IBaseEntity, ISeeder<Tentity, T>
@@ -553,7 +555,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         Constructor = constructor;
     }
 
-    public virtual async Task<Result> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result>> operation) where TResult : class => await operation(Constructor);
+    public virtual async Task<Result<TResult>> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result<TResult>>> operation) where TResult : class => await operation(Constructor);
 
     public virtual async Task<Tentity> GetByIDAsync(object id)
     {
@@ -565,7 +567,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         return (await Repository.GetAllAsync()).ToList();
     }
 
-    public virtual async Task<Result> CreateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> CreateAsync(Tentity entity)
     {
         try
         {
@@ -586,7 +588,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         }
     }
 
-    public virtual async Task<Result> CreateRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> CreateRangeAsync(IEnumerable<Tentity> entities)
     {
         var errorFounds = 0;
         try
@@ -616,7 +618,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         }
     }
 
-    public virtual async Task<Result> DeleteAsync(object id)
+    public virtual async Task<Result<Object>> DeleteAsync(object id)
     {
         try
         {
@@ -633,7 +635,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
                 }
                 else
                 {
-                    r = Result.Instance().Fail("", null, result);
+                    r = Result.Instance().Fail("", result);
 
                 }
             }
@@ -645,7 +647,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         }
     }
 
-    public virtual async Task<Result> DeleteAsync(Tentity entity)
+    public virtual async Task<Result<Object>> DeleteAsync(Tentity entity)
     {
         try
         {
@@ -658,7 +660,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
             }
             else
             {
-                return Result.Instance().Fail("", null, result);
+                return Result.Instance().Fail("", result);
             }
         }
         catch (Exception ex)
@@ -667,7 +669,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         }
     }
 
-    public virtual async Task<Result> DeleteRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> DeleteRangeAsync(IEnumerable<Tentity> entities)
     {
         try
         {
@@ -688,7 +690,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
             }
             else
             {
-                return Result.Instance().Fail("", null, result);
+                return Result.Instance().Fail("", result);
             }
         }
         catch (Exception ex)
@@ -697,7 +699,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         }
     }
 
-    public virtual async Task<Result> UpdateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> UpdateAsync(Tentity entity)
     {
         try
         {
@@ -711,7 +713,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
             }
             else
             {
-                r = Result.Instance().Fail($"", null, result);
+                r = Result.Instance().Fail($"", result);
             }
             return r;
         }
@@ -721,7 +723,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         }
     }
 
-    public virtual async Task<Result> UpdateRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> UpdateRangeAsync(IEnumerable<Tentity> entities)
     {
         try
         {
@@ -736,7 +738,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
             }
             if (!result.IsSuccess)
             {
-                result = Result.Instance().Fail($"error when try to eliminate {typeof(Tentity).Name} entity list", null, result);
+                result = Result.Instance().Fail($"error when try to eliminate {typeof(Tentity).Name} entity list", result);
             }
             else
             {
@@ -752,7 +754,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         }
     }
 
-    public virtual async Task<Result> GenerateSeeders(int amount, T data)
+    public virtual async Task<Result<Object>> GenerateSeeders(int amount, T data)
     {
         var e = (ISeeder<Tentity, T>)Activator.CreateInstance<Tentity>();
 
@@ -761,7 +763,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         return await CreateRangeAsync(generatedData);
     }
 
-    public virtual async Task<Result> ValidateOnDeleteAsync(Tentity entity)
+    public virtual async Task<Result<Object>> ValidateOnDeleteAsync(Tentity entity)
     {
         var found = await GetByIDAsync(entity);
         if (found == null)
@@ -774,7 +776,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         }
     }
 
-    public virtual async Task<Result> ValidateOnUpdateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> ValidateOnUpdateAsync(Tentity entity)
     {
         var found = await GetByIDAsync(entity);
         if (found == null)
@@ -787,7 +789,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
         }
     }
 
-    public abstract Task<Result> ValidateOnCreateAsync(Tentity entity);
+    public abstract Task<Result<Object>> ValidateOnCreateAsync(Tentity entity);
 }
 
 public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<Tentity, T> where TRepository : IBaseRepository<Tentity> where Tentity : class, IBaseEntity, ISeeder<Tentity, T>
@@ -801,7 +803,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
 
     protected TRepository Repository { get => Constructor.GetRepositoryImplementation<TRepository, Tentity>(); }
 
-    public virtual async Task<Result> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result>> operation) where TResult : class => await operation(Constructor);
+    public virtual async Task<Result<TResult>> AdvanceQueryAsync<TResult>(TResult result, Func<IRepositoryConstructor, Task<Result<TResult>>> operation) where TResult : class => await operation(Constructor);
 
     public virtual async Task<Tentity> GetByIDAsync(object id)
     {
@@ -813,7 +815,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         return (await Repository.GetAllAsync()).ToList();
     }
 
-    public virtual async Task<Result> CreateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> CreateAsync(Tentity entity)
     {
         try
         {
@@ -834,7 +836,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         }
     }
 
-    public virtual async Task<Result> CreateRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> CreateRangeAsync(IEnumerable<Tentity> entities)
     {
         var errorFounds = 0;
         try
@@ -864,7 +866,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         }
     }
 
-    public virtual async Task<Result> DeleteAsync(object id)
+    public virtual async Task<Result<Object>> DeleteAsync(object id)
     {
         try
         {
@@ -881,7 +883,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
                 }
                 else
                 {
-                    r = Result.Instance().Fail("", null, result);
+                    r = Result.Instance().Fail("", result);
 
                 }
             }
@@ -893,7 +895,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         }
     }
 
-    public virtual async Task<Result> DeleteAsync(Tentity entity)
+    public virtual async Task<Result<Object>> DeleteAsync(Tentity entity)
     {
         try
         {
@@ -906,7 +908,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
             }
             else
             {
-                return Result.Instance().Fail("", null, result);
+                return Result.Instance().Fail("", result);
             }
         }
         catch (Exception ex)
@@ -915,7 +917,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         }
     }
 
-    public virtual async Task<Result> DeleteRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> DeleteRangeAsync(IEnumerable<Tentity> entities)
     {
         try
         {
@@ -936,7 +938,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
             }
             else
             {
-                return Result.Instance().Fail("", null, result);
+                return Result.Instance().Fail("", result);
             }
         }
         catch (Exception ex)
@@ -945,7 +947,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         }
     }
 
-    public virtual async Task<Result> UpdateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> UpdateAsync(Tentity entity)
     {
         try
         {
@@ -959,7 +961,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
             }
             else
             {
-                r = Result.Instance().Fail($"", null, result);
+                r = Result.Instance().Fail($"", result);
             }
             return r;
         }
@@ -969,7 +971,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         }
     }
 
-    public virtual async Task<Result> UpdateRangeAsync(IEnumerable<Tentity> entities)
+    public virtual async Task<Result<Object>> UpdateRangeAsync(IEnumerable<Tentity> entities)
     {
         try
         {
@@ -984,7 +986,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
             }
             if (!result.IsSuccess)
             {
-                result = Result.Instance().Fail($"error when try to eliminate {typeof(Tentity).Name} entity list", null, result);
+                result = Result.Instance().Fail($"error when try to eliminate {typeof(Tentity).Name} entity list", result);
             }
             else
             {
@@ -1000,7 +1002,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         }
 
     }
-    public async Task<Result> GenerateSeeders(int amount, T data)
+    public async Task<Result<Object>> GenerateSeeders(int amount, T data)
     {
 
         var generatedData = Activator.CreateInstance<Tentity>().SeederDefinition(data).Generate(amount);
@@ -1008,7 +1010,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         return await CreateRangeAsync(generatedData);
     }
 
-    public virtual async Task<Result> ValidateOnDeleteAsync(Tentity entity)
+    public virtual async Task<Result<Object>> ValidateOnDeleteAsync(Tentity entity)
     {
         var found = await GetByIDAsync(entity);
         if (found == null)
@@ -1021,7 +1023,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         }
     }
 
-    public virtual async Task<Result> ValidateOnUpdateAsync(Tentity entity)
+    public virtual async Task<Result<Object>> ValidateOnUpdateAsync(Tentity entity)
     {
         var found = await GetByIDAsync(entity);
         if (found == null)
@@ -1034,5 +1036,5 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
         }
     }
 
-    public abstract Task<Result> ValidateOnCreateAsync(Tentity entity);
+    public abstract Task<Result<Object>> ValidateOnCreateAsync(Tentity entity);
 }

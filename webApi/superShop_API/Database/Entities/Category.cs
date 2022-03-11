@@ -12,6 +12,8 @@ public class Category : BaseEntity, ISeeder<Category>
     [Column("name", TypeName = "varchar(80)")]
     public string Name { get; set; }
 
+    public ICollection<Product>? Products { get; set; }
+
     public Faker<Category> SeederDefinition(object? referenceId)
     {
         return new Faker<Category>().RuleFor(c => c.Name, f => f.Commerce.Categories(1)[0]);

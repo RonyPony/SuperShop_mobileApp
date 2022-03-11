@@ -20,6 +20,10 @@ public class Mall : BaseEntity, ISeeder<Mall>
     [Column("coordinates")]
     public Coordinates Coordinates { get; set; }
 
+    [Required]
+    [Column("imageUrl", TypeName = "text")]
+    public string ImageUrl { get; set; }
+
     public virtual ICollection<Branch>? Branches { get; set; }
 
     public Faker<Mall> SeederDefinition(object? referenceId)

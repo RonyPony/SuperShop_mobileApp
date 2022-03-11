@@ -21,11 +21,11 @@ public class BranchService : BaseService<Branch>, IBranchesService
 
     public async Task<Branch> GetbyName(string name) => (await this.Repository.GetAsync(b => b.Name == name)).FirstOrDefault();
 
-    public async override Task<Result> ValidateOnCreateAsync(Branch entity)
+    public async override Task<Result<Object>> ValidateOnCreateAsync(Branch entity)
     {
         try
         {
-            var mallFound = await this.Repository.GetAsync(m => m.Name == entity.Name);
+            var mallFound = (await this.Repository.GetAsync(m => m.Name == entity.Name)).FirstOrDefault();
             if (mallFound == null)
             {
                 return Result.Instance().Success("There noting branches in database");

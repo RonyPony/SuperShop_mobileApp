@@ -17,10 +17,16 @@ public class DatabaseContext : IdentityDbContext<User, Role, Guid>
     public DbSet<Mall> Malls { get; set; }
     public DbSet<Branch> Branches { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<ProductOrder> ProductOrders { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<Mall>().Property(m => m.Coordinates).HasConversion(new CoordinatesCorverter());
+        builder.Entity<ProductOrder>().HasKey(po => new { po.OrderId, po.ProductId });
+        builder.Entity<ProductOrder>().HasOne<Order>(po => po.Order).WithMany(o => o.ProductOrders).HasForeignKey(po => po.OrderId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<ProductOrder>().HasOne<Product>(po => po.Product).WithMany(p => p.ProductOrders).HasForeignKey(po => po.ProductId).OnDelete(DeleteBehavior.Restrict);
         base.OnModelCreating(builder);
     }
 

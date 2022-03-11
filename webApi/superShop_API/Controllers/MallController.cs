@@ -8,7 +8,8 @@ using superShop_API.Database.Services.Constructor;
 
 namespace superShop_API.Controllers;
 
-[Authorize(Roles = Roles.Admin)]
+[AllowAnonymous]
+//[Authorize(Roles = Roles.Admin)]
 public class MallController : BaseController<MallService, MallDto, Mall>
 {
     public MallController(IServiceConstructor _constructor) : base(_constructor)

@@ -81,7 +81,7 @@ class _MallsScreenState extends State<MallsScreen> {
                 child: Container(
                   height: screenSize.height * 0.4,
                   width: screenSize.width,
-                  child: Image.network(mall.imageUrl),
+                  child: mall.imageUrl!=null?Image.network(mall.imageUrl):SizedBox(),
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
                           begin: Alignment.topRight,

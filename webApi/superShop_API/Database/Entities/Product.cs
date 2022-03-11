@@ -25,7 +25,7 @@ public class Product : BaseEntity, ISeeder<Product, ProductSeedParams>
     public string Code { get; set; }
 
     [Required]
-    [Column("description", TypeName = "varchar(250)")]
+    [Column("description", TypeName = "varchar(256)")]
     public string Description { get; set; }
 
     [Required]
@@ -54,12 +54,10 @@ public class Product : BaseEntity, ISeeder<Product, ProductSeedParams>
     [ForeignKey("categoryId")]
     public Category? Category { get; set; }
 
+    public IList<ProductOrder>? ProductOrders { get; set; }
+
     public Faker<Product> SeederDefinition(ProductSeedParams data)
     {
-        Expression<Func<Product, string>> sf;
-
-        sf = p => p.Code;
-
         return new Faker<Product>()
         .RuleFor(p => p.Name, f => f.Commerce.ProductName())
         .RuleFor(p => p.Code, Nanoid.Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyz", 32))
