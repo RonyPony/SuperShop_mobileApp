@@ -312,12 +312,12 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
             }
             else
             {
-                return Result.Instance().Fail("Fail ");
+                return Result.Instance().Fail($"Fail on creating the requested {entity.GetType().Name}");
             }
         }
         catch (Exception ex)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail("These an error occurred while creating this entity", exception: ex);
         }
     }
 
@@ -347,7 +347,7 @@ public abstract class BaseCustonService<TRepository, Tentity> : IBaseService<Ten
         }
         catch (Exception ex)
         {
-            return Result.Instance().Fail("Error creating entities in DB", ex);
+            return Result.Instance().Fail("Error creating entities in DB", exception: ex);
         }
     }
 

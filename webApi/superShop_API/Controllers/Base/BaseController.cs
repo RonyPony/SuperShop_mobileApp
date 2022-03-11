@@ -58,24 +58,56 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     [Route("save", Name = "PostSave[controller]")]
     public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ Tview view)
     {
-        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-        if (view.Id == Guid.Empty)
+        try
         {
-            R = await Service.CreateAsync(view.Entity);
+            var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
+            if (view.Id == Guid.Empty)
+            {
+                R = await Service.CreateAsync(view.Entity);
+            }
+
+            if (R.IsSuccess)
+            {
+                return R;
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, R);
+            }
+
         }
-        return R;
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
     }
 
     [HttpPut]
     [Route("update", Name = "PutUpdate[controller]")]
     public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ Tview view)
     {
-        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-        if (view.Id != Guid.Empty)
+        try
         {
-            R = await Service.UpdateAsync(view.Entity);
+            var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
+            if (view.Id != Guid.Empty)
+            {
+                R = await Service.UpdateAsync(view.Entity);
+            }
+
+            if (R.IsSuccess)
+            {
+                return R;
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, R);
+            }
+
         }
-        return R;
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
     }
 
     /// <summary>
