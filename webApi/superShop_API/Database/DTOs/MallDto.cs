@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using superShop_API.Database.DTOs.Base;
 using superShop_API.Database.Entities;
 
@@ -8,6 +9,7 @@ public class MallDto : BaseDto<Mall>
     public string Name { get; set; }
     public Coordinates Coordinates { get; set; }
 
+    [DataType(DataType.ImageUrl)]
     public string ImageUrl { get; set; }
 
     public List<BranchDto>? Branches { get; set; }

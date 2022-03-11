@@ -4,7 +4,7 @@ using superShop_API.Database.Entities;
 
 namespace superShop_API.Database.DTOs;
 
-public class ProductDto : BaseDto<Product, ProductSeedParams>
+public class ProductDto : BaseDto<Product>
 {
     [Required(ErrorMessage = "A name of this product is required")]
     [MaxLength(80, ErrorMessage = "The name of a product must be at least 80 characters")]
@@ -27,9 +27,6 @@ public class ProductDto : BaseDto<Product, ProductSeedParams>
     [Required(ErrorMessage = "The image url for this product is required")]
     public string ImageUrl { get; set; }
 
-    [Required(ErrorMessage = "The category of this product is required")]
-    public Guid CategoryId { get; set; }
-
     [Required(ErrorMessage = "The owner branch of this product is required")]
     public Guid BranchId { get; set; }
 
@@ -45,7 +42,6 @@ public class ProductDto : BaseDto<Product, ProductSeedParams>
         Price = entity.Price;
         Stock = entity.Stock;
         ImageUrl = entity.ImageUrl;
-        CategoryId = entity.CategoryId;
         BranchId = entity.BranchId;
     }
 
@@ -59,7 +55,6 @@ public class ProductDto : BaseDto<Product, ProductSeedParams>
             Price = Price,
             Stock = Stock,
             ImageUrl = ImageUrl,
-            CategoryId = CategoryId,
             BranchId = BranchId
         };
     }

@@ -15,17 +15,4 @@ public class MallController : BaseController<MallService, MallDto, Mall>
     public MallController(IServiceConstructor _constructor) : base(_constructor)
     {
     }
-
-    [HttpGet]
-    //[Authorize(Roles = Roles.User)]
-    [AllowAnonymous]
-    [Route("All", Name = "GetAllMalls")]
-    public override async Task<ActionResult<IList<MallDto>>> GetAllAsync() => await base.GetAllAsync();
-
-
-    [HttpGet]
-    //[Authorize(Roles = Roles.User)]
-    [AllowAnonymous]
-    [Route("Id", Name = "GetMallsByID")]
-    public override async Task<ActionResult<MallDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
 }

@@ -10,22 +10,19 @@ namespace superShop_API.Controllers;
 
 [AllowAnonymous]
 //[Authorize(Roles = Roles.Admin)]
-public class BranchController : BaseController<BranchService, BranchDto, Branch>
+public class BranchController : BaseController<BranchService, BranchDto, Branch, BranchSeedParams>
 {
     public BranchController(IServiceConstructor _constructor) : base(_constructor)
     {
     }
 
     [HttpGet]
-    //[Authorize(Roles = Roles.User)]
-    [AllowAnonymous]
-    [Route("All", Name = "GetAllBranches")]
-    public override async Task<ActionResult<IList<BranchDto>>> GetAllAsync() => await base.GetAllAsync();
-
+    [Authorize(Roles = Roles.User)]
+    [Route("by-mall/{mallId}")]
+    public async Task<ActionResult<IList<BranchDto>>> GetAllByMallId([FromRoute] Guid mallId) => (await this.Service.GetAllByMallId(mallId)).ConvertAll(b => new BranchDto(b));
 
     [HttpGet]
-    //[Authorize(Roles = Roles.User)]
-    [AllowAnonymous]
-    [Route("Id", Name = "GetBranchsByID")]
-    public override async Task<ActionResult<BranchDto>> GetByIDAsync(Guid id) => await base.GetByIDAsync(id);
+    [Authorize(Roles = Roles.User)]
+    [Route("by-category/{categoryId}")]
+    public async Task<ActionResult<IList<BranchDto>>> GetAllByCategoryId([FromRoute] Guid categoryId) => (await this.Service.GetAllByCategoryId(categoryId)).ConvertAll(b => new BranchDto(b));
 }

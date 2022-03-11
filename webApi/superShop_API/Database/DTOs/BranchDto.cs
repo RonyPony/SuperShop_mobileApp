@@ -4,7 +4,7 @@ using superShop_API.Database.Entities;
 
 namespace superShop_API.Database.DTOs;
 
-public class BranchDto : BaseDto<Branch>
+public class BranchDto : BaseDto<Branch, BranchSeedParams>
 {
     [Required]
     [MaxLength(80, ErrorMessage = "The name of the branch must be longer than 80 characters")]
@@ -13,6 +13,13 @@ public class BranchDto : BaseDto<Branch>
     [Required]
     [MaxLength(30, ErrorMessage = "The local code of the branch must be at least 30 characters")]
     public string LocalCode { get; set; }
+
+    [Required(ErrorMessage = "The image url of this branch is required")]
+    [DataType(DataType.ImageUrl)]
+    public string ImageUrl { get; set; }
+
+    [Required(ErrorMessage = "The category of this branch is required")]
+    public Guid CategoryId { get; set; }
 
     [Required(ErrorMessage = "The mall id is required")]
     public Guid MallId { get; set; }
@@ -27,7 +34,9 @@ public class BranchDto : BaseDto<Branch>
     {
         Name = entity.Name;
         LocalCode = entity.LocalCode;
+        ImageUrl = entity.ImageUrl;
         MallId = entity.MallId;
+        CategoryId = entity.CategoryId;
         Products = entity.Products != null ? entity.Products.ToList().ConvertAll(p => new ProductDto(p)) : new List<ProductDto>();
     }
 
@@ -37,7 +46,9 @@ public class BranchDto : BaseDto<Branch>
         {
             Name = Name,
             LocalCode = LocalCode,
+            ImageUrl = ImageUrl,
             MallId = MallId,
+            CategoryId = CategoryId
         };
     }
 }
