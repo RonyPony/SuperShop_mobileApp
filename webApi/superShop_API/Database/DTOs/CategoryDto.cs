@@ -7,7 +7,7 @@ namespace superShop_API.Database.DTOs;
 public class CategoryDto : BaseDto<Category>
 {
     [Required]
-    [MaxLength(80, ErrorMessage = "The name of the category is required")]
+    [StringLength(80, ErrorMessage = "The {0} must be at least {1}")]
     public string Name { get; set; }
     public CategoryDto()
     {

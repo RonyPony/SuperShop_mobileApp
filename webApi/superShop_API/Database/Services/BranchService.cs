@@ -32,11 +32,23 @@ public class BranchService : BaseService<Branch, BranchSeedParams>, IBranchesSer
     {
         try
         {
-            var mallFound = (await this.Repository.GetAsync(m => m.Name == entity.Name)).FirstOrDefault();
-            if (mallFound == null)
+            var branchFound = (await this.Repository.GetAsync(m => m.Name == entity.Name)).FirstOrDefault();
+            var categoryFound = (await this.Constructor.GetRepository<Category>().GetByIDAsync(entity.CategoryId));
+            var mallFound = (await this.Constructor.GetRepository<Mall>().GetByIDAsync(entity.MallId));
+
+            if (branchFound == null && categoryFound != null && mallFound != null)
             {
                 return Result.Instance().Success("There noting branches in database");
             }
+            else if (categoryFound == null)
+            {
+                return Result.Instance().Fail("The relational category doesn exists");
+            }
+            else if (mallFound == null)
+            {
+                return Result.Instance().Fail("The relational mall doesn exists");
+            }
+
             return Result.Instance().Fail("The requested branch to create exists in database !");
         }
         catch (Exception e)

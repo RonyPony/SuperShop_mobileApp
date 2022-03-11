@@ -15,6 +15,7 @@ public class BranchDto : BaseDto<Branch, BranchSeedParams>
     public string LocalCode { get; set; }
 
     [Required(ErrorMessage = "The image url of this branch is required")]
+    [DataType(DataType.ImageUrl)]
     public string ImageUrl { get; set; }
 
     [Required(ErrorMessage = "The category of this branch is required")]
