@@ -20,10 +20,6 @@ namespace superShop_API.Database.Entities
         public string Name { get; set; }
 
         [Required]
-        [Column("localCode", TypeName = "varchar(30)")]
-        public string LocalCode { get; set; }
-
-        [Required]
         [Column("imageUrl", TypeName = "text")]
         public string ImageUrl { get; set; }
 
@@ -47,7 +43,6 @@ namespace superShop_API.Database.Entities
         {
             return new Faker<Branch>()
             .RuleFor(b => b.Name, f => f.Company.CompanyName())
-            .RuleFor(b => b.LocalCode, Nanoid.Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyz", 30))
             .RuleFor(b => b.MallId, data.MallId)
             .RuleFor(b => b.CategoryId, data.CategoryId);
         }

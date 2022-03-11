@@ -10,10 +10,6 @@ public class BranchDto : BaseDto<Branch, BranchSeedParams>
     [MaxLength(80, ErrorMessage = "The name of the branch must be longer than 80 characters")]
     public string Name { get; set; }
 
-    [Required]
-    [MaxLength(30, ErrorMessage = "The local code of the branch must be at least 30 characters")]
-    public string LocalCode { get; set; }
-
     [Required(ErrorMessage = "The image url of this branch is required")]
     [DataType(DataType.ImageUrl)]
     public string ImageUrl { get; set; }
@@ -33,7 +29,6 @@ public class BranchDto : BaseDto<Branch, BranchSeedParams>
     public BranchDto(Branch entity) : base(entity)
     {
         Name = entity.Name;
-        LocalCode = entity.LocalCode;
         ImageUrl = entity.ImageUrl;
         MallId = entity.MallId;
         CategoryId = entity.CategoryId;
@@ -45,7 +40,6 @@ public class BranchDto : BaseDto<Branch, BranchSeedParams>
         return new Branch
         {
             Name = Name,
-            LocalCode = LocalCode,
             ImageUrl = ImageUrl,
             MallId = MallId,
             CategoryId = CategoryId
