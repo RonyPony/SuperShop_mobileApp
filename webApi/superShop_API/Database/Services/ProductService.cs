@@ -25,10 +25,15 @@ public class ProductService : BaseService<Product>, IProductService
     {
         try
         {
-            var mallFound = (await this.Repository.GetAsync(m => m.Name == entity.Name)).FirstOrDefault();
-            if (mallFound == null)
+            var productFound = (await this.Repository.GetAsync(m => m.Name == entity.Name)).FirstOrDefault();
+            var branchFound = await this.Constructor.GetRepository<Branch>().GetByIDAsync(entity.BranchId);
+            if (productFound == null && branchFound != null)
             {
                 return Result.Instance().Success("There noting products in database");
+            }
+            else if (branchFound == null)
+            {
+                return Result.Instance().Fail("The relational branch cannot be found");
             }
             return Result.Instance().Fail("The requested product to create exists in database !");
         }

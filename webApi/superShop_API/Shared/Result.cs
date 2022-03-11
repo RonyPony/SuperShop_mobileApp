@@ -17,7 +17,7 @@ public class Result<T>
     /// </summary>
     public Exception? Exception { get; set; }
 
-    private T? Data { get; set; }
+    public T? Data { get; set; }
 
     internal Result()
     {
