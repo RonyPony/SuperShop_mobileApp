@@ -1,32 +1,37 @@
+import 'package:supershop/models/product.model.dart';
+
 class Branch {
   String id;
   String createdAt;
   String updatedAt;
   String name;
+  String imageUrl;
   String localCode;
   String mallId;
-  List<Products> products;
+  List<Product> products;
 
   Branch(
       {this.id,
       this.createdAt,
       this.updatedAt,
       this.name,
+      this.imageUrl,
       this.localCode,
       this.mallId,
       this.products});
 
   Branch.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    imageUrl=json['imageUrl'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     name = json['name'];
     localCode = json['localCode'];
     mallId = json['mallId'];
     if (json['products'] != null) {
-      products = <Products>[];
+      products = <Product>[];
       json['products'].forEach((v) {
-        products.add(new Products.fromJson(v));
+        products.add(new Product.fromJson(v));
       });
     }
   }
@@ -36,6 +41,7 @@ class Branch {
     data['id'] = this.id;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
+    data['imageUrl']=this.imageUrl;
     data['name'] = this.name;
     data['localCode'] = this.localCode;
     data['mallId'] = this.mallId;
@@ -46,55 +52,3 @@ class Branch {
   }
 }
 
-class Products {
-  String id;
-  String createdAt;
-  String updatedAt;
-  String name;
-  String code;
-  String description;
-  int price;
-  int stock;
-  String imageUrl;
-  String branchId;
-
-  Products(
-      {this.id,
-      this.createdAt,
-      this.updatedAt,
-      this.name,
-      this.code,
-      this.description,
-      this.price,
-      this.stock,
-      this.imageUrl,
-      this.branchId});
-
-  Products.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    name = json['name'];
-    code = json['code'];
-    description = json['description'];
-    price = json['price'];
-    stock = json['stock'];
-    imageUrl = json['imageUrl'];
-    branchId = json['branchId'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['name'] = this.name;
-    data['code'] = this.code;
-    data['description'] = this.description;
-    data['price'] = this.price;
-    data['stock'] = this.stock;
-    data['imageUrl'] = this.imageUrl;
-    data['branchId'] = this.branchId;
-    return data;
-  }
-}

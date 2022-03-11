@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:supershop/models/branch.model.dart';
 import 'package:supershop/models/mall.model.dart';
+import 'package:supershop/providers/productProvider.dart';
 import 'package:supershop/screens/storeDetails.screen.dart';
 import 'package:supershop/widgets/customTextField.dart';
 import 'package:supershop/widgets/sideMenuDrawer.dart';
@@ -16,12 +19,15 @@ class StoresScreen extends StatefulWidget {
 }
 
 class _StoresScreenState extends State<StoresScreen> {
-
   Mall currentMall;
+
+  ScrollController _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context).settings.arguments as Mall;
     currentMall = args;
+    final _prodProvider = Provider.of<ProductProvider>(context, listen: false);
+    Future<List<Branch>> _futuro = _prodProvider.getMallStores(currentMall);
     TextEditingController searchTxt;
     Size screenSize = MediaQuery.of(context).size;
     _showPopupMenu() async {
@@ -57,23 +63,22 @@ class _StoresScreenState extends State<StoresScreen> {
     //         ));
 
     return Scaffold(
-        drawer: SideMenuDrawer(),
-        appBar: AppBar(
-          title: Text("Tiendas en "+args.name),
-          actions: [
-             GestureDetector(
+      drawer: SideMenuDrawer(),
+      appBar: AppBar(
+        title: Text("Tiendas en " + args.name),
+        actions: [
+          GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, CartScreen.routeName);
               },
-            child: Icon(Icons.shopping_cart_rounded))
-          ],
-          backgroundColor: Colors.blue,
-        ),
-        body:SingleChildScrollView(
-          // controller: controller,
-          child: Column(
-            children: [
-              
+              child: Icon(Icons.shopping_cart_rounded))
+        ],
+        backgroundColor: Colors.blue,
+      ),
+      body: SingleChildScrollView(
+        // controller: controller,
+        child: Column(
+          children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -89,9 +94,8 @@ class _StoresScreenState extends State<StoresScreen> {
                       children: [
                         Image.network(
                           args.imageUrl,
-                          width: screenSize.height*0.3,
+                          width: screenSize.height * 0.3,
                         ),
-                        
                       ],
                     ),
                   ),
@@ -129,39 +133,70 @@ class _StoresScreenState extends State<StoresScreen> {
             SizedBox(
               height: screenSize.height * 0.05,
             ),
-            
-            _buildTitle("Vestimenta"),
-            SizedBox(
-              height: 15,
+            FutureBuilder<List<Branch>>(
+              future: _futuro,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    return Text('Please check your connection');
+                  }
+                  if (snapshot.hasData) {
+                    return Container(
+                      height: screenSize.height * 0.5,
+                      child: Scrollbar(
+                        isAlwaysShown: true,
+                        radius: Radius.circular(50),
+                        thickness: 15,
+                        controller: _scrollController,
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          shrinkWrap: true,
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (context, index) {
+                            return _buildSubtitle(snapshot.data[index]);
+                          },
+                        ),
+                      ),
+                    );
+                  }
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
             ),
-            _buildSubtitle("SportLine America"),
-            SizedBox(
-              height: 15,
-            ),
-            _buildSubtitle("MegaModa"),
-            SizedBox(
-              height: 15,
-            ),
-            _buildSubtitle("Anthony's"),
-            SizedBox(
-              height: screenSize.height * 0.05,
-            ),
-            _buildTitle("Comida"),
-            SizedBox(
-              height: 15,
-            ),
-            _buildSubtitle("Pollos Victorina"),
-            SizedBox(
-              height: 15,
-            ),
-            _buildSubtitle("Burger King"),
-            SizedBox(
-              height: 15,
-            ),
-            _buildSubtitle("Jade Teriyaki"),
-            ],
-          ),
-        ),);
+            // _buildTitle("Vestimenta"),
+            // SizedBox(
+            //   height: 15,
+            // ),
+            // _buildSubtitle("SportLine America"),
+            // SizedBox(
+            //   height: 15,
+            // ),
+            // _buildSubtitle("MegaModa"),
+            // SizedBox(
+            //   height: 15,
+            // ),
+            // _buildSubtitle("Anthony's"),
+            // SizedBox(
+            //   height: screenSize.height * 0.05,
+            // ),
+            // _buildTitle("Comida"),
+            // SizedBox(
+            //   height: 15,
+            // ),
+            // _buildSubtitle("Pollos Victorina"),
+            // SizedBox(
+            //   height: 15,
+            // ),
+            // _buildSubtitle("Burger King"),
+            // SizedBox(
+            //   height: 15,
+            // ),
+            // _buildSubtitle("Jade Teriyaki"),
+          ],
+        ),
+      ),
+    );
   }
 
   _buildTitle(String title) {
@@ -174,19 +209,22 @@ class _StoresScreenState extends State<StoresScreen> {
             left: screenSize.width * 0.3),
         decoration: BoxDecoration(
             color: Colors.blue, borderRadius: BorderRadius.circular(50)),
-        child: Text(
-          title,
-          style: TextStyle(color: Colors.white, fontSize: 28),
+        child: Center(
+          child: Text(
+            title,
+            style: TextStyle(color: Colors.white, fontSize: 28),
+          ),
         ));
   }
 
-  _buildSubtitle(String title) {
+  _buildSubtitle(Branch tienda) {
     Size screenSize = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, StoreDetailsScreen.routeName,arguments: currentMall);
+        Navigator.pushNamed(context, StoreDetailsScreen.routeName,
+            arguments: tienda);
       },
-          child: Container(
+      child: Container(
           padding: EdgeInsets.only(
               top: screenSize.height * 0.01,
               bottom: screenSize.height * 0.01,
@@ -204,9 +242,11 @@ class _StoresScreenState extends State<StoresScreen> {
               color: Colors.white,
               border: Border.all(color: Colors.black, width: 0.1),
               borderRadius: BorderRadius.circular(50)),
-          child: Text(
-            title,
-            style: TextStyle(color: Colors.black, fontSize: 20),
+          child: Center(
+            child: Text(
+              tienda.name,
+              style: TextStyle(color: Colors.black, fontSize: 20),
+            ),
           )),
     );
   }

@@ -15,11 +15,12 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  Product _product = Product();
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     final productArgs = ModalRoute.of(context).settings.arguments as Product;
-
+_product=productArgs;
     return Scaffold(
       appBar: AppBar(
         title: Text("Detalles del producto"),
@@ -36,11 +37,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 children: [
                   Container(
                       height: screenSize.height * 0.6,
-                      child: Image.network(productArgs.imageUrl)),
+                      width: screenSize.width*0.9,
+                      child: Image.network(_product.imageUrl)),
                 ],
               ),
-              Text(productArgs.name),
-              Text("RD" + productArgs.price.toString()),
+              Text(_product.name),
+              Text("RD" + _product.price.toString()),
               SizedBox(
                 height: 10,
               ),
@@ -49,9 +51,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Container(
-                child: Text(
-                    "Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum."),
-              ),
+                child:Text(_product.description) 
+                ),
               Center(
                 child: Column(
                   children: [
