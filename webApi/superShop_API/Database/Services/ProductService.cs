@@ -5,13 +5,13 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
-public interface IProductService : IBaseService<Product, ProductSeedParams>
+public interface IProductService : IBaseService<Product>
 {
     Task<Product> GetByCode(string code);
     Task<List<Product>> GetAllByBranchId(Guid branchId);
 }
 
-public class ProductService : BaseService<Product, ProductSeedParams>, IProductService
+public class ProductService : BaseService<Product>, IProductService
 {
     public ProductService(IRepositoryConstructor constructor) : base(constructor)
     {

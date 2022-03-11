@@ -10,7 +10,7 @@ namespace superShop_API.Controllers;
 
 [AllowAnonymous]
 //[Authorize(Roles = Roles.Admin)]
-public class BranchController : BaseController<BranchService, BranchDto, Branch>
+public class BranchController : BaseController<BranchService, BranchDto, Branch, BranchSeedParams>
 {
     public BranchController(IServiceConstructor _constructor) : base(_constructor)
     {
@@ -20,4 +20,9 @@ public class BranchController : BaseController<BranchService, BranchDto, Branch>
     [Authorize(Roles = Roles.User)]
     [Route("by-mall/{mallId}")]
     public async Task<ActionResult<IList<BranchDto>>> GetAllByMallId([FromRoute] Guid mallId) => (await this.Service.GetAllByMallId(mallId)).ConvertAll(b => new BranchDto(b));
+
+    [HttpGet]
+    [Authorize(Roles = Roles.User)]
+    [Route("by-category/{categoryId}")]
+    public async Task<ActionResult<IList<BranchDto>>> GetAllByCategoryId([FromRoute] Guid categoryId) => (await this.Service.GetAllByCategoryId(categoryId)).ConvertAll(b => new BranchDto(b));
 }

@@ -12,7 +12,7 @@ public class Category : BaseEntity, ISeeder<Category>
     [Column("name", TypeName = "varchar(80)")]
     public string Name { get; set; }
 
-    public ICollection<Product>? Products { get; set; }
+    public ICollection<Branch>? Branches { get; set; }
 
     public Faker<Category> SeederDefinition(object? referenceId)
     {
