@@ -13,7 +13,7 @@ public class CategoryDto : BaseDto<Category>
     {
     }
 
-    public CategoryDto(Category entity) : base(entity) { Name = Entity.Name; }
+    public CategoryDto(Category entity) : base(entity) { Name = entity.Name; }
 
     protected override Category MakeEntity() { return new Category { Name = Name }; }
 }
