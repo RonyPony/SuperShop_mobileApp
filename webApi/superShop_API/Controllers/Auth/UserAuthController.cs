@@ -15,7 +15,8 @@ using superShop_API.Shared;
 
 namespace superShop_API.Controllers.Auth;
 
-[Authorize(Roles = Roles.Admin)]
+[AllowAnonymous]
+//[Authorize(Roles = Roles.Admin)]
 public class UserAuthController : BaseAuthorizationController<User>
 {
     public UserAuthController(IServiceConstructor _constructor, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<Role> roleManager, IConfiguration configuration) : base(_constructor, userManager, signInManager, roleManager, configuration)
