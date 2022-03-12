@@ -157,8 +157,8 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     /// <param name="id">Identificador unico de la entidad a consultar</param>
     /// <returns>Vista de la entidad de modelo resultante</returns>
     [HttpGet]
-    [Route("Id", Name = "Get[controller]ByID")]
-    public virtual async Task<ActionResult<Tview>> GetByIDAsync(Guid id) => (Tview)Activator.CreateInstance(typeof(Tview), await Service.GetByIDAsync(id));
+    [Route("{Id}", Name = "Get[controller]ByID")]
+    public virtual async Task<ActionResult<Tview>> GetByIDAsync([FromRoute(Name = "Id")] Guid id) => (Tview)Activator.CreateInstance(typeof(Tview), await Service.GetByIDAsync(id));
 
     /// <summary>
     /// Actualiza una entidad de modelo o en su defecto crea el mismo en el sistema
@@ -192,9 +192,9 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     /// <summary>
     /// Eliminar los detalles de una entidad de modelo en el sistema
     /// </summary>
-    /// <param name="ID">Identificador unico del modelo a eliminar</param>
+    /// <param name="Id">Identificador unico del modelo a eliminar</param>
     /// <returns>Resultado de la operacion de eliminacion de datos</returns>
     [HttpDelete]
-    [Route("remove", Name = "Delete[controller]")]
-    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute] Guid Id) => await Service.DeleteAsync(Id);
+    [Route("remove/{Id}", Name = "Delete[controller]")]
+    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] Guid Id) => await Service.DeleteAsync(Id);
 }

@@ -119,7 +119,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
                 }
                 else
                 {
-                    r = Result.Instance().Fail("", result);
+                    r = Result.Instance().Fail("This entity cannot be deleted", result);
 
                 }
             }
@@ -144,7 +144,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
             }
             else
             {
-                return Result.Instance().Fail("", result);
+                return Result.Instance().Fail("This entity cannot be deleted", result);
             }
         }
         catch (Exception ex)
@@ -174,7 +174,7 @@ public abstract class BaseService<Tentity> : IBaseService<Tentity> where Tentity
             }
             else
             {
-                return Result.Instance().Fail("", result);
+                return Result.Instance().Fail("This entity list cannot be deleted", result);
             }
         }
         catch (Exception ex)
@@ -765,7 +765,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
 
     public virtual async Task<Result<Object>> ValidateOnDeleteAsync(Tentity entity)
     {
-        var found = await GetByIDAsync(entity);
+        var found = await GetByIDAsync(entity.Id);
         if (found == null)
         {
             return Result.Instance().Fail($"This {entity.GetType().Name} cannot be found in database");
@@ -778,7 +778,7 @@ public abstract class BaseService<Tentity, T> : IBaseService<Tentity, T> where T
 
     public virtual async Task<Result<Object>> ValidateOnUpdateAsync(Tentity entity)
     {
-        var found = await GetByIDAsync(entity);
+        var found = await GetByIDAsync(entity.Id);
         if (found == null)
         {
             return Result.Instance().Fail($"This {entity.GetType().Name} cannot be found in database");
@@ -1012,7 +1012,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
 
     public virtual async Task<Result<Object>> ValidateOnDeleteAsync(Tentity entity)
     {
-        var found = await GetByIDAsync(entity);
+        var found = await GetByIDAsync(entity.Id);
         if (found == null)
         {
             return Result.Instance().Fail($"This {entity.GetType().Name} cannot be found in database");
@@ -1025,7 +1025,7 @@ public abstract class BaseCustonService<TRepository, Tentity, T> : IBaseService<
 
     public virtual async Task<Result<Object>> ValidateOnUpdateAsync(Tentity entity)
     {
-        var found = await GetByIDAsync(entity);
+        var found = await GetByIDAsync(entity.Id);
         if (found == null)
         {
             return Result.Instance().Fail($"This {entity.GetType().Name} cannot be found in database");
