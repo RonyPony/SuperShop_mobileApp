@@ -100,7 +100,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options => options.AddDefaultPolicy(b => b.WithOrigins("http://localhost:4200/", "https://supershop-dashboard.web.app/")));
+const string corsPolicyName = "_costonCorsName";
+
+builder.Services.AddCors(options => options.AddPolicy(corsPolicyName, b => b.WithOrigins("http://localhost:4200/", "https://supershop-dashboard.web.app/")));
 
 var app = builder.Build();
 
@@ -118,6 +120,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseCors();
+app.UseCors(corsPolicyName);
 
 app.Run();
