@@ -67,10 +67,25 @@ try {
     List<Address> list = await _productContract.getAddresses();
     return list;
   }
-  
+
+
+  Future<List<Branch>>getAllStores()async{
+    List<Branch> list = await _productContract.getAllStores();
+    return list;
+  }
 
   Future<List<Product>>getCart()async{
     List<Product> list = await _productContract.getCart();
     return list;
+  }
+
+  Future<String> getMallNameFromMallId(String mallId)async{
+    String list = await _productContract.getMallNameFromId(mallId);
+    return list;
+  }
+
+  Future<List<Product>> getProductsFromStore(Branch store)async{
+    List<Product> prods = await _productContract.getProductsByStore(store);
+    return prods;
   }
 }

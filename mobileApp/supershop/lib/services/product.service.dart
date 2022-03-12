@@ -78,7 +78,7 @@ class ProductService implements ProductServiceContract {
   Future<List<Branch>> getStores(Mall mall) async {
     final client = RequestsManager.requester();
     final response = await client.get(
-      "/Branch/All",
+      "/Branch/by-mall/${mall.id}",
     );
 
     if (response.statusCode < 400) {
@@ -103,13 +103,14 @@ class ProductService implements ProductServiceContract {
 
   @override
   Future<bool> deleteFromAddresses(String addressAlias) async {
-   SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     String jsonedAddresses = prefs.getString(SAVED_Address_KEY);
     if (jsonedAddresses != null) {
       List<dynamic> parsedListJson = jsonDecode(jsonedAddresses);
       List<Address> itemsList =
           List<Address>.from(parsedListJson.map((i) => Address.fromJson(i)));
-      final index = itemsList.indexWhere((element) => element.addressAlias == addressAlias);
+      final index = itemsList
+          .indexWhere((element) => element.addressAlias == addressAlias);
       itemsList.removeAt(index);
       String data = json.encode(itemsList);
       bool saved = await prefs.setString(SAVED_Address_KEY, data);
@@ -130,6 +131,59 @@ class ProductService implements ProductServiceContract {
       return itemsList;
     } else {
       return null;
+    }
+  }
+
+  @override
+  Future<List<Branch>> getAllStores() async {
+    final client = RequestsManager.requester();
+    final response = await client.get(
+      "/Branch/All",
+    );
+
+    if (response.statusCode < 400) {
+      List<dynamic> parsedListJson = response.data;
+      List<Branch> branchList;
+      branchList =
+          List<Branch>.from(parsedListJson.map((i) => Branch.fromJson(i)));
+      return branchList;
+    } else {
+      //TODO
+    }
+  }
+
+  @override
+  Future<String> getMallNameFromId(String mallId) async {
+    final client = RequestsManager.requester();
+    final response = await client.get(
+      "/Mall/{$mallId}",
+    );
+
+    if (response.statusCode < 400) {
+      dynamic parsedListJson = response.data;
+      Mall mallsList;
+      mallsList = Mall.fromJson(parsedListJson);
+      return mallsList.name;
+    } else {
+      //TODO
+    }
+  }
+
+  @override
+  Future<List<Product>> getProductsByStore(Branch store) async {
+    final client = RequestsManager.requester();
+    final response = await client.get(
+      "/Product/by-branch/${store.id}",
+    );
+
+    if (response.statusCode < 400) {
+      List<dynamic> parsedListJson = response.data;
+      List<Product> productList;
+      productList =
+          List<Product>.from(parsedListJson.map((i) => Product.fromJson(i)));
+      return productList;
+    } else {
+      //TODO
     }
   }
 }

@@ -12,4 +12,7 @@ abstract class ProductServiceContract {
   Future<bool>deleteFromAddresses(String addressAlias);
   Future<List<Mall>>getAllMalls();
   Future<List<Branch>>getStores(Mall mall);
+  Future<List<Branch>>getAllStores();
+  Future<String>getMallNameFromId(String mallId);
+  Future<List<Product>>getProductsByStore(Branch store);
 }
