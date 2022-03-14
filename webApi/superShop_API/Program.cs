@@ -102,7 +102,17 @@ builder.Services.AddSwaggerGen();
 
 const string corsPolicyName = "_costonCorsName";
 
-builder.Services.AddCors(options => options.AddPolicy(corsPolicyName, b => b.WithOrigins("http://localhost:4200/", "https://supershop-dashboard.web.app/")));
+//builder.Services.AddCors(options => options.AddPolicy(corsPolicyName, b => b.WithOrigins("http://localhost:4200/", "https://supershop-dashboard.web.app/")));
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: corsPolicyName,
+                      builder =>
+                      {
+                          builder.WithOrigins("http://localhost:4200", "https://supershop-dashboard.web.app");
+                          builder.AllowAnyOrigin();
+                          builder.AllowAnyHeader();
+                      });
+});
 
 var app = builder.Build();
 
