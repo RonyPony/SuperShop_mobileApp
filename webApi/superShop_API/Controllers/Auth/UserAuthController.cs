@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using superShop_API.Controllers.Base.Auth;
 using superShop_API.Controllers.Base.Auth.DTOs;
+using superShop_API.Database.DTOs.Auth;
 using superShop_API.Database.Entities.Auth;
 using superShop_API.Database.Services;
 using superShop_API.Database.Services.Constructor;
@@ -136,7 +137,7 @@ public class UserAuthController : BaseAuthorizationController<User>
     [AllowAnonymous]
     //[Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
     [Route("user/{email}")]
-    public async Task<ActionResult<Result<User>>> GetUser([FromQuery] string email)
+    public async Task<ActionResult<Result<User>>> GetUser([FromRoute(Name = "email")] string email)
     {
         try
         {
@@ -161,11 +162,11 @@ public class UserAuthController : BaseAuthorizationController<User>
     [AllowAnonymous]
     //[Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
     [Route("users")]
-    public async Task<ActionResult<Result<List<User>>>> GetUsers()
+    public async Task<ActionResult<Result<List<UserDto>>>> GetUsers()
     {
         try
         {
-            return Result.Instance<List<User>>().Success("Users list obtained", await this.Constructor.GetService<UserService, User>().GetAllAsync());
+            return Result.Instance<List<UserDto>>().Success("Users list obtained", (await this.Constructor.GetService<UserService, User>().GetAllAsync()).ToList().ConvertAll(u => new UserDto(u)));
         }
         catch (Exception e)
         {
@@ -252,8 +253,11 @@ public class UserAuthController : BaseAuthorizationController<User>
             userFinded = await _userManager.FindByNameAsync(credentials.UserName);
         }
 
-        if (userFinded != null && await _userManager.CheckPasswordAsync(userFinded, credentials.Password))
+        var loginResult = await _signInManager.PasswordSignInAsync(userFinded, credentials.Password, credentials.RememberMe, false);
+
+        if (loginResult.Succeeded)
         {
+
             var userRoles = await _userManager.GetRolesAsync(userFinded);
 
             var authClaims = new List<Claim>
@@ -268,8 +272,6 @@ public class UserAuthController : BaseAuthorizationController<User>
             }
 
             var token = GetToken(authClaims);
-
-            await _signInManager.SignInWithClaimsAsync(userFinded, new AuthenticationProperties { ExpiresUtc = DateTimeOffset.FromUnixTimeMilliseconds(token.ValidTo.Millisecond), IssuedUtc = DateTimeOffset.FromUnixTimeMilliseconds(token.ValidFrom.Millisecond), IsPersistent = credentials.RememberMe }, authClaims);
 
             return (result: Result.Instance().Success("Login successful !"), entity: userFinded, jwt: new JwtSecurityTokenHandler().WriteToken(token), expiration: token.ValidTo);
         }
