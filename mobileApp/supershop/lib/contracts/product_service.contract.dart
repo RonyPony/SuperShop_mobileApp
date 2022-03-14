@@ -6,7 +6,7 @@ import 'package:supershop/models/product.model.dart';
 abstract class ProductServiceContract {
   Future<bool>addToCart(Product productToAdd);
   Future<List<Product>>getCart();
-  Future<bool>deleteFromCart(int productId);
+  Future<bool>deleteFromCart(String productId);
   Future<bool>addToAddress(Address address);
   Future<List<Address>>getAddresses();
   Future<bool>deleteFromAddresses(String addressAlias);
@@ -15,4 +15,7 @@ abstract class ProductServiceContract {
   Future<List<Branch>>getAllStores();
   Future<String>getMallNameFromId(String mallId);
   Future<List<Product>>getProductsByStore(Branch store);
+  Future<String> getCategory(String categoryId);
+
+  Future<bool>cleanCart();
 }

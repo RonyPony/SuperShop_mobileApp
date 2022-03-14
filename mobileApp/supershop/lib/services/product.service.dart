@@ -13,11 +13,12 @@ import 'package:supershop/widgets/cartItem.dart';
 class ProductService implements ProductServiceContract {
   String SAVED_PRODUCT_KEY = "ProductosdeSuperShop";
   String SAVED_Address_KEY = "DireccionesdeSuperShop";
-  List<Product> _cartItems = new List<Product>();
+  
   List<Address> _addresses = new List<Address>();
 
   @override
   Future<bool> addToCart(Product productToAdd) async {
+    List<Product> _cartItems = new List<Product>();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _cartItems.add(productToAdd);
     String data = json.encode(_cartItems);
@@ -40,7 +41,7 @@ class ProductService implements ProductServiceContract {
   }
 
   @override
-  Future<bool> deleteFromCart(int productId) async {
+  Future<bool> deleteFromCart(String productId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String jsonedCart = prefs.getString(SAVED_PRODUCT_KEY);
     if (jsonedCart != null) {
@@ -184,6 +185,37 @@ class ProductService implements ProductServiceContract {
       return productList;
     } else {
       //TODO
+    }
+  }
+
+  @override
+  Future<String> getCategory(String categoryId) async {
+    final client = RequestsManager.requester();
+    final response = await client.get(
+      "/Category/{$categoryId}",
+    );
+
+    if (response.statusCode < 400) {
+      dynamic parsedListJson = response.data;
+      String productList;
+      productList = parsedListJson["name"];
+     return Future.delayed(const Duration(microseconds: 2),
+      () => productList);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<bool> cleanCart() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Future<bool> jsonedCart = prefs.setString(SAVED_PRODUCT_KEY,'');
+    
+    if (await jsonedCart) {
+      
+      return true;
+    } else {
+      return false;
     }
   }
 }

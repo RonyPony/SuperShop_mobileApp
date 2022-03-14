@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,6 +24,9 @@ class _StoresScreenState extends State<StoresScreen> {
   Mall currentMall;
 
   ScrollController _scrollController = ScrollController();
+
+  List<String> _categories = List<String>();
+  List<Branch> _stores = List<Branch>();
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context).settings.arguments as Mall;
@@ -153,7 +158,15 @@ class _StoresScreenState extends State<StoresScreen> {
                           shrinkWrap: true,
                           itemCount: snapshot.data.length,
                           itemBuilder: (context, index) {
-                            return _buildSubtitle(snapshot.data[index]);
+                            return Column(
+                              children: [
+                                _buildTitle(getCategoryName(
+                                    snapshot.data[index].categoryId)),
+                                    SizedBox(height: 10,),
+                                _buildSubtitle(snapshot.data[index]),
+                                SizedBox(height: 20,),
+                              ],
+                            );
                           },
                         ),
                       ),
@@ -164,6 +177,7 @@ class _StoresScreenState extends State<StoresScreen> {
                 }
               },
             ),
+            
             // _buildTitle("Vestimenta"),
             // SizedBox(
             //   height: 15,
@@ -199,22 +213,37 @@ class _StoresScreenState extends State<StoresScreen> {
     );
   }
 
-  _buildTitle(String title) {
+  _buildTitle(Future<String> title) {
     Size screenSize = MediaQuery.of(context).size;
-    return Container(
-        padding: EdgeInsets.only(
-            top: screenSize.height * 0.01,
-            bottom: screenSize.height * 0.01,
-            right: screenSize.width * 0.3,
-            left: screenSize.width * 0.3),
-        decoration: BoxDecoration(
-            color: Colors.blue, borderRadius: BorderRadius.circular(50)),
-        child: Center(
-          child: Text(
-            title,
-            style: TextStyle(color: Colors.white, fontSize: 28),
-          ),
-        ));
+    return FutureBuilder<String>(
+      future: title,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Text("Error");
+          }
+          if (snapshot.hasData) {
+            return Container(
+                padding: EdgeInsets.only(
+                    top: screenSize.height * 0.01,
+                    bottom: screenSize.height * 0.01,
+                    right: screenSize.width * 0.1,
+                    left: screenSize.width * 0.1),
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(50)),
+                child: Center(
+                  child: Text(
+                    snapshot.data,
+                    style: TextStyle(color: Colors.white, fontSize: 25),
+                  ),
+                ));
+          }
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
   }
 
   _buildSubtitle(Branch tienda) {
@@ -249,5 +278,13 @@ class _StoresScreenState extends State<StoresScreen> {
             ),
           )),
     );
+  }
+
+  Future<String> getCategoryName(String categoryId) async {
+    final _prodProvider = Provider.of<ProductProvider>(context, listen: false);
+
+    String resp = await _prodProvider.getCategoryName(categoryId);
+
+    return resp;
   }
 }

@@ -18,6 +18,11 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
+  Future<bool>cleanCart() async {
+    bool resp = await _productContract.cleanCart();
+    return resp;
+  }
+
   Future<bool> addToAddress(Address address) async {
     try {
       bool resp = await _productContract.addToAddress(address);
@@ -27,7 +32,7 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-    Future<bool> deleteCart(int productId) async {
+    Future<bool> deleteCart(String productId) async {
     try {
       bool resp = await _productContract.deleteFromCart(productId);
       return resp;
@@ -87,5 +92,10 @@ try {
   Future<List<Product>> getProductsFromStore(Branch store)async{
     List<Product> prods = await _productContract.getProductsByStore(store);
     return prods;
+  }
+
+  Future<String> getCategoryName(String storeId) {
+    Future<String> resp = _productContract.getCategory(storeId);
+    return resp;
   }
 }

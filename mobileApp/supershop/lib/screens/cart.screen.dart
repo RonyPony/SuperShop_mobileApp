@@ -22,6 +22,7 @@ class _CartScreenState extends State<CartScreen> {
         Provider.of<ProductProvider>(context, listen: false);
     Future<List<Product>> _cartItems = _productProvider.getCart();
     return Scaffold(
+      backgroundColor: Colors.white,
       drawer: SideMenuDrawer(),
       appBar: AppBar(),
       body: Column(
@@ -93,6 +94,28 @@ class _CartScreenState extends State<CartScreen> {
                 width: 150,
                 child: Center(
                   child: Text(
+                    'Limpiar',
+                    style: TextStyle(color: Colors.white, fontSize: 17),
+                  ),
+                )),
+            onPressed: () async {
+              if (await _productProvider.cleanCart()) {
+                Navigator.pop(context);
+              }
+            },
+          ),
+          SizedBox(height: 10,),
+          ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        side: BorderSide(color: Colors.black)))),
+            child: Container(
+                width: 150,
+                child: Center(
+                  child: Text(
                     'Regresar',
                     style: TextStyle(color: Colors.white, fontSize: 17),
                   ),
@@ -101,6 +124,7 @@ class _CartScreenState extends State<CartScreen> {
               Navigator.pushNamed(context, HomeScreen.routeName);
             },
           ),
+
         ],
       ),
     );
@@ -118,7 +142,7 @@ if (snapshot.data.length == 0) {
                     return Text('No hay items en el carrito');
                   }
           return Container(
-            height: screenSize.height * 0.5,
+            height: screenSize.height * 0.4,
             child: Scrollbar(
               isAlwaysShown: true,
               radius: Radius.circular(50),

@@ -5,6 +5,7 @@ class Branch {
   String createdAt;
   String updatedAt;
   String name;
+  String categoryId;
   String imageUrl;
   String localCode;
   String mallId;
@@ -15,6 +16,7 @@ class Branch {
       this.createdAt,
       this.updatedAt,
       this.name,
+      this.categoryId,
       this.imageUrl,
       this.localCode,
       this.mallId,
@@ -24,6 +26,7 @@ class Branch {
     id = json['id'];
     imageUrl=json['imageUrl'];
     createdAt = json['createdAt'];
+    categoryId=json['categoryId'];
     updatedAt = json['updatedAt'];
     name = json['name'];
     localCode = json['localCode'];
@@ -42,6 +45,7 @@ class Branch {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['imageUrl']=this.imageUrl;
+    data['categoryId']=this.categoryId;
     data['name'] = this.name;
     data['localCode'] = this.localCode;
     data['mallId'] = this.mallId;
