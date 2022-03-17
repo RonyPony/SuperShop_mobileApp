@@ -9,7 +9,6 @@ using superShop_API.Database.Services.Constructor;
 namespace superShop_API.Controllers;
 
 [AllowAnonymous]
-[DisableCors]
 public class OrderController : BaseController<OrderService, OrderDto, Order, Guid, OrderSeedParams>
 {
     public OrderController(IServiceConstructor _constructor) : base(_constructor)

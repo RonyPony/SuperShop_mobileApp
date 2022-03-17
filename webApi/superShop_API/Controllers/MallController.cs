@@ -9,7 +9,6 @@ using superShop_API.Database.Services.Constructor;
 namespace superShop_API.Controllers;
 
 [AllowAnonymous]
-[DisableCors]
 //[Authorize(Roles = Roles.Admin)]
 public class MallController : BaseController<MallService, MallDto, Mall, Guid>
 {

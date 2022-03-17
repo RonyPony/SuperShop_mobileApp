@@ -10,7 +10,6 @@ using superShop_API.Database.Services.Constructor;
 namespace superShop_API.Controllers;
 
 [AllowAnonymous]
-[DisableCors]
 //[Authorize(Roles = Roles.Admin)]
 public class BranchController : BaseController<BranchService, BranchDto, Branch, Guid, BranchSeedParams>
 {
