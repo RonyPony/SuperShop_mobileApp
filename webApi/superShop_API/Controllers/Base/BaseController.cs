@@ -18,6 +18,7 @@ namespace superShop_API.Controllers.Base;
 /// <typeparam name="TEntity">Tipo de modelo en el cual se ha creado el TService</typeparam>
 [ApiController]
 [Authorize]
+[DisableCors]
 [Route("api/[controller]")]
 public abstract class BaseController<TService, TView, TEntity, TKey> : ControllerBase where TEntity : class, IBaseEntity<TKey>, ISeeder<TEntity, TKey> where TView : BaseDto<TEntity, TKey> where TService : class, IBaseService<TEntity, TKey> where TKey : IEquatable<TKey>
 {
@@ -196,7 +197,6 @@ public abstract class BaseController<TService, TView, TEntity, TKey, T> : Contro
     /// <param name="Id">Identificador unico del modelo a eliminar</param>
     /// <returns>Resultado de la operacion de eliminacion de datos</returns>
     [HttpDelete]
-    [DisableCors]
     [Route("remove/{Id}", Name = "Delete[controller]")]
     public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] TKey Id) => await Service.DeleteAsync(Id);
 }

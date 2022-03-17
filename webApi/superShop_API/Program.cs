@@ -60,7 +60,7 @@ builder.Services.AddSwaggerGen(options =>
         },
         License = new OpenApiLicense
         {
-            Name = "Private Lincence",
+            Name = "Private License",
             Url = new Uri("http://www.yansimora.com")
         }
     });
