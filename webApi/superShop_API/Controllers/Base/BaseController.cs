@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using superShop_API.Database.DTOs.Base;
 using superShop_API.Database.Entities.Base;
@@ -195,6 +196,7 @@ public abstract class BaseController<TService, TView, TEntity, TKey, T> : Contro
     /// <param name="Id">Identificador unico del modelo a eliminar</param>
     /// <returns>Resultado de la operacion de eliminacion de datos</returns>
     [HttpDelete]
+    [DisableCors]
     [Route("remove/{Id}", Name = "Delete[controller]")]
     public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] TKey Id) => await Service.DeleteAsync(Id);
 }
