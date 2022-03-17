@@ -102,7 +102,6 @@ builder.Services.AddSwaggerGen();
 
 const string corsPolicyName = "_costonCorsName";
 
-//builder.Services.AddCors(options => options.AddPolicy(corsPolicyName, b => b.WithOrigins("http://localhost:4200/", "https://supershop-dashboard.web.app/")));
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: corsPolicyName,
@@ -128,8 +127,8 @@ app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-
 app.UseCors(corsPolicyName);
+
+app.MapControllers();
 
 app.Run();
