@@ -6,7 +6,7 @@ using superShop_API.Database.Seeders;
 
 namespace superShop_API.Database.Entities;
 
-public class ProductOrder : BaseEntity, ISeeder<ProductOrder>
+public class ProductOrder : BaseEntity<Guid>, ISeeder<ProductOrder, Guid>
 {
     [Required]
     [Column("productId")]

@@ -6,8 +6,8 @@ namespace superShop_API.Database.Repositories.Constructor;
 
 public interface IRepositoryConstructor : IDisposable, IAsyncDisposable
 {
-    IBaseRepository<Tentity> GetRepository<Tentity>() where Tentity : class, IBaseEntity;
-    TRepository GetRepositoryImplementation<TRepository, Tentity>() where TRepository : IBaseRepository<Tentity> where Tentity : class, IBaseEntity;
+    IBaseRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : class, IBaseEntity<TKey> where TKey : IEquatable<TKey>;
+    TRepository GetRepositoryImplementation<TRepository, TEntity, TKey>() where TRepository : IBaseRepository<TEntity, TKey> where TEntity : class, IBaseEntity<TKey> where TKey : IEquatable<TKey>;
 }
 
 public class RepositoryConstructor : IRepositoryConstructor
@@ -30,9 +30,9 @@ public class RepositoryConstructor : IRepositoryConstructor
         return Context.DisposeAsync();
     }
 
-    public IBaseRepository<Tentity> GetRepository<Tentity>() where Tentity : class, IBaseEntity => new BaseRepository<Tentity>(Context);
+    IBaseRepository<TEntity, TKey> IRepositoryConstructor.GetRepository<TEntity, TKey>() => new BaseRepository<TEntity, TKey>(Context);
 
-    public TRepository GetRepositoryImplementation<TRepository, Tentity>() where TRepository : IBaseRepository<Tentity> where Tentity : class, IBaseEntity
+    TRepository IRepositoryConstructor.GetRepositoryImplementation<TRepository, TEntity, TKey>()
     {
         Type? tConcreteRepository = null;
         Assembly.GetExecutingAssembly().GetTypes().ToList().ForEach(t =>

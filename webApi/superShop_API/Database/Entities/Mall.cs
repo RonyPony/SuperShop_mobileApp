@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace superShop_API.Database.Entities;
 
 [Table("malls")]
-public class Mall : BaseEntity, ISeeder<Mall>
+public class Mall : BaseEntity<Guid>, ISeeder<Mall, Guid>
 {
     [Required]
     [Column("name", TypeName = "varchar(80)")]

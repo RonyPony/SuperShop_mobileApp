@@ -3,7 +3,7 @@ using superShop_API.Database.Entities;
 
 namespace superShop_API.Database.DTOs;
 
-public class ProductOrderDto : BaseDto<ProductOrder>
+public class ProductOrderDto : BaseDto<ProductOrder, Guid>
 {
     public Guid ProductId { get; set; }
 

@@ -8,7 +8,7 @@ using superShop_API.Database.Services.Constructor;
 namespace superShop_API.Controllers;
 
 [AllowAnonymous]
-public class CategoryController : BaseController<CategoryService, CategoryDto, Category>
+public class CategoryController : BaseController<CategoryService, CategoryDto, Category, Guid>
 {
     public CategoryController(IServiceConstructor _constructor) : base(_constructor)
     {

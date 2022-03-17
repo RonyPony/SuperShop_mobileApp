@@ -12,16 +12,16 @@ namespace superShop_API.Controllers.Base;
 /// <summary>
 /// Controlador generico para los controllers del proyecto
 /// </summary>
-/// <typeparam name="Tservice">Interfaz implementadora del servicio a utilizar para este controlador</typeparam>
-/// <typeparam name="Tview">Tipo de vista a utilizar en este controlador</typeparam>
-/// <typeparam name="Tentity">Tipo de modelo en el cual se ha creado el Tservice</typeparam>
+/// <typeparam name="TService">Interfaz implementadora del servicio a utilizar para este controlador</typeparam>
+/// <typeparam name="TView">Tipo de vista a utilizar en este controlador</typeparam>
+/// <typeparam name="TEntity">Tipo de modelo en el cual se ha creado el TService</typeparam>
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase where Tentity : class, IBaseEntity, ISeeder<Tentity> where Tview : BaseDto<Tentity> where Tservice : class, IBaseService<Tentity>
+public abstract class BaseController<TService, TView, TEntity, TKey> : ControllerBase where TEntity : class, IBaseEntity<TKey>, ISeeder<TEntity, TKey> where TView : BaseDto<TEntity, TKey> where TService : class, IBaseService<TEntity, TKey> where TKey : IEquatable<TKey>
 {
     protected readonly IServiceConstructor Constructor;
-    protected readonly Tservice Service;
+    protected readonly TService Service;
     /// <summary>
     /// Constructor generico del controlador
     /// </summary>
@@ -29,7 +29,7 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     protected BaseController(IServiceConstructor _constructor)
     {
         Constructor = _constructor;
-        Service = Constructor.GetService<Tservice, Tentity>();
+        Service = Constructor.GetService<TService, TEntity, TKey>();
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     /// <returns>Lista de las vistas de los modelos resultantes</returns>
     [HttpGet]
     [Route("All", Name = "GetAll[controller]")]
-    public virtual async Task<ActionResult<IList<Tview>>> GetAllAsync() => (await Service.GetAllAsync()).ConvertAll(m => (Tview)Activator.CreateInstance(typeof(Tview), m));
+    public virtual async Task<ActionResult<IList<TView>>> GetAllAsync() => (await Service.GetAllAsync()).ConvertAll(m => (TView)Activator.CreateInstance(typeof(TView), m));
 
     /// <summary>
     /// Obtiene los detalles de una entidad de modelo en base a su identificador en base de datos
@@ -47,7 +47,7 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     /// <returns>Vista de la entidad de modelo resultante</returns>
     [HttpGet]
     [Route("{Id}", Name = "Get[controller]ByID")]
-    public virtual async Task<ActionResult<Tview>> GetByIDAsync([FromRoute] Guid Id) => (Tview)Activator.CreateInstance(typeof(Tview), await Service.GetByIDAsync(Id));
+    public virtual async Task<ActionResult<TView>> GetByIDAsync([FromRoute] TKey Id) => (TView)Activator.CreateInstance(typeof(TView), await Service.GetByIDAsync(Id));
 
     /// <summary>
     /// Actualiza una entidad de modelo o en su defecto crea el mismo en el sistema
@@ -56,12 +56,12 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     /// <returns>Resultado de la operacion de ingreso/actualizacion de datos</returns>
     [HttpPost]
     [Route("save", Name = "PostSave[controller]")]
-    public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ Tview view)
+    public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ TView view)
     {
         try
         {
-            var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-            if (view.Id == Guid.Empty)
+            var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(TView).Name}' ");
+            if (view.Id == null)
             {
                 R = await Service.CreateAsync(view.Entity);
             }
@@ -84,12 +84,12 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
 
     [HttpPut]
     [Route("update", Name = "PutUpdate[controller]")]
-    public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ Tview view)
+    public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ TView view)
     {
         try
         {
-            var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-            if (view.Id != Guid.Empty)
+            var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(TView).Name}' ");
+            if (view.Id != null)
             {
                 R = await Service.UpdateAsync(view.Entity);
             }
@@ -117,22 +117,22 @@ public abstract class BaseController<Tservice, Tview, Tentity> : ControllerBase 
     /// <returns>Resultado de la operacion de eliminacion de datos</returns>
     [HttpDelete]
     [Route("remove/{Id}", Name = "Delete[controller]")]
-    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute] Guid Id) => await Service.DeleteAsync(Id);
+    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute] TKey Id) => await Service.DeleteAsync(Id);
 }
 
 /// <summary>
 /// Controlador generico para los controllers del proyecto
 /// </summary>
-/// <typeparam name="Tservice">Interfaz implementadora del servicio a utilizar para este controlador</typeparam>
-/// <typeparam name="Tview">Tipo de vista a utilizar en este controlador</typeparam>
-/// <typeparam name="Tentity">Tipo de modelo en el cual se ha creado el Tservice</typeparam>
+/// <typeparam name="TService">Interfaz implementadora del servicio a utilizar para este controlador</typeparam>
+/// <typeparam name="TView">Tipo de vista a utilizar en este controlador</typeparam>
+/// <typeparam name="TEntity">Tipo de modelo en el cual se ha creado el TService</typeparam>
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBase where Tentity : class, IBaseEntity, ISeeder<Tentity, T> where Tview : BaseDto<Tentity, T> where Tservice : class, IBaseService<Tentity, T>
+public abstract class BaseController<TService, TView, TEntity, TKey, T> : ControllerBase where TEntity : class, IBaseEntity<TKey>, ISeeder<TEntity, TKey, T> where TView : BaseDto<TEntity, TKey, T> where TService : class, IBaseService<TEntity, TKey, T> where TKey : IEquatable<TKey>
 {
     protected readonly IServiceConstructor Constructor;
-    protected readonly Tservice Service;
+    protected readonly TService Service;
     /// <summary>
     /// Constructor generico del controlador
     /// </summary>
@@ -140,7 +140,7 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     protected BaseController(IServiceConstructor _constructor)
     {
         Constructor = _constructor;
-        Service = Constructor.GetService<Tservice, Tentity, T>();
+        Service = Constructor.GetService<TService, TEntity, TKey, T>();
     }
 
     /// <summary>
@@ -149,7 +149,7 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     /// <returns>Lista de las vistas de los modelos resultantes</returns>
     [HttpGet]
     [Route("All", Name = "GetAll[controller]")]
-    public virtual async Task<ActionResult<IList<Tview>>> GetAllAsync() => (await Service.GetAllAsync()).ConvertAll(m => (Tview)Activator.CreateInstance(typeof(Tview), m));
+    public virtual async Task<ActionResult<IList<TView>>> GetAllAsync() => (await Service.GetAllAsync()).ConvertAll(m => (TView)Activator.CreateInstance(typeof(TView), m));
 
     /// <summary>
     /// Obtiene los detalles de una entidad de modelo en base a su identificador en base de datos
@@ -158,7 +158,7 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     /// <returns>Vista de la entidad de modelo resultante</returns>
     [HttpGet]
     [Route("{Id}", Name = "Get[controller]ByID")]
-    public virtual async Task<ActionResult<Tview>> GetByIDAsync([FromRoute(Name = "Id")] Guid id) => (Tview)Activator.CreateInstance(typeof(Tview), await Service.GetByIDAsync(id));
+    public virtual async Task<ActionResult<TView>> GetByIDAsync([FromRoute(Name = "Id")] TKey id) => (TView)Activator.CreateInstance(typeof(TView), await Service.GetByIDAsync(id));
 
     /// <summary>
     /// Actualiza una entidad de modelo o en su defecto crea el mismo en el sistema
@@ -167,10 +167,10 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     /// <returns>Resultado de la operacion de ingreso/actualizacion de datos</returns>
     [HttpPost]
     [Route("save", Name = "PostSave[controller]")]
-    public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ Tview view)
+    public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ TView view)
     {
-        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-        if (view.Id == Guid.Empty)
+        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(TView).Name}' ");
+        if (view.Id == null)
         {
             R = await Service.CreateAsync(view.Entity);
         }
@@ -179,10 +179,10 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
 
     [HttpPut]
     [Route("update", Name = "PutUpdate[controller]")]
-    public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ Tview view)
+    public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ TView view)
     {
-        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(Tview).Name}' ");
-        if (view.Id != Guid.Empty)
+        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(TView).Name}' ");
+        if (view.Id != null)
         {
             R = await Service.UpdateAsync(view.Entity);
         }
@@ -196,5 +196,5 @@ public abstract class BaseController<Tservice, Tview, Tentity, T> : ControllerBa
     /// <returns>Resultado de la operacion de eliminacion de datos</returns>
     [HttpDelete]
     [Route("remove/{Id}", Name = "Delete[controller]")]
-    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] Guid Id) => await Service.DeleteAsync(Id);
+    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] TKey Id) => await Service.DeleteAsync(Id);
 }

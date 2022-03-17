@@ -10,7 +10,7 @@ namespace superShop_API.Controllers;
 
 [AllowAnonymous]
 //[Authorize(Roles = Roles.Admin)]
-public class MallController : BaseController<MallService, MallDto, Mall>
+public class MallController : BaseController<MallService, MallDto, Mall, Guid>
 {
     public MallController(IServiceConstructor _constructor) : base(_constructor)
     {

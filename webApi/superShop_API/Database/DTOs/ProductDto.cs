@@ -4,7 +4,7 @@ using superShop_API.Database.Entities;
 
 namespace superShop_API.Database.DTOs;
 
-public class ProductDto : BaseDto<Product>
+public class ProductDto : BaseDto<Product, Guid>
 {
     [Required(ErrorMessage = "A name of this product is required")]
     [MaxLength(80, ErrorMessage = "The name of a product must be at least 80 characters")]

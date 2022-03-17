@@ -5,12 +5,12 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
-public interface ICategoryService : IBaseService<Category>
+public interface ICategoryService : IBaseService<Category, Guid>
 {
     Task<Category?> GetByName(string name);
 }
 
-public class CategoryService : BaseService<Category>, ICategoryService
+public class CategoryService : BaseService<Category, Guid>, ICategoryService
 {
     public CategoryService(IRepositoryConstructor constructor) : base(constructor)
     {

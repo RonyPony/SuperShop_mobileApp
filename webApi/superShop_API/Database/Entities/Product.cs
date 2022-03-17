@@ -7,7 +7,7 @@ using superShop_API.Database.Seeders;
 namespace superShop_API.Database.Entities;
 
 [Table("products")]
-public class Product : BaseEntity, ISeeder<Product>
+public class Product : BaseEntity<Guid>, ISeeder<Product, Guid>
 {
     [Required]
     [Column("name", TypeName = "varchar(80)")]

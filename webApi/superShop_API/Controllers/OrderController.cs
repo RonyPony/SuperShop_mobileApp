@@ -8,7 +8,7 @@ using superShop_API.Database.Services.Constructor;
 namespace superShop_API.Controllers;
 
 [AllowAnonymous]
-public class OrderController : BaseController<OrderService, OrderDto, Order, OrderSeedParams>
+public class OrderController : BaseController<OrderService, OrderDto, Order, Guid, OrderSeedParams>
 {
     public OrderController(IServiceConstructor _constructor) : base(_constructor)
     {

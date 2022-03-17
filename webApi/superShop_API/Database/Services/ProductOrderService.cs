@@ -5,7 +5,7 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
-public class ProductOrderService : BaseService<ProductOrder>
+public class ProductOrderService : BaseService<ProductOrder, Guid>
 {
     public ProductOrderService(IRepositoryConstructor constructor) : base(constructor)
     {

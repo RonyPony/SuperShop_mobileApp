@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace superShop_API.Database.Entities.Base;
 
-public interface IBaseEntity
+public interface IBaseEntity<TKey> where TKey : IEquatable<TKey>
 {
     [Key]
-    Guid Id { get; set; }
+    TKey Id { get; set; }
 
     [Column("createdAt")]
     DateTime CreatedAt { get; set; }
@@ -15,10 +15,10 @@ public interface IBaseEntity
     [Column("updatedAt")]
     DateTime UpdatedAt { get; set; }
 }
-public abstract class BaseEntity : IBaseEntity
+public abstract class BaseEntity<TKey> : IBaseEntity<TKey> where TKey : IEquatable<TKey>
 {
     [Key]
-    public Guid Id { get; set; }
+    public TKey Id { get; set; }
 
     [Column("createdAt")]
     public DateTime CreatedAt { get; set; }

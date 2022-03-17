@@ -5,7 +5,7 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
-public interface IBranchesService : IBaseService<Branch, BranchSeedParams>
+public interface IBranchesService : IBaseService<Branch, Guid, BranchSeedParams>
 {
     Task<Branch> GetbyName(string name);
     Task<List<Branch>> GetAllByMallId(Guid mallId);
@@ -13,7 +13,7 @@ public interface IBranchesService : IBaseService<Branch, BranchSeedParams>
     Task<List<Branch>> GetAllByCategoryId(Guid categoryId);
 }
 
-public class BranchService : BaseService<Branch, BranchSeedParams>, IBranchesService
+public class BranchService : BaseService<Branch, Guid, BranchSeedParams>, IBranchesService
 {
     public BranchService(IRepositoryConstructor constructor) : base(constructor)
     {
@@ -30,8 +30,8 @@ public class BranchService : BaseService<Branch, BranchSeedParams>, IBranchesSer
         try
         {
             var branchFound = (await this.Repository.GetAsync(m => m.Name == entity.Name)).FirstOrDefault();
-            var categoryFound = (await this.Constructor.GetRepository<Category>().GetByIDAsync(entity.CategoryId));
-            var mallFound = (await this.Constructor.GetRepository<Mall>().GetByIDAsync(entity.MallId));
+            var categoryFound = (await this.Constructor.GetRepository<Category, Guid>().GetByIDAsync(entity.CategoryId));
+            var mallFound = (await this.Constructor.GetRepository<Mall, Guid>().GetByIDAsync(entity.MallId));
 
             if (branchFound == null && categoryFound != null && mallFound != null)
             {

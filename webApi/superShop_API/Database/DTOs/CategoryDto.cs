@@ -4,7 +4,7 @@ using superShop_API.Database.Entities;
 
 namespace superShop_API.Database.DTOs;
 
-public class CategoryDto : BaseDto<Category>
+public class CategoryDto : BaseDto<Category, Guid>
 {
     [Required]
     [StringLength(80, ErrorMessage = "The {0} must be at least {1}")]

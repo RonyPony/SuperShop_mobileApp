@@ -5,7 +5,7 @@ using superShop_API.Database.Seeders;
 
 namespace superShop_API.Database.Entities.Auth;
 
-public class User : IdentityUser<Guid>, IBaseEntity, ISeeder<User>
+public class User : IdentityUser<Guid>, IBaseEntity<Guid>, ISeeder<User, Guid>
 {
 
     public string Name { get; set; }

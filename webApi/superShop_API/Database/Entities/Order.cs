@@ -13,7 +13,7 @@ public class OrderSeedParams
     public Guid UserId { get; set; }
 }
 
-public class Order : BaseEntity, ISeeder<Order, OrderSeedParams>
+public class Order : BaseEntity<Guid>, ISeeder<Order, Guid, OrderSeedParams>
 {
     [Required]
     [Column("branchId")]

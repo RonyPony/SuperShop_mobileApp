@@ -5,13 +5,13 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
-public interface IProductService : IBaseService<Product>
+public interface IProductService : IBaseService<Product, Guid>
 {
     Task<Product> GetByCode(string code);
     Task<List<Product>> GetAllByBranchId(Guid branchId);
 }
 
-public class ProductService : BaseService<Product>, IProductService
+public class ProductService : BaseService<Product, Guid>, IProductService
 {
     public ProductService(IRepositoryConstructor constructor) : base(constructor)
     {
@@ -26,7 +26,7 @@ public class ProductService : BaseService<Product>, IProductService
         try
         {
             var productFound = (await this.Repository.GetAsync(m => m.Name == entity.Name)).FirstOrDefault();
-            var branchFound = await this.Constructor.GetRepository<Branch>().GetByIDAsync(entity.BranchId);
+            var branchFound = await this.Constructor.GetRepository<Branch, Guid>().GetByIDAsync(entity.BranchId);
             if (productFound == null && branchFound != null)
             {
                 return Result.Instance().Success("There noting products in database");

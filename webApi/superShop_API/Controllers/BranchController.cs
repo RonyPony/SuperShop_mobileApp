@@ -10,7 +10,7 @@ namespace superShop_API.Controllers;
 
 [AllowAnonymous]
 //[Authorize(Roles = Roles.Admin)]
-public class BranchController : BaseController<BranchService, BranchDto, Branch, BranchSeedParams>
+public class BranchController : BaseController<BranchService, BranchDto, Branch, Guid, BranchSeedParams>
 {
     public BranchController(IServiceConstructor _constructor) : base(_constructor)
     {
