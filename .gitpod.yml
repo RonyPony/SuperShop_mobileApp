@@ -1,7 +1,15 @@
+image:
+  file: .gitpod.Dockerfile
+
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
   - init: echo 'init script' # runs during prebuild
     command: echo 'start script'
+  - name: Postinstall .NET 6.0 and dev certificates
+    init: |
+      mkdir -p /tmp/dotnet && curl -fsSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 6.0 --install-dir /tmp/dotnet 
+      dotnet dev-certs https 
+      dotnet restore
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 ports:
@@ -11,5 +19,3 @@ ports:
 vscode:
   extensions:
     - muhammad-sammy.csharp
-
-image: gitpod/workspace-dotnet
