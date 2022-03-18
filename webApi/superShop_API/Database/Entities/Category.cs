@@ -6,7 +6,7 @@ using superShop_API.Database.Seeders;
 
 namespace superShop_API.Database.Entities;
 
-public class Category : BaseEntity, ISeeder<Category>
+public class Category : BaseEntity<Guid>, ISeeder<Category, Guid>
 {
     [Required]
     [Column("name", TypeName = "varchar(80)")]

@@ -4,7 +4,7 @@ using superShop_API.Database.Entities;
 
 namespace superShop_API.Database.DTOs;
 
-public class MallDto : BaseDto<Mall>
+public class MallDto : BaseDto<Mall, Guid>
 {
     public string Name { get; set; }
     public Coordinates Coordinates { get; set; }

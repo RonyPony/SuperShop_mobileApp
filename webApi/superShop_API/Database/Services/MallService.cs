@@ -5,12 +5,12 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
-public interface IMallService : IBaseService<Mall>
+public interface IMallService : IBaseService<Mall, Guid>
 {
     Task<List<Mall>> GetByName(string name);
 }
 
-public class MallService : BaseService<Mall>, IMallService
+public class MallService : BaseService<Mall, Guid>, IMallService
 {
     public MallService(IRepositoryConstructor constructor) : base(constructor)
     {

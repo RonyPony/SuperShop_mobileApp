@@ -5,12 +5,12 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
-public interface IUserService : IBaseService<User>
+public interface IUserService : IBaseService<User, Guid>
 {
 
 }
 
-public class UserService : BaseService<User>, IUserService
+public class UserService : BaseService<User, Guid>, IUserService
 {
     public UserService(IRepositoryConstructor constructor) : base(constructor)
     {

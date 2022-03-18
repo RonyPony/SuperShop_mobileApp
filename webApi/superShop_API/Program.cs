@@ -60,7 +60,7 @@ builder.Services.AddSwaggerGen(options =>
         },
         License = new OpenApiLicense
         {
-            Name = "Private Lincence",
+            Name = "Private License",
             Url = new Uri("http://www.yansimora.com")
         }
     });
@@ -92,26 +92,28 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddHealthChecks();
 builder.Services.AddAuthorization();
-builder.Services.AddTransient<IRepositoryConstructor>(factory => new RepositoryConstructor(factory.GetService<DatabaseContext>()));
-builder.Services.AddTransient<IServiceConstructor>(factory => new ServiceConstructor(factory.GetService<IRepositoryConstructor>()));
+builder.Services.AddScoped<IRepositoryConstructor>(factory => new RepositoryConstructor(factory.GetService<DatabaseContext>()));
+builder.Services.AddScoped<IServiceConstructor>(factory => new ServiceConstructor(factory.GetService<IRepositoryConstructor>()));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-const string corsPolicyName = "_costonCorsName";
+const string corsPolicyName = "_customCorsName";
 
-//builder.Services.AddCors(options => options.AddPolicy(corsPolicyName, b => b.WithOrigins("http://localhost:4200/", "https://supershop-dashboard.web.app/")));
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: corsPolicyName,
-                      builder =>
-                      {
-                          builder.WithOrigins("http://localhost:4200", "https://supershop-dashboard.web.app");
-                          builder.AllowAnyOrigin();
-                          builder.AllowAnyHeader();
-                      });
+    options.AddPolicy(name: corsPolicyName, builder => 
+            builder.WithOrigins("http://localhost:4200", "https://supershop-dashboard.web.app")
+                   .AllowAnyOrigin().WithMethods(
+                        HttpMethod.Get.Method,
+                        HttpMethod.Put.Method,
+                        HttpMethod.Post.Method,
+                        HttpMethod.Delete.Method
+                        )
+                    .AllowAnyHeader()
+                    );
 });
 
 var app = builder.Build();
@@ -128,8 +130,8 @@ app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-
 app.UseCors(corsPolicyName);
+
+app.MapControllers();
 
 app.Run();

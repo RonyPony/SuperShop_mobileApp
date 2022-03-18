@@ -18,7 +18,7 @@ namespace superShop_API.Controllers.Auth;
 
 [AllowAnonymous]
 //[Authorize(Roles = Roles.Admin)]
-public class UserAuthController : BaseAuthorizationController<User>
+public class UserAuthController : BaseAuthorizationController<User, Guid>
 {
     public UserAuthController(IServiceConstructor _constructor, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<Role> roleManager, IConfiguration configuration) : base(_constructor, userManager, signInManager, roleManager, configuration)
     {
@@ -166,7 +166,7 @@ public class UserAuthController : BaseAuthorizationController<User>
     {
         try
         {
-            return Result.Instance<List<UserDto>>().Success("Users list obtained", (await this.Constructor.GetService<UserService, User>().GetAllAsync()).ToList().ConvertAll(u => new UserDto(u)));
+            return Result.Instance<List<UserDto>>().Success("Users list obtained", (await this.Constructor.GetService<UserService, User, Guid>().GetAllAsync()).ToList().ConvertAll(u => new UserDto(u)));
         }
         catch (Exception e)
         {

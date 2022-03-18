@@ -4,7 +4,7 @@ using superShop_API.Database.Entities.Base;
 
 namespace superShop_API.Database.Entities.Auth;
 
-public class Role : IdentityRole<Guid>, IBaseEntity
+public class Role : IdentityRole<Guid>, IBaseEntity<Guid>
 {
     public Role()
     {

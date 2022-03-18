@@ -13,7 +13,7 @@ namespace superShop_API.Database.Entities
     }
 
     [Table("branches")]
-    public class Branch : BaseEntity, ISeeder<Branch, BranchSeedParams>
+    public class Branch : BaseEntity<Guid>, ISeeder<Branch, Guid, BranchSeedParams>
     {
         [Required]
         [Column("name", TypeName = "varchar(80)")]

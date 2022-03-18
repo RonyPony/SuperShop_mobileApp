@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 using superShop_API.Controllers.Base;
 using superShop_API.Database.DTOs;
 using superShop_API.Database.Entities;
@@ -10,7 +10,7 @@ namespace superShop_API.Controllers;
 
 [AllowAnonymous]
 //[Authorize(Roles = Roles.Admin)]
-public class MallController : BaseController<MallService, MallDto, Mall>
+public class MallController : BaseController<MallService, MallDto, Mall, Guid>
 {
     public MallController(IServiceConstructor _constructor) : base(_constructor)
     {

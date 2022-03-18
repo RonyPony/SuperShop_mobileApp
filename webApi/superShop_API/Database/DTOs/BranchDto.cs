@@ -4,7 +4,7 @@ using superShop_API.Database.Entities;
 
 namespace superShop_API.Database.DTOs;
 
-public class BranchDto : BaseDto<Branch, BranchSeedParams>
+public class BranchDto : BaseDto<Branch, Guid, BranchSeedParams>
 {
     [Required]
     [MaxLength(80, ErrorMessage = "The name of the branch must be longer than 80 characters")]

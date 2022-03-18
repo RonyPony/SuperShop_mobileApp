@@ -55,7 +55,7 @@ public class DatabaseContext : IdentityDbContext<User, Role, Guid>
         {
             // for entities that inherit from BaseEntity,
             // set UpdatedOn / CreatedOn appropriately
-            if (entry.Entity is BaseEntity trackable)
+            if (entry.Entity is BaseEntity<Guid> trackable)
             {
                 switch (entry.State)
                 {

@@ -3,7 +3,7 @@ using superShop_API.Database.Entities.Auth;
 
 namespace superShop_API.Database.DTOs.Auth;
 
-public class UserDto : BaseDto<User>
+public class UserDto : BaseDto<User, Guid>
 {
     public UserDto()
     {

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using superShop_API.Controllers.Base;
 using superShop_API.Database.DTOs;
@@ -10,7 +11,7 @@ namespace superShop_API.Controllers;
 
 [AllowAnonymous]
 //[Authorize(Roles = Roles.Admin)]
-public class ProductController : BaseController<ProductService, ProductDto, Product>
+public class ProductController : BaseController<ProductService, ProductDto, Product, Guid>
 {
     public ProductController(IServiceConstructor _constructor) : base(_constructor)
     {
