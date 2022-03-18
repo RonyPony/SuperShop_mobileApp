@@ -10,6 +10,12 @@ tasks:
       mkdir -p /tmp/dotnet && curl -fsSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 6.0 --install-dir /tmp/dotnet 
       dotnet dev-certs https 
       dotnet restore
+  - name: Postinstall of flutter and android SDK 
+    command: |
+      mkdir -p /home/gitpod/.android
+      touch /home/gitpod/.android/repositories.cfg
+      export PATH=/usr/lib/dart/bin:$FLUTTER_HOME/bin:$ANDROID_HOME/bin:$PATH
+      /home/gitpod/android-sdk/tools/bin/sdkmanager "platform-tools" "platforms;android-28" "build-tools;28.0.3"
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 ports:
@@ -19,3 +25,4 @@ ports:
 vscode:
   extensions:
     - muhammad-sammy.csharp
+    - Dart-Code.flutter
