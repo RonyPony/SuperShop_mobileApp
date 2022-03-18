@@ -31,13 +31,14 @@ class ProductService implements ProductServiceContract {
   Future<List<Product>> getCart() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String jsonedCart = prefs.getString(SAVED_PRODUCT_KEY);
-    if (jsonedCart != null) {
+    if (jsonedCart != null && jsonedCart !="") {
       List<dynamic> parsedListJson = jsonDecode(jsonedCart);
       List<Product> itemsList =
           List<Product>.from(parsedListJson.map((i) => Product.fromJson(i)));
       return itemsList;
     } else {
-      return null;
+      List<Product> emptyList=[];
+      return emptyList;
     }
   }
 

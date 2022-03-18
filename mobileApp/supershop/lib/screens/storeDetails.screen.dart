@@ -141,9 +141,9 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                     arguments: producto);
               },
               child: Container(
-                height: 100,
-                width: 100,
-                child: Image.network(producto.imageUrl),
+                height: 150,
+                width: 200,
+                child: Image.network(producto.imageUrl,),
                 decoration: BoxDecoration(
                     color: Colors.blue,
                     shape: BoxShape.rectangle,
