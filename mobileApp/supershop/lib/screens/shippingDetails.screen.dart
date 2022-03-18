@@ -1,8 +1,10 @@
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:supershop/models/Address.model.dart';
 import 'package:supershop/providers/productProvider.dart';
+import 'package:supershop/screens/confirmScreen.dart';
 import 'package:supershop/widgets/sideMenuDrawer.dart';
 
 import 'cart.screen.dart';
@@ -16,10 +18,12 @@ class ShoppingDetailScreen extends StatefulWidget {
 }
 
 class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
-  int _isPaypal;
+  bool _isPaypal=null;
   int val = -1;
 
   ScrollController _scrollController = ScrollController();
+
+  String _currentSelectedAddress="";
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -174,32 +178,53 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
               title: Text("Efectivo"),
               leading: Radio(
                 value: 1,
+
                 groupValue: val,
                 onChanged: (value) {
                   setState(() {
                     val = value;
+                     if (val==2) {
+                      _isPaypal=true;
+                    }
+                    if(val==1){
+                      _isPaypal=false;
+                    }
+                    print(_isPaypal);
                   });
                 },
                 activeColor: Colors.blue,
               ),
             ),
             ListTile(
-              title: Text("Paypal"),
+              title: Row(
+                children: [
+                  SvgPicture.asset('assets/paypal.svg',height: 30,),
+                ],
+              ),
               leading: Radio(
                 value: 2,
                 groupValue: val,
                 onChanged: (value) {
                   setState(() {
                     val = value;
+                    if (val==2) {
+                      _isPaypal=true;
+                    }
+                    if(val==1){
+                      _isPaypal=false;
+                    }
+                    print(_isPaypal);
                   });
                 },
                 activeColor: Colors.blue,
               ),
             ),
+            _currentSelectedAddress.length>=1?Text('Su pedido se enviara a '+_currentSelectedAddress):Text('Seleccione una direccion'),
             SizedBox(
               height: screenSize.height * 0.1,
             ),
-            _payButton()
+            _payButton(),
+            
           ],
         ),
       ),
@@ -208,18 +233,31 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
 
   _buildMyAddresses(Address address) {
     Size screenSize = MediaQuery.of(context).size;
-    bool selected=false;
+    bool selected = false;
     int _selectedIndex = 0;
     return ListTile(
       title: Text(address.addressAlias),
       // selected: index == _selectedIndex,
+      onTap: () {
+        _currentSelectedAddress=address.address;
+        setState(() {
+        
+        });
+      },
+      leading: Icon(
+        Icons.location_on_outlined,
+        color: Colors.blue,
+        size: 45,
+      ),
+      trailing: GestureDetector(
           onTap: () {
-            setState(() {
-              _selectedIndex = 0;
-            });
+            delete(address);
           },
-      leading: Icon(Icons.location_on_outlined,color: Colors.blue,size: 45,),
-      trailing: Icon(Icons.delete_forever,size: 35,color: Colors.red,),
+          child: Icon(
+            Icons.delete_forever,
+            size: 35,
+            color: Colors.red,
+          )),
     );
   }
 
@@ -240,7 +278,19 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
               fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
-      onPressed: () async {},
+      onPressed: () async {
+        if (_currentSelectedAddress.length<1) {
+          CoolAlert.show(context: context,text: "Seleccione una direccion", title: "Direccion",type: CoolAlertType.warning);
+        return;
+        }
+
+        if (_isPaypal==null) {
+          CoolAlert.show(context: context,text: "Seleccione un metodo de pago", title: "Metodo de pago",type: CoolAlertType.warning);
+          return;
+        }
+
+        Navigator.pushNamed(context, ConfirmScreen.routeName);
+      },
     );
   }
 
@@ -274,5 +324,14 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
         );
       },
     );
+  }
+
+  void delete(Address address) {
+    final _productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
+        _productProvider.deleteAddress(address.addressAlias);
+        setState(() {
+          
+        });
   }
 }

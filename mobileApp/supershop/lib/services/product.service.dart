@@ -20,6 +20,7 @@ class ProductService implements ProductServiceContract {
   Future<bool> addToCart(Product productToAdd) async {
     List<Product> _cartItems = new List<Product>();
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    _cartItems = await getCart();
     _cartItems.add(productToAdd);
     String data = json.encode(_cartItems);
     bool saved = await prefs.setString(SAVED_PRODUCT_KEY, data);
@@ -113,6 +114,7 @@ class ProductService implements ProductServiceContract {
       final index = itemsList
           .indexWhere((element) => element.addressAlias == addressAlias);
       itemsList.removeAt(index);
+      _addresses = itemsList;
       String data = json.encode(itemsList);
       bool saved = await prefs.setString(SAVED_Address_KEY, data);
       return saved;

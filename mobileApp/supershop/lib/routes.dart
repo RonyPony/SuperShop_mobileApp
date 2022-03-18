@@ -8,6 +8,7 @@ import 'package:supershop/screens/authentication/login.screen.dart';
 import 'package:supershop/screens/authentication/recoverPassword.screen.dart';
 import 'package:supershop/screens/authentication/register.screen.dart';
 import 'package:supershop/screens/cart.screen.dart';
+import 'package:supershop/screens/confirmScreen.dart';
 import 'package:supershop/screens/home.screen.dart';
 import 'package:supershop/screens/info.screen.dart';
 import 'package:supershop/screens/malls.screen.dart';
@@ -31,4 +32,5 @@ final Map<String, WidgetBuilder> routes = {
   TiendasScreen.routeName:(context)=>TiendasScreen(),
   InfoScreen.routeName:(context)=>InfoScreen(),
   ShoppingDetailScreen.routeName:(context)=>ShoppingDetailScreen(),
+  ConfirmScreen.routeName:(context)=>ConfirmScreen(),
 };

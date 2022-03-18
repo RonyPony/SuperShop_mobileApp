@@ -16,11 +16,13 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  double _total = 0;
   @override
   Widget build(BuildContext context) {
     final _productProvider =
         Provider.of<ProductProvider>(context, listen: false);
     Future<List<Product>> _cartItems = _productProvider.getCart();
+
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: SideMenuDrawer(),
@@ -49,14 +51,19 @@ class _CartScreenState extends State<CartScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  'Total:',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                Text(
-                  'RD 1000',
-                  style: TextStyle(fontSize: 18),
-                )
+                // Text(
+                //   'Total:',
+                //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                // ),
+                // GestureDetector(
+                //   onTap: () {
+                //     setState(() {});
+                //   },
+                //   child: Text(
+                //     'RD ' + _total.toString(),
+                //     style: TextStyle(fontSize: 18),
+                //   ),
+                // )
               ],
             ),
           ),
@@ -104,7 +111,9 @@ class _CartScreenState extends State<CartScreen> {
               }
             },
           ),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           ElevatedButton(
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.blue),
@@ -124,7 +133,6 @@ class _CartScreenState extends State<CartScreen> {
               Navigator.pushNamed(context, HomeScreen.routeName);
             },
           ),
-
         ],
       ),
     );
@@ -138,9 +146,9 @@ class _CartScreenState extends State<CartScreen> {
         if (snapshot.hasData) {
           List<Product> orderItems = snapshot.data;
           ScrollController _scrollController = ScrollController();
-if (snapshot.data.length == 0) {
-                    return Text('No hay items en el carrito');
-                  }
+          if (snapshot.data.length == 0) {
+            return Text('No hay items en el carrito');
+          }
           return Container(
             height: screenSize.height * 0.4,
             child: Scrollbar(
@@ -153,13 +161,13 @@ if (snapshot.data.length == 0) {
                 shrinkWrap: true,
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                 
-                    return CartItem(
-                        productId: snapshot.data[index].id,
-                        productName: snapshot.data[index].name,
-                        productPrice: snapshot.data[index].price,
-                        productImage: snapshot.data[index].imageUrl);
-                  
+                  _total = _total + snapshot.data[index].price;
+
+                  return CartItem(
+                      productId: snapshot.data[index].id,
+                      productName: snapshot.data[index].name,
+                      productPrice: snapshot.data[index].price,
+                      productImage: snapshot.data[index].imageUrl);
                 },
               ),
             ),
@@ -173,5 +181,9 @@ if (snapshot.data.length == 0) {
         }
       },
     );
+  }
+
+  int getTotal() {
+    return 1;
   }
 }
