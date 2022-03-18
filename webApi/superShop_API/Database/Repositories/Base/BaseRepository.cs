@@ -123,6 +123,7 @@ public class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey> wher
     {
         return await Task.Run(() =>
         {
+            Context.Entry(entity).State = EntityState.Detached;
             Context.Set<TEntity>().Attach(entity);
             Context.Entry(entity).State = EntityState.Modified;
 

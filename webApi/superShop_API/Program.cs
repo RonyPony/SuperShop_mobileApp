@@ -92,8 +92,8 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddHealthChecks();
 builder.Services.AddAuthorization();
-builder.Services.AddTransient<IRepositoryConstructor>(factory => new RepositoryConstructor(factory.GetService<DatabaseContext>()));
-builder.Services.AddTransient<IServiceConstructor>(factory => new ServiceConstructor(factory.GetService<IRepositoryConstructor>()));
+builder.Services.AddScoped<IRepositoryConstructor>(factory => new RepositoryConstructor(factory.GetService<DatabaseContext>()));
+builder.Services.AddScoped<IServiceConstructor>(factory => new ServiceConstructor(factory.GetService<IRepositoryConstructor>()));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

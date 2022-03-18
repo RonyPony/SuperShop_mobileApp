@@ -18,14 +18,24 @@ public abstract class BaseDto<TEntity, TKey> where TEntity : class, IBaseEntity<
         UpdatedAt = entity.UpdatedAt;
     }
 
-    public TKey? Id { get; set; }
+    public TKey Id { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 
     [JsonIgnore]
-    public TEntity Entity { get { return MakeEntity(); } }
+    public TEntity Entity
+    {
+        get
+        {
+            var ent = MakeEntity();
+
+            ent.Id = Id;
+
+            return ent;
+        }
+    }
 
     protected abstract TEntity MakeEntity();
 }
@@ -44,14 +54,24 @@ public abstract class BaseDto<TEntity, TKey, T> where TEntity : class, IBaseEnti
         UpdatedAt = entity.UpdatedAt;
     }
 
-    public TKey? Id { get; set; }
+    public TKey Id { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 
     [JsonIgnore]
-    public TEntity Entity { get { return MakeEntity(); } }
+    public TEntity Entity
+    {
+        get
+        {
+            var ent = MakeEntity();
+
+            ent.Id = Id;
+
+            return ent;
+        }
+    }
 
     protected abstract TEntity MakeEntity();
 }
