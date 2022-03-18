@@ -5,7 +5,9 @@ USER gitpod
 ENV DOTNET_ROOT=/tmp/dotnet
 ENV PATH=$PATH:/tmp/dotnet
 
-ENV ANDROID_HOME=/home/gitpod/android-sdk \
+ENV ANDROID_SDK=/home/gitpod/android-sdk \
+    ANDROID_PATH=$ANDROID_SDK/tools:$ANDROID_SDK/platform-tools \
+    ANDROID_STUDIO=/home/gitpod/android-studio \
     FLUTTER_HOME=/home/gitpod/flutter
 
 USER root
