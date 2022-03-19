@@ -171,7 +171,7 @@ public abstract class BaseController<TService, TView, TEntity, TKey, T> : Contro
     public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ TView view)
     {
         var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(TView).Name}' ");
-        if (view.Id == null)
+        if (view.Id.Equals(default(TKey)))
         {
             R = await Service.CreateAsync(view.Entity);
         }
@@ -183,7 +183,7 @@ public abstract class BaseController<TService, TView, TEntity, TKey, T> : Contro
     public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ TView view)
     {
         var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(TView).Name}' ");
-        if (view.Id != null)
+        if (!view.Id.Equals(default(TKey)))
         {
             R = await Service.UpdateAsync(view.Entity);
         }
