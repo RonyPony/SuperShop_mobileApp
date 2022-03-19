@@ -24,6 +24,8 @@ public class DatabaseContext : IdentityDbContext<User, Role, Guid>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<Mall>().Property(m => m.Coordinates).HasConversion(new CoordinatesCorverter());
+        builder.Entity<Branch>().Navigation(b => b.Category).AutoInclude();
+        builder.Entity<Branch>().Navigation(b => b.Mall).AutoInclude();
         builder.Entity<ProductOrder>().HasKey(po => new { po.OrderId, po.ProductId });
         builder.Entity<ProductOrder>().HasOne<Order>(po => po.Order).WithMany(o => o.ProductOrders).HasForeignKey(po => po.OrderId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<ProductOrder>().HasOne<Product>(po => po.Product).WithMany(p => p.ProductOrders).HasForeignKey(po => po.ProductId).OnDelete(DeleteBehavior.Restrict);

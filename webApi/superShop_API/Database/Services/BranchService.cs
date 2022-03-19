@@ -19,11 +19,21 @@ public class BranchService : BaseService<Branch, Guid, BranchSeedParams>, IBranc
     {
     }
 
-    public async Task<Branch> GetbyName(string name) => (await this.Repository.GetAsync(b => b.Name == name)).FirstOrDefault();
+    public override async Task<List<Branch>> GetAllAsync()
+    {
+        return (await this.Repository.GetAsync(b => b.Category, b => b.Mall)).ToList();
+    }
 
-    public async Task<List<Branch>> GetAllByMallId(Guid mallId) => (await this.Repository.GetAsync(b => b.MallId == mallId)).ToList();
+    public override async Task<Branch> GetByIDAsync(Guid id)
+    {
+        return (await this.Repository.GetAsync(b => b.Id == id, b => b.Category, b => b.Mall)).FirstOrDefault();
+    }
 
-    public async Task<List<Branch>> GetAllByCategoryId(Guid categoryId) => (await this.Repository.GetAsync(b => b.CategoryId == categoryId)).ToList();
+    public async Task<Branch> GetbyName(string name) => (await this.Repository.GetAsync(b => b.Name == name, b => b.Category, b => b.Mall)).FirstOrDefault();
+
+    public async Task<List<Branch>> GetAllByMallId(Guid mallId) => (await this.Repository.GetAsync(b => b.MallId == mallId, b => b.Category, b => b.Mall)).ToList();
+
+    public async Task<List<Branch>> GetAllByCategoryId(Guid categoryId) => (await this.Repository.GetAsync(b => b.CategoryId == categoryId, b => b.Category, b => b.Mall)).ToList();
 
     public async override Task<Result<Object>> ValidateOnCreateAsync(Branch entity)
     {
