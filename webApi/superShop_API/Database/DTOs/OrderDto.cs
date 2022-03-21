@@ -26,6 +26,10 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
 
     public string Address { get; set; }
 
+    public double TotalTax { get; set; }
+
+    public double TotalWhitoutTaxes { get; set; }
+
     public double Total { get; set; }
 
     public bool Completed { get; set; }
@@ -40,9 +44,36 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
             BranchId = BranchId,
             UserId = UserId,
             Address = Address,
+            TotalTax = TotalTax,
+            TotalWhitoutTaxes = TotalWhitoutTaxes,
             Total = Total,
             Completed = Completed,
             ProductOrders = ProductOrderDtos.ToList().ConvertAll(po => po.Entity)
+        };
+    }
+}
+
+public class NewOrderDto : BaseDto<Order, Guid, OrderSeedParams>
+{
+    public Guid BranchId { get; set; }
+    public Guid UserId { get; set; }
+    public string Address { get; set; }
+    public bool Completed { get; set; }
+    public Guid[] ProductIds { get; set; }
+
+    public NewOrderDto()
+    {
+
+    }
+
+    protected override Order MakeEntity()
+    {
+        return new Order
+        {
+            BranchId = BranchId,
+            UserId = UserId,
+            Address = Address,
+            Completed = Completed
         };
     }
 }
