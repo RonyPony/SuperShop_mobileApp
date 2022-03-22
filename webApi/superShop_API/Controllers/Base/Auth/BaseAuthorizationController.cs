@@ -3,6 +3,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +20,7 @@ namespace superShop_API.Controllers.Base.Auth;
 /// </summary>
 /// <typeparam name="TEntity">Tipo de entidad de modelo sobre la cual se hara la autorizacion</typeparam>
 [ApiController]
+[EnableCors]
 [Route("api/auth/[controller]")]
 public abstract class BaseAuthorizationController<TEntity, TKey> : ControllerBase where TEntity : class, IBaseEntity<TKey> where TKey : IEquatable<TKey>
 {

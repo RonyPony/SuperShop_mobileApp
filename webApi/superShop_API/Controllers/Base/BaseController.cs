@@ -18,6 +18,7 @@ namespace superShop_API.Controllers.Base;
 /// <typeparam name="TEntity">Tipo de modelo en el cual se ha creado el TService</typeparam>
 [ApiController]
 [Authorize]
+[EnableCors]
 [Route("api/[controller]")]
 public abstract class BaseController<TService, TView, TEntity, TKey> : ControllerBase where TEntity : class, IBaseEntity<TKey>, ISeeder<TEntity, TKey> where TView : BaseDto<TEntity, TKey> where TService : class, IBaseService<TEntity, TKey> where TKey : IEquatable<TKey>
 {
