@@ -8,6 +8,8 @@ abstract class AuthServiceContract {
   Future<UserInfo>registerUser(UserToRegisterInfo userInfo);
   Future<UserInfo>getLocalActiveUser();
   Future<UserInfo>getUserInfo(String email);
+Future<bool>logout();
+  
   }
   
  

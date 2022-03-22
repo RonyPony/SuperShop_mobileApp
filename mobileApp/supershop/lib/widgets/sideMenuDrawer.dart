@@ -1,3 +1,4 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -66,8 +67,13 @@ class SideMenuDrawer extends StatelessWidget {
                 _createMenuItem("Tiendas", "assets/tienda-icon.svg",
                     TiendasScreen.routeName, true, context),
                 _createSplitter(),
-                _createMenuItem("Perfil", "assets/user.svg",
-                    RegisterScreen.routeName, false, context,getCurrentUser(context)),
+                _createMenuItem(
+                    "Perfil",
+                    "assets/user.svg",
+                    RegisterScreen.routeName,
+                    false,
+                    context,
+                    getCurrentUser(context)),
                 _createSplitter(),
                 _createMenuItem("Informacion", "assets/info-icon.svg",
                     InfoScreen.routeName, true, context),
@@ -78,9 +84,18 @@ class SideMenuDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 20),
             child: GestureDetector(
-              onTap: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, LoginScreen.routeName, (route) => false);
+              onTap: () async {
+                final _authProvider =
+                    Provider.of<AuthProvider>(context, listen: false);
+                if (await _authProvider.logout()) {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, LoginScreen.routeName, (route) => false);
+                } else {
+                  CoolAlert.show(
+                      context: context,
+                      type: CoolAlertType.error,
+                      title: "Error Cerrando Sesion");
+                }
               },
               child: Row(
                 children: [

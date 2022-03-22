@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:supershop/models/Address.model.dart';
+import 'package:supershop/models/branch.model.dart';
+import 'package:supershop/models/product.model.dart';
+import 'package:supershop/models/userInfo.model.dart';
+import 'package:supershop/providers/authProvider.dart';
 import 'package:supershop/providers/productProvider.dart';
+import 'package:supershop/screens/authentication/login.screen.dart';
 import 'package:supershop/screens/confirmScreen.dart';
 import 'package:supershop/widgets/sideMenuDrawer.dart';
 
@@ -13,19 +18,22 @@ import 'home.screen.dart';
 class ShoppingDetailScreen extends StatefulWidget {
   ShoppingDetailScreen({Key key}) : super(key: key);
   static String routeName = '/shoppingDetailsScreen';
+
   @override
   State<ShoppingDetailScreen> createState() => _ShoppingDetailScreenState();
 }
 
 class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
-  bool _isPaypal=null;
+  bool _isPaypal = null;
   int val = -1;
-
+  List<Product> _productos;
   ScrollController _scrollController = ScrollController();
 
-  String _currentSelectedAddress="";
+  String _currentSelectedAddress = "";
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context).settings.arguments as List<Product>;
+    _productos = args;
     Size screenSize = MediaQuery.of(context).size;
     final _productProvider =
         Provider.of<ProductProvider>(context, listen: false);
@@ -157,6 +165,7 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
                 } else {
                   return CircularProgressIndicator();
                 }
+                return Text('Agrega una direccion');
               },
             ),
             // _buildMyAddresses(),
@@ -178,16 +187,15 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
               title: Text("Efectivo"),
               leading: Radio(
                 value: 1,
-
                 groupValue: val,
                 onChanged: (value) {
                   setState(() {
                     val = value;
-                     if (val==2) {
-                      _isPaypal=true;
+                    if (val == 2) {
+                      _isPaypal = true;
                     }
-                    if(val==1){
-                      _isPaypal=false;
+                    if (val == 1) {
+                      _isPaypal = false;
                     }
                     print(_isPaypal);
                   });
@@ -198,7 +206,10 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
             ListTile(
               title: Row(
                 children: [
-                  SvgPicture.asset('assets/paypal.svg',height: 30,),
+                  SvgPicture.asset(
+                    'assets/paypal.svg',
+                    height: 30,
+                  ),
                 ],
               ),
               leading: Radio(
@@ -207,11 +218,11 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
                 onChanged: (value) {
                   setState(() {
                     val = value;
-                    if (val==2) {
-                      _isPaypal=true;
+                    if (val == 2) {
+                      _isPaypal = true;
                     }
-                    if(val==1){
-                      _isPaypal=false;
+                    if (val == 1) {
+                      _isPaypal = false;
                     }
                     print(_isPaypal);
                   });
@@ -219,12 +230,13 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
                 activeColor: Colors.blue,
               ),
             ),
-            _currentSelectedAddress.length>=1?Text('Su pedido se enviara a '+_currentSelectedAddress):Text('Seleccione una direccion'),
+            _currentSelectedAddress.length >= 1
+                ? Text('Su pedido se enviara a ' + _currentSelectedAddress)
+                : Text('Seleccione una direccion'),
             SizedBox(
               height: screenSize.height * 0.1,
             ),
             _payButton(),
-            
           ],
         ),
       ),
@@ -239,10 +251,8 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
       title: Text(address.addressAlias),
       // selected: index == _selectedIndex,
       onTap: () {
-        _currentSelectedAddress=address.address;
-        setState(() {
-        
-        });
+        _currentSelectedAddress = address.address;
+        setState(() {});
       },
       leading: Icon(
         Icons.location_on_outlined,
@@ -279,17 +289,45 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
         ),
       ),
       onPressed: () async {
-        if (_currentSelectedAddress.length<1) {
-          CoolAlert.show(context: context,text: "Seleccione una direccion", title: "Direccion",type: CoolAlertType.warning);
-        return;
-        }
-
-        if (_isPaypal==null) {
-          CoolAlert.show(context: context,text: "Seleccione un metodo de pago", title: "Metodo de pago",type: CoolAlertType.warning);
+        if (_currentSelectedAddress.length < 1) {
+          CoolAlert.show(
+              context: context,
+              text: "Seleccione una direccion",
+              title: "Direccion",
+              type: CoolAlertType.warning);
           return;
         }
 
-        Navigator.pushNamed(context, ConfirmScreen.routeName);
+        if (_isPaypal == null) {
+          CoolAlert.show(
+              context: context,
+              text: "Seleccione un metodo de pago",
+              title: "Metodo de pago",
+              type: CoolAlertType.warning);
+          return;
+        }
+
+        final _productProvider =
+            Provider.of<ProductProvider>(context, listen: false);
+        final _authProvider = Provider.of<AuthProvider>(context, listen: false);
+        UserInfo currentUser = await _authProvider.getLocalActiveUser();
+        if (currentUser!=null) {
+          bool created = await _productProvider.createOrder(_productos,
+            _productos.first.branchId, _currentSelectedAddress, currentUser.id);
+        if (created) {
+          Navigator.pushNamed(context, ConfirmScreen.routeName);
+        } else {
+          CoolAlert.show(
+              context: context,
+              type: CoolAlertType.error,
+              title: "Error",
+              text: "Error creando la orden, favor intentar mas tarde");
+        }
+        }else{
+          CoolAlert.show(onCancelBtnTap: () {
+            Navigator.pushNamedAndRemoveUntil(context, LoginScreen.routeName, (route) => false);
+          },showCancelBtn:true ,cancelBtnText: "Iniciar Sesion",context: context, type: CoolAlertType.info,title: "Inicia Sesion",text: "Para poder realizar compras debes iniciar sesion");
+        }
       },
     );
   }
@@ -329,9 +367,7 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
   void delete(Address address) {
     final _productProvider =
         Provider.of<ProductProvider>(context, listen: false);
-        _productProvider.deleteAddress(address.addressAlias);
-        setState(() {
-          
-        });
+    _productProvider.deleteAddress(address.addressAlias);
+    setState(() {});
   }
 }

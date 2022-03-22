@@ -31,10 +31,8 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  TextEditingController _emailController =
-      TextEditingController(text: "");
-  TextEditingController _passwordController =
-      TextEditingController(text: "");
+  TextEditingController _emailController = TextEditingController(text: "");
+  TextEditingController _passwordController = TextEditingController(text: "");
   bool _rememberMe = false;
   @override
   Widget build(BuildContext context) {
@@ -158,6 +156,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                       cred.password = _passwordController.text;
                       cred.remember = _rememberMe;
                       LoginResponse response = await _authProvider.login(cred);
+                      if (response == null) {
+                        return CoolAlert.show(context: context, type: CoolAlertType.error,title: "Error",text: "Error iniciando sesion, favor intentelo mas tarde");
+                      }
                       if (response.result.isSuccess == true) {
                         Navigator.pushNamedAndRemoveUntil(
                             context, HomeScreen.routeName, (route) => false);
@@ -171,11 +172,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                               content: SingleChildScrollView(
                                 child: ListBody(
                                   children: <Widget>[
-                                    Text(
-                                        'Por favor intente  mas tarde.'),
-                                    Text("(" +
-                                    response.result.message+
-                                        ")"),
+                                    Text('Por favor intente  mas tarde.'),
+                                    Text("(" + response.result.message + ")"),
                                   ],
                                 ),
                               ),

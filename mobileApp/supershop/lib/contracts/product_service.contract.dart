@@ -16,6 +16,6 @@ abstract class ProductServiceContract {
   Future<String>getMallNameFromId(String mallId);
   Future<List<Product>>getProductsByStore(Branch store);
   Future<String> getCategory(String categoryId);
-
+Future<bool> createOrder(List<Product> products,String address,String tiendaId,String userId);
   Future<bool>cleanCart();
 }

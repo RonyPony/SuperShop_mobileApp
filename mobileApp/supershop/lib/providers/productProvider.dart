@@ -18,7 +18,14 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  Future<bool>cleanCart() async {
+  Future<bool> createOrder(
+      List<Product> productos, String tienda, String direccion,String userId) async {
+    bool resp =
+        await _productContract.createOrder(productos, direccion, tienda,userId);
+        return resp;
+  }
+
+  Future<bool> cleanCart() async {
     bool resp = await _productContract.cleanCart();
     return resp;
   }
@@ -32,7 +39,7 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-    Future<bool> deleteCart(String productId) async {
+  Future<bool> deleteCart(String productId) async {
     try {
       bool resp = await _productContract.deleteFromCart(productId);
       return resp;
@@ -41,8 +48,7 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-
-   Future<bool> deleteAddress(String addressAlias) async {
+  Future<bool> deleteAddress(String addressAlias) async {
     try {
       bool resp = await _productContract.deleteFromAddresses(addressAlias);
       return resp;
@@ -51,16 +57,16 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  Future<List<Branch>>getMallStores(Mall mall) async {
-try {
-  List<Branch> lista = await _productContract.getStores(mall);
-  return lista;
-} catch (e) {
-  throw e;
-}
+  Future<List<Branch>> getMallStores(Mall mall) async {
+    try {
+      List<Branch> lista = await _productContract.getStores(mall);
+      return lista;
+    } catch (e) {
+      throw e;
+    }
   }
 
-  Future<List<Mall>>getMalls()async{
+  Future<List<Mall>> getMalls() async {
     try {
       List<Mall> malls = await _productContract.getAllMalls();
       return malls;
@@ -68,28 +74,28 @@ try {
       throw e;
     }
   }
-  Future<List<Address>>getAddresses()async{
+
+  Future<List<Address>> getAddresses() async {
     List<Address> list = await _productContract.getAddresses();
     return list;
   }
 
-
-  Future<List<Branch>>getAllStores()async{
+  Future<List<Branch>> getAllStores() async {
     List<Branch> list = await _productContract.getAllStores();
     return list;
   }
 
-  Future<List<Product>>getCart()async{
+  Future<List<Product>> getCart() async {
     List<Product> list = await _productContract.getCart();
     return list;
   }
 
-  Future<String> getMallNameFromMallId(String mallId)async{
+  Future<String> getMallNameFromMallId(String mallId) async {
     String list = await _productContract.getMallNameFromId(mallId);
     return list;
   }
 
-  Future<List<Product>> getProductsFromStore(Branch store)async{
+  Future<List<Product>> getProductsFromStore(Branch store) async {
     List<Product> prods = await _productContract.getProductsByStore(store);
     return prods;
   }

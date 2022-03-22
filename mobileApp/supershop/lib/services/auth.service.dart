@@ -50,7 +50,7 @@ class AuthenticationService implements AuthServiceContract {
         //TODO
       }
     } catch (e) {
-      throw e;
+      return null;
     }
   }
 
@@ -77,6 +77,17 @@ class AuthenticationService implements AuthServiceContract {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String data = json.encode(loginInfo);
+      bool saved = await prefs.setString(SAVED_ACTIVE_USER_KEY, data);
+      return saved;
+    } catch (e) {
+      return false;
+    }
+  }
+
+    Future<bool> removeLocalActiveUser() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String data = json.encode(null);
       bool saved = await prefs.setString(SAVED_ACTIVE_USER_KEY, data);
       return saved;
     } catch (e) {
@@ -112,5 +123,10 @@ class AuthenticationService implements AuthServiceContract {
     } catch (e) {
       print(e);
     }
+  }
+
+  @override
+  Future<bool> logout() {
+   return removeLocalActiveUser();
   }
 }

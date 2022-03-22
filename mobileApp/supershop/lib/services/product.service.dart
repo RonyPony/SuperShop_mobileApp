@@ -13,7 +13,7 @@ import 'package:supershop/widgets/cartItem.dart';
 class ProductService implements ProductServiceContract {
   String SAVED_PRODUCT_KEY = "ProductosdeSuperShop";
   String SAVED_Address_KEY = "DireccionesdeSuperShop";
-  
+
   List<Address> _addresses = new List<Address>();
 
   @override
@@ -31,13 +31,13 @@ class ProductService implements ProductServiceContract {
   Future<List<Product>> getCart() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String jsonedCart = prefs.getString(SAVED_PRODUCT_KEY);
-    if (jsonedCart != null && jsonedCart !="") {
+    if (jsonedCart != null && jsonedCart != "") {
       List<dynamic> parsedListJson = jsonDecode(jsonedCart);
       List<Product> itemsList =
           List<Product>.from(parsedListJson.map((i) => Product.fromJson(i)));
       return itemsList;
     } else {
-      List<Product> emptyList=[];
+      List<Product> emptyList = [];
       return emptyList;
     }
   }
@@ -202,8 +202,7 @@ class ProductService implements ProductServiceContract {
       dynamic parsedListJson = response.data;
       String productList;
       productList = parsedListJson["name"];
-     return Future.delayed(const Duration(microseconds: 2),
-      () => productList);
+      return Future.delayed(const Duration(microseconds: 2), () => productList);
     } else {
       return null;
     }
@@ -212,12 +211,40 @@ class ProductService implements ProductServiceContract {
   @override
   Future<bool> cleanCart() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    Future<bool> jsonedCart = prefs.setString(SAVED_PRODUCT_KEY,'');
-    
+    Future<bool> jsonedCart = prefs.setString(SAVED_PRODUCT_KEY, '');
+
     if (await jsonedCart) {
-      
       return true;
     } else {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> createOrder(
+      List<Product> products, String address, String tiendaId,String userId) async {
+    try {
+      List<String>productsId=[];
+      products.forEach((element) { 
+        productsId.add(element.id);
+      });
+      final client = RequestsManager.requester();
+      final response = await client.post("/Order/new", data: {
+        {
+          "branchId": tiendaId,
+          "userId":userId,
+          "address": address,
+          "completed": true,
+          "productIds": productsId
+        }
+      });
+
+      if (response.statusCode < 400) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }

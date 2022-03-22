@@ -1,9 +1,11 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:supershop/models/product.model.dart';
 import 'package:supershop/providers/productProvider.dart';
 import 'package:supershop/screens/home.screen.dart';
+import 'package:supershop/screens/shippingDetails.screen.dart';
 import 'package:supershop/widgets/cartItem.dart';
 import 'package:supershop/widgets/sideMenuDrawer.dart';
 
@@ -84,9 +86,24 @@ class _CartScreenState extends State<CartScreen> {
                       style: TextStyle(color: Colors.blue, fontSize: 17),
                     ),
                   )),
-              onPressed: () {
-                // print(nameController.text);
-                // print(passwordController.text);
+              onPressed: () async {
+                final productProvider = Provider.of<ProductProvider>(context, listen: false);
+                List<Product> productos = await productProvider.getCart();
+                if (productos.length==0) {
+                  CoolAlert.show(context: context, type: CoolAlertType.warning,title: "No hay productos en el carrito");
+                  return;
+                }
+                String tmpBranchId = productos.first.branchId;
+                productos.forEach((element) {
+                  if (element.branchId!=tmpBranchId) {
+                    CoolAlert.show(context: context, type: CoolAlertType.error,title: "Tiendas distintas",text: "No puedes comprar varios productos de tiendas distintas, Los productos "+productos.first.name+" & "+element.name+" son de tiendas distintas");
+                  return;
+                  }
+                });
+                
+                Navigator.pushNamed(context, ShoppingDetailScreen.routeName,arguments: productos);
+
+                // bool created = await productProvider.createOrder(productos,tmpBranchId);
               },
             ),
           ),

@@ -20,6 +20,15 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+    Future<bool> logout()async{
+    try {
+      final response = await _authContract.logout();
+      return response;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<UserInfo>getUserInfo(String email) async {
     try {
       final response = await _authContract.getUserInfo(email);
