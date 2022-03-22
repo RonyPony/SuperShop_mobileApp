@@ -52,7 +52,7 @@ public class ServiceConstructor : IServiceConstructor
         return Constructor.DisposeAsync();
     }
 
-    TService IServiceConstructor.GetService<TService, TEntity, TKey>()
+    public TService GetService<TService, TEntity, TKey>() where TService : IBaseService<TEntity, TKey> where TEntity : class, IBaseEntity<TKey>, ISeeder<TEntity, TKey> where TKey : IEquatable<TKey>
     {
         Type? tConcreteService = null;
         Assembly.GetExecutingAssembly().GetTypes().ToList().ForEach(t =>
@@ -65,7 +65,7 @@ public class ServiceConstructor : IServiceConstructor
         return (TService)Activator.CreateInstance(tConcreteService, Constructor);
     }
 
-    TService IServiceConstructor.GetService<TService, TEntity, TKey, T>()
+    public TService GetService<TService, TEntity, TKey, T>() where TService : IBaseService<TEntity, TKey, T> where TEntity : class, IBaseEntity<TKey>, ISeeder<TEntity, TKey, T> where TKey : IEquatable<TKey>
     {
         Type? tConcreteService = null;
         Assembly.GetExecutingAssembly().GetTypes().ToList().ForEach(t =>

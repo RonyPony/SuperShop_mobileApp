@@ -17,6 +17,7 @@ public class OrderController : BaseController<OrderService, OrderDto, Order, Gui
     {
     }
 
+
     [HttpPost]
     [Route("new", Name = "PostSaveNewOrder")]
     public async virtual Task<ActionResult<Result<Object>>> PostSaveNewOrder([FromBody] NewOrderDto view)

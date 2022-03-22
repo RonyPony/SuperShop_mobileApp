@@ -24,8 +24,19 @@ public class DatabaseContext : IdentityDbContext<User, Role, Guid>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<Mall>().Property(m => m.Coordinates).HasConversion(new CoordinatesCorverter());
+
+        builder.Entity<Branch>().HasOne(b => b.Mall).WithMany(m => m.Branches).HasForeignKey(b => b.MallId);
+        builder.Entity<Branch>().HasOne(b => b.Category).WithMany(c => c.Branches).HasForeignKey(b => b.CategoryId);
         builder.Entity<Branch>().Navigation(b => b.Category).AutoInclude();
         builder.Entity<Branch>().Navigation(b => b.Mall).AutoInclude();
+
+        builder.Entity<Order>().HasOne(o => o.Branch).WithMany(b => b.Orders).HasForeignKey(o => o.BranchId);
+        builder.Entity<Order>().HasOne(o => o.User).WithMany(u => u.Orders).HasForeignKey(o => o.UserId);
+        builder.Entity<Order>().Navigation(b => b.Branch).AutoInclude();
+        builder.Entity<Order>().Navigation(b => b.ProductOrders).AutoInclude();
+
+        builder.Entity<Product>().HasOne(p => p.Branch).WithMany(b => b.Products).HasForeignKey(p => p.BranchId);
+
         builder.Entity<ProductOrder>().HasKey(po => new { po.OrderId, po.ProductId });
         builder.Entity<ProductOrder>().HasOne<Order>(po => po.Order).WithMany(o => o.ProductOrders).HasForeignKey(po => po.OrderId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<ProductOrder>().HasOne<Product>(po => po.Product).WithMany(p => p.ProductOrders).HasForeignKey(po => po.ProductId).OnDelete(DeleteBehavior.Restrict);

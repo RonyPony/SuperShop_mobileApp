@@ -95,11 +95,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IRepositoryConstructor>(factory => new RepositoryConstructor(factory.GetService<DatabaseContext>()));
 builder.Services.AddScoped<IServiceConstructor>(factory => new ServiceConstructor(factory.GetService<IRepositoryConstructor>()));
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 const string corsPolicyName = "_customCorsName";
 
 builder.Services.AddCors(options =>
@@ -116,11 +111,17 @@ builder.Services.AddCors(options =>
                     );
 });
 
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
+app.UseCors(corsPolicyName);
 app.UseSwagger();
 app.UseSwaggerUI();
 //}
@@ -130,7 +131,6 @@ app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors(corsPolicyName);
 
 app.MapControllers();
 

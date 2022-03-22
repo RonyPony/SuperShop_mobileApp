@@ -19,9 +19,9 @@ public class ProductOrderDto : BaseDto<ProductOrder, Guid>
     public ProductOrderDto(ProductOrder entity) : base(entity)
     {
         ProductId = entity.ProductId;
-        Product = new ProductDto(entity.Product);
+        Product = entity.Product != null ? new ProductDto(entity.Product) : new ProductDto();
         OrderId = entity.OrderId;
-        Order = new OrderDto(entity.Order);
+        Order = entity.Order != null ? new OrderDto(entity.Order) : new OrderDto();
     }
 
     protected override ProductOrder MakeEntity()

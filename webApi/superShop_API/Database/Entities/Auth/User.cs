@@ -17,6 +17,8 @@ public class User : IdentityUser<Guid>, IBaseEntity<Guid>, ISeeder<User, Guid>
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    public ICollection<Order> Orders { get; set; }
+
     public Faker<User> SeederDefinition(object? referenceId)
     {
         return new Faker<User>()

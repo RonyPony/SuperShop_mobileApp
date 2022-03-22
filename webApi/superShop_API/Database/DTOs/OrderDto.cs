@@ -16,8 +16,8 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
         Address = entity.Address;
         Total = entity.Total;
         Completed = entity.Completed;
-        Branch = new BranchDto(entity.Branch);
-        ProductOrderDtos = entity.ProductOrders != null ? entity.ProductOrders.ToList().ConvertAll(po => new ProductOrderDto(po)) : new List<ProductOrderDto>();
+        Branch = entity.Branch != null ? new BranchDto(entity.Branch) : new BranchDto();
+        ProductOrderDtos = entity.ProductOrders.Count() > 0 ? entity.ProductOrders.ToList().ConvertAll(po => new ProductOrderDto(po)) : new List<ProductOrderDto>();
     }
 
     public Guid BranchId { get; set; }
