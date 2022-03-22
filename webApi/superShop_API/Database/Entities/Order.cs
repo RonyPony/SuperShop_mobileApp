@@ -49,6 +49,9 @@ public class Order : BaseEntity<Guid>, ISeeder<Order, Guid, OrderSeedParams>
     [ForeignKey("userId")]
     public User? User { get; set; }
 
+    [NotMapped]
+    public List<Product> Products { get; set; }
+
     public ICollection<ProductOrder>? ProductOrders { get; set; }
 
     public Faker<Order> SeederDefinition(OrderSeedParams data)

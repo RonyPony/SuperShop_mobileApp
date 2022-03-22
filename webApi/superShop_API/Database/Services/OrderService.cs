@@ -25,11 +25,19 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
 
             if (poList.Count() > 0)
             {
-                o.ProductOrders = poList;
+                o.Products = new List<Product>();
+
+                foreach (var p in poList)
+                {
+                    var product = await this.Constructor.GetRepository<Product, Guid>().GetByIDAsync(p.ProductId);
+                    o.Products.Add(product);
+                }
+
                 orderList.Add(o);
             }
             else
             {
+                o.Products = null;
                 o.ProductOrders = null;
                 orderList.Add(o);
             }

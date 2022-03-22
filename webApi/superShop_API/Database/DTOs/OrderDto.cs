@@ -17,7 +17,7 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
         Total = entity.Total;
         Completed = entity.Completed;
         Branch = entity.Branch != null ? new BranchDto(entity.Branch) : new BranchDto();
-        ProductOrderDtos = entity.ProductOrders.Count() > 0 ? entity.ProductOrders.ToList().ConvertAll(po => new ProductOrderDto(po)) : new List<ProductOrderDto>();
+        Products = entity.Products != null ? entity.Products.ToList().ConvertAll(po => new ProductDto(po)) : new List<ProductDto>();
     }
 
     public Guid BranchId { get; set; }
@@ -36,7 +36,7 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
 
     public BranchDto Branch { get; set; }
 
-    public IList<ProductOrderDto>? ProductOrderDtos { get; set; }
+    public IList<ProductDto>? Products { get; set; }
     protected override Order MakeEntity()
     {
         return new Order
@@ -47,8 +47,7 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
             TotalTax = TotalTax,
             TotalWhitoutTaxes = TotalWhitoutTaxes,
             Total = Total,
-            Completed = Completed,
-            ProductOrders = ProductOrderDtos.ToList().ConvertAll(po => po.Entity)
+            Completed = Completed
         };
     }
 }
