@@ -97,7 +97,7 @@ builder.Services.AddScoped<IServiceConstructor>(factory => new ServiceConstructo
 
 const string corsPolicyName = "_customCorsName";
 
-builder.Services.AddCors(options =>
+builder.Services.AddCors(/*options =>
 {
     options.AddPolicy(name: corsPolicyName, builder =>
             builder.AllowAnyOrigin().WithMethods(
@@ -108,7 +108,7 @@ builder.Services.AddCors(options =>
                         )
                     .AllowAnyHeader()
                     );
-});
+}*/);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -120,7 +120,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-app.UseCors(corsPolicyName);
+// global cors policy
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true) // allow any origin
+    .AllowCredentials()); // allow credentials
 app.UseSwagger();
 app.UseSwaggerUI();
 //}
