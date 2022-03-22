@@ -99,9 +99,8 @@ const string corsPolicyName = "_customCorsName";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: corsPolicyName, builder => 
-            builder.WithOrigins("http://localhost:4200", "https://supershop-dashboard.web.app")
-                   .AllowAnyOrigin().WithMethods(
+    options.AddPolicy(name: corsPolicyName, builder =>
+            builder.AllowAnyOrigin().WithMethods(
                         HttpMethod.Get.Method,
                         HttpMethod.Put.Method,
                         HttpMethod.Post.Method,
