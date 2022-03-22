@@ -28,6 +28,14 @@ public class Order : BaseEntity<Guid>, ISeeder<Order, Guid, OrderSeedParams>
     public string Address { get; set; }
 
     [Required]
+    [Column("totalTax")]
+    public double TotalTax { get; set; }
+
+    [Required]
+    [Column("totalWhitoutTaxes")]
+    public double TotalWhitoutTaxes { get; set; }
+
+    [Required]
     [Column("total")]
     public double Total { get; set; }
 
@@ -45,11 +53,16 @@ public class Order : BaseEntity<Guid>, ISeeder<Order, Guid, OrderSeedParams>
 
     public Faker<Order> SeederDefinition(OrderSeedParams data)
     {
+        var total = Convert.ToDouble(new Faker().Commerce.Price());
+        var tax = total * 0.18;
+
         return new Faker<Order>()
         .RuleFor(o => o.BranchId, data.BranchId)
         .RuleFor(o => o.UserId, data.UserId)
         .RuleFor(o => o.Address, f => f.Address.Direction())
-        .RuleFor(o => o.Total, f => Convert.ToDouble(f.Commerce.Price()))
+        .RuleFor(o => o.TotalTax, tax)
+        .RuleFor(o => o.TotalWhitoutTaxes, total)
+        .RuleFor(o => o.Total, total + tax)
         .RuleFor(o => o.Completed, f => f.Random.Bool());
     }
 }

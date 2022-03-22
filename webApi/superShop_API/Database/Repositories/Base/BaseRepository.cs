@@ -86,7 +86,7 @@ public class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey> wher
     {
         return await Task.Run(() =>
         {
-            var query = Context.Set<TEntity>().AsQueryable().AsExpandable();
+            var query = Context.Set<TEntity>().AsQueryable();
 
             foreach (var includeProperty in include)
             {
