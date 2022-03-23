@@ -114,9 +114,9 @@ class AuthenticationService implements AuthServiceContract {
     try {
       Dio cliente = RequestsManager.createRequester();
       Response resp =
-          await cliente.get("auth/UserAuth/user/{$email}");
+          await cliente.get("auth/UserAuth/user/$email");
       if (resp.data["isSuccess"]) {
-        return UserInfo();
+        return UserInfo.fromJson(resp.data["data"]);
       }else{
         return null;
       }

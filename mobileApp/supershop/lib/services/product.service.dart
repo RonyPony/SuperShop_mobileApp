@@ -221,23 +221,22 @@ class ProductService implements ProductServiceContract {
   }
 
   @override
-  Future<bool> createOrder(
-      List<Product> products, String address, String tiendaId,String userId) async {
+  Future<bool> createOrder(List<Product> products, String address,
+      String tiendaId, String userId) async {
     try {
-      List<String>productsId=[];
-      products.forEach((element) { 
+      List<String> productsId = [];
+      products.forEach((element) {
         productsId.add(element.id);
       });
       final client = RequestsManager.requester();
-      final response = await client.post("/Order/new", data: {
-        {
-          "branchId": tiendaId,
-          "userId":userId,
-          "address": address,
-          "completed": true,
-          "productIds": productsId
-        }
-      });
+      final queryParam = {
+        'branchId': tiendaId,
+        'userId': userId,
+        'address': address,
+        'completed': true,
+        'productIds': productsId
+      };
+      final response = await client.post("/Order/new", data: queryParam);
 
       if (response.statusCode < 400) {
         return true;

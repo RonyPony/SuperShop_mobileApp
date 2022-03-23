@@ -71,7 +71,9 @@ _product=productArgs;
                             child: Text('Comprar'),
                           )),
                       onPressed: () {
-                        Navigator.pushNamed(context, ShoppingDetailScreen.routeName);
+                        List<Product>pList=List<Product>();
+                        pList.add(_product);
+                        Navigator.pushNamed(context, ShoppingDetailScreen.routeName,arguments:pList);
                       },
                     ),
                     ElevatedButton(
