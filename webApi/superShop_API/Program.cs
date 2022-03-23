@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -9,6 +9,7 @@ using superShop_API.Database.Entities.Auth;
 using superShop_API.Database.Repositories.Constructor;
 using superShop_API.Database.Services.Constructor;
 using System.Text;
+using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -95,18 +96,12 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IRepositoryConstructor>(factory => new RepositoryConstructor(factory.GetService<DatabaseContext>()));
 builder.Services.AddScoped<IServiceConstructor>(factory => new ServiceConstructor(factory.GetService<IRepositoryConstructor>()));
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 const string corsPolicyName = "_customCorsName";
 
-builder.Services.AddCors(options =>
+builder.Services.AddCors(/*options =>
 {
-    options.AddPolicy(name: corsPolicyName, builder => 
-            builder.WithOrigins("http://localhost:4200", "https://supershop-dashboard.web.app")
-                   .AllowAnyOrigin().WithMethods(
+    options.AddPolicy(name: corsPolicyName, builder =>
+            builder.AllowAnyOrigin().WithMethods(
                         HttpMethod.Get.Method,
                         HttpMethod.Put.Method,
                         HttpMethod.Post.Method,
@@ -114,7 +109,15 @@ builder.Services.AddCors(options =>
                         )
                     .AllowAnyHeader()
                     );
-});
+}*/);
+
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+  options.SerializerSettings.ContractResolver =
+        new CamelCasePropertyNamesContractResolver());
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -127,10 +130,16 @@ app.UseSwaggerUI();
 
 // app.UseHttpsRedirection();
 
+// global cors policy
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true) // allow any origin
+    .AllowCredentials()); // allow credentials
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors(corsPolicyName);
 
 app.MapControllers();
 

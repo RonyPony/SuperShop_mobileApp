@@ -44,12 +44,15 @@ public class Order : BaseEntity<Guid>, ISeeder<Order, Guid, OrderSeedParams>
     public bool Completed { get; set; }
 
     [ForeignKey("branchId")]
-    public Branch Branch { get; set; }
+    public Branch? Branch { get; set; }
 
     [ForeignKey("userId")]
-    public User User { get; set; }
+    public User? User { get; set; }
 
-    public IList<ProductOrder> ProductOrders { get; set; }
+    [NotMapped]
+    public List<Product>? Products { get; set; }
+
+    public ICollection<ProductOrder>? ProductOrders { get; set; }
 
     public Faker<Order> SeederDefinition(OrderSeedParams data)
     {

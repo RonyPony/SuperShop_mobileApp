@@ -2,14 +2,48 @@ using superShop_API.Database.Entities;
 using superShop_API.Database.Entities.Auth;
 using superShop_API.Database.Repositories.Constructor;
 using superShop_API.Database.Services.Base;
+using superShop_API.Database.Services.Constructor;
 using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
 public class OrderService : BaseService<Order, Guid, OrderSeedParams>
 {
+    private ProductOrderService poService { get; set; }
     public OrderService(IRepositoryConstructor constructor) : base(constructor)
     {
+        poService = new ServiceConstructor(Constructor).GetService<ProductOrderService, ProductOrder, Guid>();
+    }
+
+    public override async Task<List<Order>> GetAllAsync()
+    {
+        var orders = (await this.Repository.GetAllAsync()).ToList();
+        var orderList = new List<Order>();
+        foreach (var o in orders)
+        {
+            var poList = await poService.GetByOrderId(o.Id);
+
+            if (poList.Count() > 0)
+            {
+                o.Products = new List<Product>();
+
+                foreach (var p in poList)
+                {
+                    var product = await this.Constructor.GetRepository<Product, Guid>().GetByIDAsync(p.ProductId);
+                    o.Products.Add(product);
+                }
+
+                orderList.Add(o);
+            }
+            else
+            {
+                o.Products = null;
+                o.ProductOrders = null;
+                orderList.Add(o);
+            }
+        }
+
+        return orderList;
     }
 
     public async override Task<Result<Object>> ValidateOnCreateAsync(Order entity)
@@ -75,6 +109,16 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
                 });
 
                 R = await this.CreateAsync(order);
+
+                if (R.IsSuccess)
+                {
+                    var poR = await this.poService.CreateRangeAsync(productList.ConvertAll(p => new ProductOrder { ProductId = p.Id, OrderId = order.Id, Id = Guid.NewGuid() }));
+
+                    if (!poR.IsSuccess)
+                    {
+                        R = Result.Instance().Fail($"The product orders relations cannot be saved !");
+                    }
+                }
 
             }
             else if (user == null)

@@ -1,3 +1,4 @@
+using System.Data.Entity;
 using superShop_API.Database.Entities.Base;
 using superShop_API.Database.Repositories.Base;
 using superShop_API.Database.Repositories.Constructor;
@@ -361,14 +362,20 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
             {
                 var result = await ValidateOnDeleteAsync(entity);
                 if (result.IsSuccess)
+                if (result.IsSuccess)
                 {
                     await Repository.DeleteAsync(id);
-                    await Repository.CommitChangesAsync();
-                    r = Result.Instance().Success("entity delete successfully");
+                   var commitResult = (EntityState)Enum.ToObject(typeof(EntityState),(await Repository.CommitChangesAsync()));
+                   if(commitResult == EntityState.Deleted){
+                       r = Result.Instance().Success("entity delete successfully");
+                   } else {
+                       r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                   }
+                    
                 }
                 else
                 {
-                    r = Result.Instance().Fail("", result);
+                    r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", result);
 
                 }
             }
@@ -630,12 +637,17 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
                 if (result.IsSuccess)
                 {
                     await Repository.DeleteAsync(id);
-                    await Repository.CommitChangesAsync();
-                    r = Result.Instance().Success("entity delete successfully");
+                    var status = await Repository.CommitChangesAsync();
+                   if((EntityState)status == EntityState.Deleted){
+                       r = Result.Instance().Success("entity delete successfully");
+                   } else {
+                       r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                   }
+                    
                 }
                 else
                 {
-                    r = Result.Instance().Fail("", result);
+                    r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", result);
 
                 }
             }

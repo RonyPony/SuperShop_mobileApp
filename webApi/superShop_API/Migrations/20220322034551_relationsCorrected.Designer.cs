@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using superShop_API.Database;
 
@@ -11,9 +12,10 @@ using superShop_API.Database;
 namespace superShop_API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220322034551_relationsCorrected")]
+    partial class relationsCorrected
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -550,13 +552,13 @@ namespace superShop_API.Migrations
                     b.HasOne("superShop_API.Database.Entities.Category", "Category")
                         .WithMany("Branches")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("superShop_API.Database.Entities.Mall", "Mall")
                         .WithMany("Branches")
                         .HasForeignKey("MallId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -569,13 +571,13 @@ namespace superShop_API.Migrations
                     b.HasOne("superShop_API.Database.Entities.Branch", "Branch")
                         .WithMany("Orders")
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("superShop_API.Database.Entities.Auth.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Branch");
@@ -588,7 +590,7 @@ namespace superShop_API.Migrations
                     b.HasOne("superShop_API.Database.Entities.Branch", "Branch")
                         .WithMany("Products")
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Branch");
@@ -599,7 +601,7 @@ namespace superShop_API.Migrations
                     b.HasOne("superShop_API.Database.Entities.Order", "Order")
                         .WithMany("ProductOrders")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("superShop_API.Database.Entities.Product", "Product")

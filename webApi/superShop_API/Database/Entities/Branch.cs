@@ -37,6 +37,8 @@ namespace superShop_API.Database.Entities
         [ForeignKey("categoryId")]
         public Category? Category { get; set; }
 
+        public ICollection<Order>? Orders { get; set; }
+
         public ICollection<Product>? Products { get; set; }
 
         public Faker<Branch> SeederDefinition(BranchSeedParams data)

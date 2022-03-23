@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using superShop_API.Database;
 
@@ -11,9 +12,10 @@ using superShop_API.Database;
 namespace superShop_API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220323043822_DeleteHappends")]
+    partial class DeleteHappends
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -599,7 +601,7 @@ namespace superShop_API.Migrations
                     b.HasOne("superShop_API.Database.Entities.Order", "Order")
                         .WithMany("ProductOrders")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("superShop_API.Database.Entities.Product", "Product")
