@@ -33,16 +33,11 @@ public class UserAuthController : BaseAuthorizationController<User, Guid>
         {
             User userExists;
 
-            if (new EmailAddressAttribute().IsValid(userModel.UserName))
-            {
-                userExists = await _userManager.FindByEmailAsync(userModel.UserName);
-            }
-            else
-            {
-                userExists = await _userManager.FindByNameAsync(userModel.UserName);
-            }
+           var userExistsByName = await _userManager.FindByNameAsync(userModel.UserName);
 
-            if (userExists != null)
+           var userExistsByEmail = await _userManager.FindByEmailAsync(userModel.Email);
+
+            if (userExistsByName != null || userExistsByEmail != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("User already exists!"));
 
             var user = new User()
@@ -86,16 +81,11 @@ public class UserAuthController : BaseAuthorizationController<User, Guid>
         {
             User userExists;
 
-            if (new EmailAddressAttribute().IsValid(userModel.UserName))
-            {
-                userExists = await _userManager.FindByEmailAsync(userModel.UserName);
-            }
-            else
-            {
-                userExists = await _userManager.FindByNameAsync(userModel.UserName);
-            }
+            var userExistsByName = await _userManager.FindByNameAsync(userModel.UserName);
 
-            if (userExists != null)
+           var userExistsByEmail = await _userManager.FindByEmailAsync(userModel.Email);
+
+            if (userExistsByName != null || userExistsByEmail != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("User already exists!"));
 
             var user = new User()
@@ -181,8 +171,6 @@ public class UserAuthController : BaseAuthorizationController<User, Guid>
     {
         try
         {
-            if (_signInManager.IsSignedIn(this.User))
-            {
                 var userFinded = await _userManager.FindByEmailAsync(this.User.FindFirst(c => c.Type == ClaimTypes.Email).Value);
 
                 var result = await _userManager.DeleteAsync(userFinded);
@@ -195,11 +183,6 @@ public class UserAuthController : BaseAuthorizationController<User, Guid>
                 {
                     return StatusCode(StatusCodes.Status400BadRequest, Result.Instance().Fail("Theres an error when trying to delete the user", data: result.Errors));
                 }
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status401Unauthorized, Result.Instance().Fail("You don't logged in !"));
-            }
         }
         catch (Exception e)
         {
@@ -242,7 +225,9 @@ public class UserAuthController : BaseAuthorizationController<User, Guid>
 
     protected override async Task<(Result<Object> result, User? entity, string jwt, DateTime expiration)> AuthorizeAccess(Credentials credentials)
     {
-        User userFinded;
+        try
+        {
+            User userFinded;
 
         if (new EmailAddressAttribute().IsValid(credentials.UserName))
         {
@@ -276,6 +261,11 @@ public class UserAuthController : BaseAuthorizationController<User, Guid>
             return (result: Result.Instance().Success("Login successful !"), entity: userFinded, jwt: new JwtSecurityTokenHandler().WriteToken(token), expiration: token.ValidTo);
         }
         return (result: Result.Instance().Fail("Login failed !"), entity: null, jwt: String.Empty, expiration: DateTime.Now);
+        }
+        catch (Exception e)
+        {
+            return (Result.Instance().Fail("There is an error on the authorize validation",e),null,String.Empty,DateTime.Now);
+        }
     }
 
     protected override Task<(Result<Object> result, User? entity)> ChangePassword(string email, string newPassword, string actualPassword = null, string resetToken = null)

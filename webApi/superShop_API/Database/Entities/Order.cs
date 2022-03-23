@@ -50,7 +50,7 @@ public class Order : BaseEntity<Guid>, ISeeder<Order, Guid, OrderSeedParams>
     public User? User { get; set; }
 
     [NotMapped]
-    public List<Product> Products { get; set; }
+    public List<Product>? Products { get; set; }
 
     public ICollection<ProductOrder>? ProductOrders { get; set; }
 
