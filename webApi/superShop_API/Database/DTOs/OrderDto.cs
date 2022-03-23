@@ -11,6 +11,7 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
 
     public OrderDto(Order entity) : base(entity)
     {
+        entity.Branch.Products = null;
         BranchId = entity.BranchId;
         UserId = entity.UserId;
         Address = entity.Address;

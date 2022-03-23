@@ -6,16 +6,20 @@ using superShop_API.Database.DTOs;
 using superShop_API.Database.Entities;
 using superShop_API.Database.Services;
 using superShop_API.Database.Services.Constructor;
+using superShop_API.Shared;
 
 namespace superShop_API.Controllers;
 
 [AllowAnonymous]
+[EnableCors]
 //[Authorize(Roles = Roles.Admin)]
 public class BranchController : BaseController<BranchService, BranchDto, Branch, Guid, BranchSeedParams>
 {
     public BranchController(IServiceConstructor _constructor) : base(_constructor)
     {
     }
+
+    //public async override Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] string Id) => await Service.DeleteAsync(Guid.Parse(Id));
 
     [HttpGet]
     [Authorize(Roles = Roles.User)]

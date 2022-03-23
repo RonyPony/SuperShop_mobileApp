@@ -17,6 +17,8 @@ public class OrderController : BaseController<OrderService, OrderDto, Order, Gui
     {
     }
 
+    //public async override Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] string Id) => await Service.DeleteAsync(Guid.Parse(Id));
+
 
     [HttpPost]
     [Route("new", Name = "PostSaveNewOrder")]
