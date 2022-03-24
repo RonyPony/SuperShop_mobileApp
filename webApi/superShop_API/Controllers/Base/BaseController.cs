@@ -40,7 +40,17 @@ public abstract class BaseController<TService, TView, TEntity, TKey> : Controlle
     /// <returns>Lista de las vistas de los modelos resultantes</returns>
     [HttpGet]
     [Route("All", Name = "GetAll[controller]")]
-    public virtual async Task<ActionResult<IList<TView>>> GetAllAsync() => (await Service.GetAllAsync()).ConvertAll(m => (TView)Activator.CreateInstance(typeof(TView), m));
+    public virtual async Task<ActionResult<IList<TView>>> GetAllAsync()
+    {
+        try
+        {
+            return (await Service.GetAllAsync()).ConvertAll(m => (TView)Activator.CreateInstance(typeof(TView), m));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
+    }
 
     /// <summary>
     /// Obtiene los detalles de una entidad de modelo en base a su identificador en base de datos
@@ -49,7 +59,17 @@ public abstract class BaseController<TService, TView, TEntity, TKey> : Controlle
     /// <returns>Vista de la entidad de modelo resultante</returns>
     [HttpGet]
     [Route("{Id}", Name = "Get[controller]ByID")]
-    public virtual async Task<ActionResult<TView>> GetByIDAsync([FromRoute] TKey Id) => (TView)Activator.CreateInstance(typeof(TView), await Service.GetByIDAsync(Id));
+    public virtual async Task<ActionResult<TView>> GetByIDAsync([FromRoute] TKey Id)
+    {
+        try
+        {
+            return (TView)Activator.CreateInstance(typeof(TView), await Service.GetByIDAsync(Id));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
+    }
 
     /// <summary>
     /// Actualiza una entidad de modelo o en su defecto crea el mismo en el sistema
@@ -119,8 +139,17 @@ public abstract class BaseController<TService, TView, TEntity, TKey> : Controlle
     /// <returns>Resultado de la operacion de eliminacion de datos</returns>
     [HttpDelete]
     [Route("remove/{Id}", Name = "Delete[controller]")]
-    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] TKey Id) => await Service.DeleteAsync(Id);
-    //public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] string Id) => await Service.DeleteAsync((TKey)Activator.CreateInstance(typeof(TKey),Id));
+    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] TKey Id)
+    {
+        try
+        {
+            return await Service.DeleteAsync(Id);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
+    }
 }
 
 /// <summary>
@@ -153,7 +182,17 @@ public abstract class BaseController<TService, TView, TEntity, TKey, T> : Contro
     /// <returns>Lista de las vistas de los modelos resultantes</returns>
     [HttpGet]
     [Route("All", Name = "GetAll[controller]")]
-    public virtual async Task<ActionResult<IList<TView>>> GetAllAsync() => (await Service.GetAllAsync()).ConvertAll(m => (TView)Activator.CreateInstance(typeof(TView), m));
+    public virtual async Task<ActionResult<IList<TView>>> GetAllAsync()
+    {
+        try
+        {
+            return (await Service.GetAllAsync()).ConvertAll(m => (TView)Activator.CreateInstance(typeof(TView), m));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
+    }
 
     /// <summary>
     /// Obtiene los detalles de una entidad de modelo en base a su identificador en base de datos
@@ -162,7 +201,17 @@ public abstract class BaseController<TService, TView, TEntity, TKey, T> : Contro
     /// <returns>Vista de la entidad de modelo resultante</returns>
     [HttpGet]
     [Route("{Id}", Name = "Get[controller]ByID")]
-    public virtual async Task<ActionResult<TView>> GetByIDAsync([FromRoute(Name = "Id")] TKey id) => (TView)Activator.CreateInstance(typeof(TView), await Service.GetByIDAsync(id));
+    public virtual async Task<ActionResult<TView>> GetByIDAsync([FromRoute(Name = "Id")] TKey id)
+    {
+        try
+        {
+            return (TView)Activator.CreateInstance(typeof(TView), await Service.GetByIDAsync(id));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
+    }
 
     /// <summary>
     /// Actualiza una entidad de modelo o en su defecto crea el mismo en el sistema
@@ -173,24 +222,56 @@ public abstract class BaseController<TService, TView, TEntity, TKey, T> : Contro
     [Route("save", Name = "PostSave[controller]")]
     public async virtual Task<ActionResult<Result<Object>>> PostSaveChangesAsync([FromBody] /*JObject*/ TView view)
     {
-        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(TView).Name}' ");
-        if (view.Id.Equals(default(TKey)))
+        try
         {
-            R = await Service.CreateAsync(view.Entity);
+            var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(TView).Name}' ");
+            if (view.Id.Equals(default(TKey)))
+            {
+                R = await Service.CreateAsync(view.Entity);
+            }
+
+            if (R.IsSuccess)
+            {
+                return R;
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, R);
+            }
+
         }
-        return R;
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
     }
 
     [HttpPut]
     [Route("update", Name = "PutUpdate[controller]")]
     public virtual async Task<ActionResult<Result<Object>>> PutUpdateChangesAsync([FromBody] /*JObject*/ TView view)
     {
-        var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(TView).Name}' ");
-        if (!view.Id.Equals(default(TKey)))
+        try
         {
-            R = await Service.UpdateAsync(view.Entity);
+            var R = Result.Instance().Fail($"La vista recibida no es de tipo '{typeof(TView).Name}' ");
+            if (!view.Id.Equals(default(TKey)))
+            {
+                R = await Service.UpdateAsync(view.Entity);
+            }
+
+            if (R.IsSuccess)
+            {
+                return R;
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, R);
+            }
+
         }
-        return R;
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
     }
 
     /// <summary>
@@ -200,6 +281,15 @@ public abstract class BaseController<TService, TView, TEntity, TKey, T> : Contro
     /// <returns>Resultado de la operacion de eliminacion de datos</returns>
     [HttpDelete]
     [Route("remove/{Id}", Name = "Delete[controller]")]
-    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] TKey Id) => await Service.DeleteAsync(Id);
-    //public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] string Id) => await Service.DeleteAsync((TKey)Activator.CreateInstance(typeof(TKey),Id));
+    public async virtual Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] TKey Id)
+    {
+        try
+        {
+            return await Service.DeleteAsync(Id);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
+    }
 }
