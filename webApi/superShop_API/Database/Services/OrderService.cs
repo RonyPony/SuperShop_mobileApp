@@ -101,12 +101,12 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
                     Completed = details.Completed
                 };
 
-                productList.ForEach(p =>
+                foreach (var p in productList)
                 {
                     order.TotalWhitoutTaxes += Convert.ToDouble(p.Price);
                     order.TotalTax += Convert.ToDouble(p.Price) * 0.18;
                     order.Total += order.TotalWhitoutTaxes + order.TotalTax;
-                });
+                }
 
                 R = await this.CreateAsync(order);
 

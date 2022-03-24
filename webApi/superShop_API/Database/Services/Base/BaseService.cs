@@ -59,7 +59,7 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
             {
                 await Repository.InsertAsync(entity);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Added)
+                if (commitResult == EntityState.Detached)
                 {
                     r = Result.Instance().Success($"{typeof(TEntity).Name} inserted successfully !");
                 }
@@ -103,7 +103,7 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
             {
                 await Repository.InsertRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Added)
+                if (commitResult == EntityState.Detached)
                 {
                     r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
                 }
@@ -134,7 +134,7 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
                     {
                         await Repository.DeleteAsync(id);
                         var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                        if (commitResult == EntityState.Deleted)
+                        if (commitResult == EntityState.Unchanged)
                         {
                             r = Result.Instance().Success("entity delete successfully");
                         }
@@ -171,7 +171,7 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
                 {
                     await Repository.DeleteAsync(entity);
                     var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                    if (commitResult == EntityState.Deleted)
+                    if (commitResult == EntityState.Unchanged)
                     {
                         r = Result.Instance().Success("entity delete successfully");
                     }
@@ -211,7 +211,7 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
             {
                 await Repository.DeleteRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Deleted)
+                if (commitResult == EntityState.Unchanged)
                 {
                     r = Result.Instance().Success("entity delete successfully");
                 }
@@ -407,7 +407,7 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
             {
                 await Repository.InsertRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Added)
+                if (commitResult == EntityState.Detached)
                 {
                     r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
                 }
@@ -438,7 +438,7 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
                     {
                         await Repository.DeleteAsync(id);
                         var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                        if (commitResult == EntityState.Deleted)
+                        if (commitResult == EntityState.Unchanged)
                         {
                             r = Result.Instance().Success("entity delete successfully");
                         }
@@ -475,7 +475,7 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
                 {
                     await Repository.DeleteAsync(entity);
                     var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                    if (commitResult == EntityState.Deleted)
+                    if (commitResult == EntityState.Unchanged)
                     {
                         r = Result.Instance().Success("entity delete successfully");
                     }
@@ -515,7 +515,7 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
             {
                 await Repository.DeleteRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Deleted)
+                if (commitResult == EntityState.Unchanged)
                 {
                     r = Result.Instance().Success("entity delete successfully");
                 }
@@ -694,7 +694,7 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
             {
                 await Repository.InsertAsync(entity);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Added)
+                if (commitResult == EntityState.Detached)
                 {
                     r = Result.Instance().Success($"{typeof(TEntity).Name} inserted successfully !");
                 }
@@ -738,7 +738,7 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
             {
                 await Repository.InsertRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Added)
+                if (commitResult == EntityState.Detached)
                 {
                     r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
                 }
@@ -769,7 +769,7 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
                     {
                         await Repository.DeleteAsync(id);
                         var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                        if (commitResult == EntityState.Deleted)
+                        if (commitResult == EntityState.Unchanged)
                         {
                             r = Result.Instance().Success("entity delete successfully");
                         }
@@ -806,7 +806,7 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
                 {
                     await Repository.DeleteAsync(entity);
                     var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                    if (commitResult == EntityState.Deleted)
+                    if (commitResult == EntityState.Unchanged)
                     {
                         r = Result.Instance().Success("entity delete successfully");
                     }
@@ -846,7 +846,7 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
             {
                 await Repository.DeleteRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Deleted)
+                if (commitResult == EntityState.Unchanged)
                 {
                     r = Result.Instance().Success("entity delete successfully");
                 }
@@ -1006,7 +1006,7 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
             {
                 await Repository.InsertAsync(entity);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Added)
+                if (commitResult == EntityState.Detached)
                 {
                     r = Result.Instance().Success($"{typeof(TEntity).Name} inserted successfully !");
                 }
@@ -1050,7 +1050,7 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
             {
                 await Repository.InsertRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Added)
+                if (commitResult == EntityState.Detached)
                 {
                     r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
                 }
@@ -1081,7 +1081,7 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
                     {
                         await Repository.DeleteAsync(id);
                         var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                        if (commitResult == EntityState.Deleted)
+                        if (commitResult == EntityState.Unchanged)
                         {
                             r = Result.Instance().Success("entity delete successfully");
                         }
@@ -1118,7 +1118,7 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
                 {
                     await Repository.DeleteAsync(entity);
                     var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                    if (commitResult == EntityState.Deleted)
+                    if (commitResult == EntityState.Unchanged)
                     {
                         r = Result.Instance().Success("entity delete successfully");
                     }
@@ -1158,7 +1158,7 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
             {
                 await Repository.DeleteRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Deleted)
+                if (commitResult == EntityState.Unchanged)
                 {
                     r = Result.Instance().Success("entity delete successfully");
                 }
