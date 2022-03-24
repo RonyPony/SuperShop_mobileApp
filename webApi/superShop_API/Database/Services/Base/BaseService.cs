@@ -212,14 +212,15 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
             {
                 await Repository.DeleteRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Detached)
-                {
-                    r = Result.Instance().Success("entity delete successfully");
-                }
-                else
-                {
-                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
-                }
+                r = Result.Instance().Success("entity delete successfully");
+                // if (commitResult == EntityState.Detached)
+                // {
+                //     r = Result.Instance().Success("entity delete successfully");
+                // }
+                // else
+                // {
+                //     r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                // }
             }
             else
             {
