@@ -39,6 +39,16 @@ public class UserDto : BaseDto<User, Guid>
     public DateTime UpdatedAt { get; set; }
     protected override User MakeEntity()
     {
-        throw new NotImplementedException();
+        return new User
+        {
+            Name = Name,
+            LastName = LastName,
+            Email = Email,
+            UserName = UserName,
+            LockoutEnabled = LockoutEnabled,
+            RegistrationDate = RegistrationDate,
+            CreatedAt = CreatedAt,
+            UpdatedAt = UpdatedAt
+        };
     }
 }
