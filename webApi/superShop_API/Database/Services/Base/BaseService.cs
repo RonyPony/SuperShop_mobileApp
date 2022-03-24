@@ -103,14 +103,15 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
             {
                 await Repository.InsertRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Detached)
-                {
-                    r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
-                }
-                else
-                {
-                    r = Result.Instance().Fail($"The requested entitty list '{typeof(TEntity).Name}' cannot be created !");
-                }
+                r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
+                // if (commitResult == EntityState.Unchanged)
+                // {
+                //     r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
+                // }
+                // else
+                // {
+                //     r = Result.Instance().Fail($"The requested entitty list '{typeof(TEntity).Name}' cannot be created !");
+                // }
             }
             return r;
         }
@@ -211,7 +212,7 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
             {
                 await Repository.DeleteRangeAsync(entities);
                 var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                if (commitResult == EntityState.Unchanged)
+                if (commitResult == EntityState.Detached)
                 {
                     r = Result.Instance().Success("entity delete successfully");
                 }
@@ -769,7 +770,7 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
                     {
                         await Repository.DeleteAsync(id);
                         var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
-                        if (commitResult == EntityState.Unchanged)
+                        if (commitResult == EntityState.Detached)
                         {
                             r = Result.Instance().Success("entity delete successfully");
                         }
