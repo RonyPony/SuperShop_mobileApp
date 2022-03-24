@@ -236,6 +236,7 @@ class ProductService implements ProductServiceContract {
         'completed': true,
         'productIds': productsId
       };
+      // client.options.baseUrl="https://5000-ronypony-supershopmobile-ao0i4py39kx.ws-us38.gitpod.io/api/";
       final response = await client.post("/Order/new", data: queryParam);
 
       if (response.statusCode < 400) {

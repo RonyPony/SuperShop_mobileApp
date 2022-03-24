@@ -25,7 +25,7 @@ class Mall {
         : null;
     imageUrl = json['imageUrl'];
     if (json['branches'] != null) {
-      branches = <Null>[];
+      branches = <Branch>[];
       json['branches'].forEach((v) {
         branches.add(new Branch.fromJson(v));
       });
@@ -53,8 +53,8 @@ class Mall {
 }
 
 class Coordinates {
-  int lat;
-  int long;
+  double lat;
+  double long;
 
   Coordinates({this.lat, this.long});
 

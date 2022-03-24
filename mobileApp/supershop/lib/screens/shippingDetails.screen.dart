@@ -57,7 +57,9 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
               child: Icon(Icons.arrow_back_ios))
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
+        // controller: controller,
+        child: Padding(
         padding: EdgeInsets.only(
             top: screenSize.height * 0.08,
             left: screenSize.width * 0.05,
@@ -239,6 +241,7 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
             _payButton(),
           ],
         ),
+      ),
       ),
     );
   }
