@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using superShop_API.Database.Entities.Base;
 using superShop_API.Database.Seeders;
 

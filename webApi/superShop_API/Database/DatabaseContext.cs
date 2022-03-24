@@ -24,6 +24,7 @@ public class DatabaseContext : IdentityDbContext<User, Role, Guid>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<Mall>().Property(m => m.Coordinates).HasConversion(new CoordinatesCorverter());
+        builder.Entity<Mall>().Navigation(m => m.Branches).AutoInclude();
 
         builder.Entity<Branch>().HasOne(b => b.Mall).WithMany(m => m.Branches).HasForeignKey(b => b.MallId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<Branch>().HasOne(b => b.Category).WithMany(c => c.Branches).HasForeignKey(b => b.CategoryId).OnDelete(DeleteBehavior.Restrict);
@@ -37,7 +38,6 @@ public class DatabaseContext : IdentityDbContext<User, Role, Guid>
 
         builder.Entity<Product>().HasOne(p => p.Branch).WithMany(b => b.Products).HasForeignKey(p => p.BranchId).OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<ProductOrder>().HasKey(po => new { po.OrderId, po.ProductId });
         builder.Entity<ProductOrder>().HasOne<Order>(po => po.Order).WithMany(o => o.ProductOrders).HasForeignKey(po => po.OrderId).OnDelete(DeleteBehavior.ClientCascade);
         builder.Entity<ProductOrder>().HasOne<Product>(po => po.Product).WithMany(p => p.ProductOrders).HasForeignKey(po => po.ProductId).OnDelete(DeleteBehavior.Restrict);
         base.OnModelCreating(builder);

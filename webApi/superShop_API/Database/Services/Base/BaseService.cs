@@ -54,17 +54,25 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
     {
         try
         {
-            var result = await ValidateOnCreateAsync(entity);
-            if (result.IsSuccess)
+            var r = await ValidateOnCreateAsync(entity);
+            if (r.IsSuccess)
             {
                 await Repository.InsertAsync(entity);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success($"{typeof(TEntity).Name} inserted successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Detached)
+                {
+                    r = Result.Instance().Success($"{typeof(TEntity).Name} inserted successfully !");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be created !");
+                }
             }
             else
             {
-                return Result.Instance().Fail($"Fail on creating the new {typeof(TEntity).Name}", result);
+                r = Result.Instance().Fail($"Fail on creating the new {typeof(TEntity).Name}", r);
             }
+            return r;
         }
         catch (Exception ex)
         {
@@ -74,6 +82,7 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
 
     public virtual async Task<Result<Object>> CreateRangeAsync(IEnumerable<TEntity> entities)
     {
+        var r = Result.Instance();
         var errorList = new List<Result<Object>>();
         try
         {
@@ -93,9 +102,18 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
             else
             {
                 await Repository.InsertRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("models save successfully");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
+                // if (commitResult == EntityState.Unchanged)
+                // {
+                //     r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
+                // }
+                // else
+                // {
+                //     r = Result.Instance().Fail($"The requested entitty list '{typeof(TEntity).Name}' cannot be created !");
+                // }
             }
+            return r;
         }
         catch (Exception ex)
         {
@@ -113,16 +131,25 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
             {
                 var result = await ValidateOnDeleteAsync(entity);
                 if (result.IsSuccess)
-                {
-                    await Repository.DeleteAsync(id);
-                    await Repository.CommitChangesAsync();
-                    r = Result.Instance().Success("entity delete successfully");
-                }
-                else
-                {
-                    r = Result.Instance().Fail("This entity cannot be deleted", result);
+                    if (result.IsSuccess)
+                    {
+                        await Repository.DeleteAsync(id);
+                        var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                        if (commitResult == EntityState.Unchanged)
+                        {
+                            r = Result.Instance().Success("entity delete successfully");
+                        }
+                        else
+                        {
+                            r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                        }
 
-                }
+                    }
+                    else
+                    {
+                        r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", result);
+
+                    }
             }
             return r;
         }
@@ -136,17 +163,31 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
     {
         try
         {
-            var result = await ValidateOnDeleteAsync(entity);
-            if (result.IsSuccess)
+            var r = Result.Instance();
+            var ent = await Repository.GetByIDAsync(entity.Id);
+            if (ent != null)
             {
-                await Repository.DeleteAsync(entity);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("entity delete successfully");
+                r = await ValidateOnDeleteAsync(entity);
+                if (r.IsSuccess)
+                {
+                    await Repository.DeleteAsync(entity);
+                    var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                    if (commitResult == EntityState.Unchanged)
+                    {
+                        r = Result.Instance().Success("entity delete successfully");
+                    }
+                    else
+                    {
+                        r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                    }
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", r);
+
+                }
             }
-            else
-            {
-                return Result.Instance().Fail("This entity cannot be deleted", result);
-            }
+            return r;
         }
         catch (Exception ex)
         {
@@ -158,25 +199,34 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
     {
         try
         {
-            var result = Result.Instance();
+            var r = Result.Instance();
             foreach (var entity in entities)
             {
-                result = await ValidateOnDeleteAsync(entity);
-                if (!result.IsSuccess)
+                r = await ValidateOnDeleteAsync(entity);
+                if (!r.IsSuccess)
                 {
                     break;
                 }
             }
-            if (result.IsSuccess)
+            if (r.IsSuccess)
             {
                 await Repository.DeleteRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("Entittes deleted successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                r = Result.Instance().Success("entity delete successfully");
+                // if (commitResult == EntityState.Detached)
+                // {
+                //     r = Result.Instance().Success("entity delete successfully");
+                // }
+                // else
+                // {
+                //     r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                // }
             }
             else
             {
-                return Result.Instance().Fail("This entity list cannot be deleted", result);
+                r = Result.Instance().Fail("This entity list cannot be deleted", r);
             }
+            return r;
         }
         catch (Exception ex)
         {
@@ -189,22 +239,29 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
         try
         {
             var r = Result.Instance();
-            var result = await ValidateOnUpdateAsync(entity);
-            if (result.IsSuccess)
+            r = await ValidateOnUpdateAsync(entity);
+            if (r.IsSuccess)
             {
                 await Repository.UpdateAsync(entity);
-                await Repository.CommitChangesAsync();
-                r = Result.Instance().Success($"{entity.GetType().Name} entity update successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Modified)
+                {
+                    r = Result.Instance().Success("entity updated successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be updated !");
+                }
             }
             else
             {
-                r = Result.Instance().Fail($"", result);
+                r = Result.Instance().Fail($"There is an error while validate the requested entitty", r);
             }
             return r;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail("These an error when trying to update the requested entity", e);
         }
     }
 
@@ -212,30 +269,37 @@ public abstract class BaseService<TEntity, TKey> : IBaseService<TEntity, TKey> w
     {
         try
         {
-            var result = Result.Instance();
+            var r = Result.Instance();
             foreach (var entity in entities)
             {
-                result = await ValidateOnUpdateAsync(entity);
-                if (!result.IsSuccess)
+                r = await ValidateOnUpdateAsync(entity);
+                if (!r.IsSuccess)
                 {
                     break;
                 }
             }
-            if (!result.IsSuccess)
+            if (!r.IsSuccess)
             {
-                result = Result.Instance().Fail($"error when try to eliminate {typeof(TEntity).Name} entity list", result);
+                r = Result.Instance().Fail($"error when try to eliminate {typeof(TEntity).Name} entity list", r);
             }
             else
             {
                 await Repository.UpdateRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                result = Result.Instance().Success($"list of {typeof(TEntity).Name} entities update succefully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Modified)
+                {
+                    r = Result.Instance().Success("entity list updated successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty list '{typeof(TEntity).Name}' cannot be updated !");
+                }
             }
-            return result;
+            return r;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail($"error when try to update the list of {typeof(TEntity)} entities in database", ex);
+            return Result.Instance().Fail($"error when try to update the list of {typeof(TEntity)} entities in database", e);
         }
     }
 
@@ -324,31 +388,41 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
 
     public virtual async Task<Result<Object>> CreateRangeAsync(IEnumerable<TEntity> entities)
     {
-        var errorFounds = 0;
+        var r = Result.Instance();
+        var errorList = new List<Result<Object>>();
         try
         {
             foreach (var model in entities)
             {
-                if ((await ValidateOnCreateAsync(model)).IsSuccess)
+                var result = await ValidateOnCreateAsync(model);
+                if (!result.IsSuccess)
                 {
-                    errorFounds++;
+                    errorList.Add(result);
                 }
             }
 
-            if (errorFounds > 0)
+            if (errorList.Count > 0)
             {
-                return Result.Instance().Fail($"Error in data for insert: {errorFounds}");
+                return Result.Instance().Fail($"Error in data for insert: {errorList.Count}", errorList);
             }
             else
             {
                 await Repository.InsertRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("models save successfully");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Detached)
+                {
+                    r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty list '{typeof(TEntity).Name}' cannot be created !");
+                }
             }
+            return r;
         }
         catch (Exception ex)
         {
-            return Result.Instance().Fail("Error creating entities in DB", exception: ex);
+            return Result.Instance().Fail("Error creating entities in DB", ex);
         }
     }
 
@@ -362,22 +436,25 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
             {
                 var result = await ValidateOnDeleteAsync(entity);
                 if (result.IsSuccess)
-                if (result.IsSuccess)
-                {
-                    await Repository.DeleteAsync(id);
-                   var commitResult = (EntityState)Enum.ToObject(typeof(EntityState),(await Repository.CommitChangesAsync()));
-                   if(commitResult == EntityState.Deleted){
-                       r = Result.Instance().Success("entity delete successfully");
-                   } else {
-                       r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
-                   }
-                    
-                }
-                else
-                {
-                    r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", result);
+                    if (result.IsSuccess)
+                    {
+                        await Repository.DeleteAsync(id);
+                        var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                        if (commitResult == EntityState.Unchanged)
+                        {
+                            r = Result.Instance().Success("entity delete successfully");
+                        }
+                        else
+                        {
+                            r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                        }
 
-                }
+                    }
+                    else
+                    {
+                        r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", result);
+
+                    }
             }
             return r;
         }
@@ -391,17 +468,31 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
     {
         try
         {
-            var result = await ValidateOnDeleteAsync(entity);
-            if (result.IsSuccess)
+            var r = Result.Instance();
+            var ent = await Repository.GetByIDAsync(entity.Id);
+            if (ent != null)
             {
-                await Repository.DeleteAsync(entity);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("entity delete successfully");
+                r = await ValidateOnDeleteAsync(entity);
+                if (r.IsSuccess)
+                {
+                    await Repository.DeleteAsync(entity);
+                    var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                    if (commitResult == EntityState.Unchanged)
+                    {
+                        r = Result.Instance().Success("entity delete successfully");
+                    }
+                    else
+                    {
+                        r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                    }
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", r);
+
+                }
             }
-            else
-            {
-                return Result.Instance().Fail("", result);
-            }
+            return r;
         }
         catch (Exception ex)
         {
@@ -413,25 +504,33 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
     {
         try
         {
-            var result = Result.Instance();
+            var r = Result.Instance();
             foreach (var entity in entities)
             {
-                result = await ValidateOnDeleteAsync(entity);
-                if (!result.IsSuccess)
+                r = await ValidateOnDeleteAsync(entity);
+                if (!r.IsSuccess)
                 {
                     break;
                 }
             }
-            if (result.IsSuccess)
+            if (r.IsSuccess)
             {
                 await Repository.DeleteRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("Entittes deleted successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Unchanged)
+                {
+                    r = Result.Instance().Success("entity delete successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                }
             }
             else
             {
-                return Result.Instance().Fail("", result);
+                r = Result.Instance().Fail("This entity list cannot be deleted", r);
             }
+            return r;
         }
         catch (Exception ex)
         {
@@ -444,22 +543,29 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
         try
         {
             var r = Result.Instance();
-            var result = await ValidateOnUpdateAsync(entity);
-            if (result.IsSuccess)
+            r = await ValidateOnUpdateAsync(entity);
+            if (r.IsSuccess)
             {
                 await Repository.UpdateAsync(entity);
-                await Repository.CommitChangesAsync();
-                r = Result.Instance().Success($"{entity.GetType().Name} entity update successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Modified)
+                {
+                    r = Result.Instance().Success("entity updated successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be updated !");
+                }
             }
             else
             {
-                r = Result.Instance().Fail($"", result);
+                r = Result.Instance().Fail($"There is an error while validate the requested entitty", r);
             }
             return r;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail("These an error when trying to update the requested entity", e);
         }
     }
 
@@ -467,30 +573,37 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey> : IBaseServi
     {
         try
         {
-            var result = Result.Instance();
+            var r = Result.Instance();
             foreach (var entity in entities)
             {
-                result = await ValidateOnUpdateAsync(entity);
-                if (!result.IsSuccess)
+                r = await ValidateOnUpdateAsync(entity);
+                if (!r.IsSuccess)
                 {
                     break;
                 }
             }
-            if (!result.IsSuccess)
+            if (!r.IsSuccess)
             {
-                result = Result.Instance().Fail($"error when try to eliminate {typeof(TEntity).Name} entity list", result);
+                r = Result.Instance().Fail($"error when try to eliminate {typeof(TEntity).Name} entity list", r);
             }
             else
             {
                 await Repository.UpdateRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                result = Result.Instance().Success($"list of {typeof(TEntity).Name} entities update succefully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Modified)
+                {
+                    r = Result.Instance().Success("entity list updated successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty list '{typeof(TEntity).Name}' cannot be updated !");
+                }
             }
-            return result;
+            return r;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail("There's an error when trying to update the requested range", ex);
+            return Result.Instance().Fail($"error when try to update the list of {typeof(TEntity)} entities in database", e);
         }
 
     }
@@ -578,46 +691,65 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
     {
         try
         {
-            if ((await ValidateOnCreateAsync(entity)).IsSuccess)
+            var r = await ValidateOnCreateAsync(entity);
+            if (r.IsSuccess)
             {
                 await Repository.InsertAsync(entity);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success($"{typeof(TEntity).Name} inserted successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Detached)
+                {
+                    r = Result.Instance().Success($"{typeof(TEntity).Name} inserted successfully !");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be created !");
+                }
             }
             else
             {
-                return Result.Instance().Fail("Fail ");
+                r = Result.Instance().Fail($"Fail on creating the new {typeof(TEntity).Name}", r);
             }
+            return r;
         }
         catch (Exception ex)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail($"These occurred an error while creating the new {typeof(TEntity).Name}", ex);
         }
     }
 
     public virtual async Task<Result<Object>> CreateRangeAsync(IEnumerable<TEntity> entities)
     {
-        var errorFounds = 0;
+        var r = Result.Instance();
+        var errorList = new List<Result<Object>>();
         try
         {
             foreach (var model in entities)
             {
-                if ((await ValidateOnCreateAsync(model)).IsSuccess)
+                var result = await ValidateOnCreateAsync(model);
+                if (!result.IsSuccess)
                 {
-                    errorFounds++;
+                    errorList.Add(result);
                 }
             }
 
-            if (errorFounds > 0)
+            if (errorList.Count > 0)
             {
-                return Result.Instance().Fail($"Error in data for insert: {errorFounds}");
+                return Result.Instance().Fail($"Error in data for insert: {errorList.Count}", errorList);
             }
             else
             {
                 await Repository.InsertRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("models save successfully");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Detached)
+                {
+                    r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty list '{typeof(TEntity).Name}' cannot be created !");
+                }
             }
+            return r;
         }
         catch (Exception ex)
         {
@@ -635,21 +767,25 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
             {
                 var result = await ValidateOnDeleteAsync(entity);
                 if (result.IsSuccess)
-                {
-                    await Repository.DeleteAsync(id);
-                    var status = await Repository.CommitChangesAsync();
-                   if((EntityState)status == EntityState.Deleted){
-                       r = Result.Instance().Success("entity delete successfully");
-                   } else {
-                       r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
-                   }
-                    
-                }
-                else
-                {
-                    r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", result);
+                    if (result.IsSuccess)
+                    {
+                        await Repository.DeleteAsync(id);
+                        var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                        if (commitResult == EntityState.Detached)
+                        {
+                            r = Result.Instance().Success("entity delete successfully");
+                        }
+                        else
+                        {
+                            r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                        }
 
-                }
+                    }
+                    else
+                    {
+                        r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", result);
+
+                    }
             }
             return r;
         }
@@ -663,17 +799,31 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
     {
         try
         {
-            var result = await ValidateOnDeleteAsync(entity);
-            if (result.IsSuccess)
+            var r = Result.Instance();
+            var ent = await Repository.GetByIDAsync(entity.Id);
+            if (ent != null)
             {
-                await Repository.DeleteAsync(entity);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("entity delete successfully");
+                r = await ValidateOnDeleteAsync(entity);
+                if (r.IsSuccess)
+                {
+                    await Repository.DeleteAsync(entity);
+                    var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                    if (commitResult == EntityState.Unchanged)
+                    {
+                        r = Result.Instance().Success("entity delete successfully");
+                    }
+                    else
+                    {
+                        r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                    }
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", r);
+
+                }
             }
-            else
-            {
-                return Result.Instance().Fail("", result);
-            }
+            return r;
         }
         catch (Exception ex)
         {
@@ -685,25 +835,33 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
     {
         try
         {
-            var result = Result.Instance();
+            var r = Result.Instance();
             foreach (var entity in entities)
             {
-                result = await ValidateOnDeleteAsync(entity);
-                if (!result.IsSuccess)
+                r = await ValidateOnDeleteAsync(entity);
+                if (!r.IsSuccess)
                 {
                     break;
                 }
             }
-            if (result.IsSuccess)
+            if (r.IsSuccess)
             {
                 await Repository.DeleteRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("Entittes deleted successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Unchanged)
+                {
+                    r = Result.Instance().Success("entity delete successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                }
             }
             else
             {
-                return Result.Instance().Fail("", result);
+                r = Result.Instance().Fail("This entity list cannot be deleted", r);
             }
+            return r;
         }
         catch (Exception ex)
         {
@@ -716,22 +874,29 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
         try
         {
             var r = Result.Instance();
-            var result = await ValidateOnUpdateAsync(entity);
-            if (result.IsSuccess)
+            r = await ValidateOnUpdateAsync(entity);
+            if (r.IsSuccess)
             {
                 await Repository.UpdateAsync(entity);
-                await Repository.CommitChangesAsync();
-                r = Result.Instance().Success($"{entity.GetType().Name} entity update successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Modified)
+                {
+                    r = Result.Instance().Success("entity updated successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be updated !");
+                }
             }
             else
             {
-                r = Result.Instance().Fail($"", result);
+                r = Result.Instance().Fail($"There is an error while validate the requested entitty", r);
             }
             return r;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail("These an error when trying to update the requested entity", e);
         }
     }
 
@@ -739,30 +904,37 @@ public abstract class BaseService<TEntity, TKey, T> : IBaseService<TEntity, TKey
     {
         try
         {
-            var result = Result.Instance();
+            var r = Result.Instance();
             foreach (var entity in entities)
             {
-                result = await ValidateOnUpdateAsync(entity);
-                if (!result.IsSuccess)
+                r = await ValidateOnUpdateAsync(entity);
+                if (!r.IsSuccess)
                 {
                     break;
                 }
             }
-            if (!result.IsSuccess)
+            if (!r.IsSuccess)
             {
-                result = Result.Instance().Fail($"error when try to eliminate {typeof(TEntity).Name} entity list", result);
+                r = Result.Instance().Fail($"error when try to eliminate {typeof(TEntity).Name} entity list", r);
             }
             else
             {
                 await Repository.UpdateRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                result = Result.Instance().Success($"list of {typeof(TEntity).Name} entities update succefully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Modified)
+                {
+                    r = Result.Instance().Success("entity list updated successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty list '{typeof(TEntity).Name}' cannot be updated !");
+                }
             }
-            return result;
+            return r;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail($"error when try to update the list of {typeof(TEntity)} entities in database", ex);
+            return Result.Instance().Fail($"error when try to update the list of {typeof(TEntity)} entities in database", e);
         }
     }
 
@@ -831,46 +1003,65 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
     {
         try
         {
-            if ((await ValidateOnCreateAsync(entity)).IsSuccess)
+            var r = await ValidateOnCreateAsync(entity);
+            if (r.IsSuccess)
             {
                 await Repository.InsertAsync(entity);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success($"{typeof(TEntity).Name} inserted successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Detached)
+                {
+                    r = Result.Instance().Success($"{typeof(TEntity).Name} inserted successfully !");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be created !");
+                }
             }
             else
             {
-                return Result.Instance().Fail("Fail ");
+                r = Result.Instance().Fail($"Fail on creating the new {typeof(TEntity).Name}", r);
             }
+            return r;
         }
         catch (Exception ex)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail($"These occurred an error while creating the new {typeof(TEntity).Name}", ex);
         }
     }
 
     public virtual async Task<Result<Object>> CreateRangeAsync(IEnumerable<TEntity> entities)
     {
-        var errorFounds = 0;
+        var r = Result.Instance();
+        var errorList = new List<Result<Object>>();
         try
         {
             foreach (var model in entities)
             {
-                if ((await ValidateOnCreateAsync(model)).IsSuccess)
+                var result = await ValidateOnCreateAsync(model);
+                if (!result.IsSuccess)
                 {
-                    errorFounds++;
+                    errorList.Add(result);
                 }
             }
 
-            if (errorFounds > 0)
+            if (errorList.Count > 0)
             {
-                return Result.Instance().Fail($"Error in data for insert: {errorFounds}");
+                return Result.Instance().Fail($"Error in data for insert: {errorList.Count}", errorList);
             }
             else
             {
                 await Repository.InsertRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("models save successfully");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Detached)
+                {
+                    r = Result.Instance().Success($"{typeof(TEntity).Name}s models inserted successfully !");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty list '{typeof(TEntity).Name}' cannot be created !");
+                }
             }
+            return r;
         }
         catch (Exception ex)
         {
@@ -888,16 +1079,25 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
             {
                 var result = await ValidateOnDeleteAsync(entity);
                 if (result.IsSuccess)
-                {
-                    await Repository.DeleteAsync(id);
-                    await Repository.CommitChangesAsync();
-                    r = Result.Instance().Success("entity delete successfully");
-                }
-                else
-                {
-                    r = Result.Instance().Fail("", result);
+                    if (result.IsSuccess)
+                    {
+                        await Repository.DeleteAsync(id);
+                        var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                        if (commitResult == EntityState.Unchanged)
+                        {
+                            r = Result.Instance().Success("entity delete successfully");
+                        }
+                        else
+                        {
+                            r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                        }
 
-                }
+                    }
+                    else
+                    {
+                        r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", result);
+
+                    }
             }
             return r;
         }
@@ -911,17 +1111,31 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
     {
         try
         {
-            var result = await ValidateOnDeleteAsync(entity);
-            if (result.IsSuccess)
+            var r = Result.Instance();
+            var ent = await Repository.GetByIDAsync(entity.Id);
+            if (ent != null)
             {
-                await Repository.DeleteAsync(entity);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("entity delete successfully");
+                r = await ValidateOnDeleteAsync(entity);
+                if (r.IsSuccess)
+                {
+                    await Repository.DeleteAsync(entity);
+                    var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                    if (commitResult == EntityState.Unchanged)
+                    {
+                        r = Result.Instance().Success("entity delete successfully");
+                    }
+                    else
+                    {
+                        r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                    }
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"These an error while validating this entity ({typeof(TEntity).Name}) for delete !", r);
+
+                }
             }
-            else
-            {
-                return Result.Instance().Fail("", result);
-            }
+            return r;
         }
         catch (Exception ex)
         {
@@ -933,25 +1147,33 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
     {
         try
         {
-            var result = Result.Instance();
+            var r = Result.Instance();
             foreach (var entity in entities)
             {
-                result = await ValidateOnDeleteAsync(entity);
-                if (!result.IsSuccess)
+                r = await ValidateOnDeleteAsync(entity);
+                if (!r.IsSuccess)
                 {
                     break;
                 }
             }
-            if (result.IsSuccess)
+            if (r.IsSuccess)
             {
                 await Repository.DeleteRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                return Result.Instance().Success("Entittes deleted successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Unchanged)
+                {
+                    r = Result.Instance().Success("entity delete successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be deleted");
+                }
             }
             else
             {
-                return Result.Instance().Fail("", result);
+                r = Result.Instance().Fail("This entity list cannot be deleted", r);
             }
+            return r;
         }
         catch (Exception ex)
         {
@@ -964,22 +1186,29 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
         try
         {
             var r = Result.Instance();
-            var result = await ValidateOnUpdateAsync(entity);
-            if (result.IsSuccess)
+            r = await ValidateOnUpdateAsync(entity);
+            if (r.IsSuccess)
             {
                 await Repository.UpdateAsync(entity);
-                await Repository.CommitChangesAsync();
-                r = Result.Instance().Success($"{entity.GetType().Name} entity update successfully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Modified)
+                {
+                    r = Result.Instance().Success("entity updated successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty '{typeof(TEntity).Name}' cannot be updated !");
+                }
             }
             else
             {
-                r = Result.Instance().Fail($"", result);
+                r = Result.Instance().Fail($"There is an error while validate the requested entitty", r);
             }
             return r;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail("", ex);
+            return Result.Instance().Fail("These an error when trying to update the requested entity", e);
         }
     }
 
@@ -987,30 +1216,37 @@ public abstract class BaseCustonService<TRepository, TEntity, TKey, T> : IBaseSe
     {
         try
         {
-            var result = Result.Instance();
+            var r = Result.Instance();
             foreach (var entity in entities)
             {
-                result = await ValidateOnUpdateAsync(entity);
-                if (!result.IsSuccess)
+                r = await ValidateOnUpdateAsync(entity);
+                if (!r.IsSuccess)
                 {
                     break;
                 }
             }
-            if (!result.IsSuccess)
+            if (!r.IsSuccess)
             {
-                result = Result.Instance().Fail($"error when try to eliminate {typeof(TEntity).Name} entity list", result);
+                r = Result.Instance().Fail($"error when try to eliminate {typeof(TEntity).Name} entity list", r);
             }
             else
             {
                 await Repository.UpdateRangeAsync(entities);
-                await Repository.CommitChangesAsync();
-                result = Result.Instance().Success($"list of {typeof(TEntity).Name} entities update succefully !");
+                var commitResult = (EntityState)Enum.ToObject(typeof(EntityState), (await Repository.CommitChangesAsync()));
+                if (commitResult == EntityState.Modified)
+                {
+                    r = Result.Instance().Success("entity list updated successfully");
+                }
+                else
+                {
+                    r = Result.Instance().Fail($"The requested entitty list '{typeof(TEntity).Name}' cannot be updated !");
+                }
             }
-            return result;
+            return r;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return Result.Instance().Fail("There's an error when trying to update the requested range", ex);
+            return Result.Instance().Fail($"error when try to update the list of {typeof(TEntity)} entities in database", e);
         }
 
     }

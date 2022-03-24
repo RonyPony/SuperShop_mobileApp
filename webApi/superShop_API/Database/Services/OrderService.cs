@@ -101,18 +101,21 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
                     Completed = details.Completed
                 };
 
-                productList.ForEach(p =>
+                foreach (var p in productList)
                 {
-                    order.TotalWhitoutTaxes += Convert.ToDouble(p.Price);
-                    order.TotalTax += Convert.ToDouble(p.Price) * 0.18;
-                    order.Total += order.TotalWhitoutTaxes + order.TotalTax;
-                });
+                    var TotalWhitoutTaxes = Convert.ToDouble(p.Price);
+                    var TotalTax = Convert.ToDouble(TotalWhitoutTaxes * 0.18);
+
+                    order.TotalWhitoutTaxes = TotalWhitoutTaxes + order.TotalWhitoutTaxes;
+                    order.TotalTax = TotalTax + order.TotalTax;
+                    order.Total = TotalWhitoutTaxes + TotalTax + order.Total;
+                }
 
                 R = await this.CreateAsync(order);
 
                 if (R.IsSuccess)
                 {
-                    var poR = await this.poService.CreateRangeAsync(productList.ConvertAll(p => new ProductOrder { ProductId = p.Id, OrderId = order.Id, Id = Guid.NewGuid() }));
+                    var poR = await this.poService.CreateRangeAsync(productList.ConvertAll(p => new ProductOrder { ProductId = p.Id, OrderId = order.Id }));
 
                     if (!poR.IsSuccess)
                     {
@@ -134,6 +137,21 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
         catch (Exception e)
         {
             return Result.Instance().Fail("These have an error while saving the new requested order", e);
+        }
+    }
+
+    public override async Task<Result<Object>> DeleteAsync(Guid id){
+        try
+        {
+           var r = await poService.DeleteRangeAsync(await poService.GetByOrderId(id));
+           if(r.IsSuccess){
+               r = await base.DeleteAsync(id);
+           }
+           return r;
+        }
+        catch (Exception e)
+        {
+            return Result.Instance().Fail("Error deleting this entity from DB", e);
         }
     }
 }
