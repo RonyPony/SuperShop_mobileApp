@@ -1,5 +1,6 @@
 using superShop_API.Database.DTOs.Base;
 using superShop_API.Database.Entities;
+using superShop_API.Shared;
 
 namespace superShop_API.Database.DTOs;
 
@@ -18,6 +19,7 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
         Total = entity.Total;
         Completed = entity.Completed;
         Branch = entity.Branch != null ? new BranchDto(entity.Branch) : new BranchDto();
+        TranssactionDetails = entity.TranssactionDetails;
         Products = entity.Products != null ? entity.Products.ToList().ConvertAll(po => new ProductDto(po)) : new List<ProductDto>();
     }
 
@@ -37,6 +39,8 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
 
     public BranchDto Branch { get; set; }
 
+    public DataObject TranssactionDetails { get; set; }
+
     public IList<ProductDto>? Products { get; set; }
     protected override Order MakeEntity()
     {
@@ -48,7 +52,8 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
             TotalTax = TotalTax,
             TotalWhitoutTaxes = TotalWhitoutTaxes,
             Total = Total,
-            Completed = Completed
+            Completed = Completed,
+            TranssactionDetails = TranssactionDetails
         };
     }
 }
@@ -60,6 +65,8 @@ public class NewOrderDto : BaseDto<Order, Guid, OrderSeedParams>
     public string Address { get; set; }
     public bool Completed { get; set; }
     public Guid[] ProductIds { get; set; }
+
+    public DataObject TranssactionDetails { get; set; }
 
     public NewOrderDto()
     {
@@ -73,7 +80,8 @@ public class NewOrderDto : BaseDto<Order, Guid, OrderSeedParams>
             BranchId = BranchId,
             UserId = UserId,
             Address = Address,
-            Completed = Completed
+            Completed = Completed,
+            TranssactionDetails = TranssactionDetails
         };
     }
 }

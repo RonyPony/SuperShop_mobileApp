@@ -8,10 +8,10 @@ tasks:
   - name: Postinstall .NET 6.0 and dev certificates
     command: |
       mkdir -p /tmp/dotnet && curl -fsSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 6.0 --install-dir /tmp/dotnet
-      dotnet tool install --global dotnet-ef
-      export PATH="$PATH:/home/gitpod/.dotnet/tools" 
+      dotnet tool install --global dotnet-ef 
       dotnet dev-certs https 
       dotnet restore
+      export PATH="$PATH:/home/gitpod/.dotnet/tools"
   # - name: Postinstall of flutter and android SDK 
   #   command: |
   #     mkdir -p /home/gitpod/.android

@@ -4,6 +4,7 @@ using Bogus;
 using superShop_API.Database.Entities.Auth;
 using superShop_API.Database.Entities.Base;
 using superShop_API.Database.Seeders;
+using superShop_API.Shared;
 
 namespace superShop_API.Database.Entities;
 
@@ -48,6 +49,9 @@ public class Order : BaseEntity<Guid>, ISeeder<Order, Guid, OrderSeedParams>
 
     [ForeignKey("userId")]
     public User? User { get; set; }
+
+    [Column("transactionDetails")]
+    public DataObject TranssactionDetails { get; set; }
 
     [NotMapped]
     public List<Product>? Products { get; set; }

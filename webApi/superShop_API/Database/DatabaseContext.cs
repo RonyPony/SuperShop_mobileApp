@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using superShop_API.Database.Entities;
 using superShop_API.Database.Entities.Auth;
 using superShop_API.Database.Entities.Base;
-
+using superShop_API.Shared;
 
 namespace superShop_API.Database;
 public class DatabaseContext : IdentityDbContext<User, Role, Guid>
@@ -33,6 +33,7 @@ public class DatabaseContext : IdentityDbContext<User, Role, Guid>
 
         builder.Entity<Order>().HasOne(o => o.Branch).WithMany(b => b.Orders).HasForeignKey(o => o.BranchId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<Order>().HasOne(o => o.User).WithMany(u => u.Orders).HasForeignKey(o => o.UserId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<Order>().Property(o => o.TranssactionDetails).HasDataObjectJsonConversion();
         builder.Entity<Order>().Navigation(b => b.Branch).AutoInclude();
         builder.Entity<Order>().Navigation(b => b.ProductOrders).AutoInclude();
 

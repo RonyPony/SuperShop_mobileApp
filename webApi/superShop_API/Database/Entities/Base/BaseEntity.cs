@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Identity;
 
 namespace superShop_API.Database.Entities.Base;
 
 public interface IBaseEntity<TKey> where TKey : IEquatable<TKey>
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     TKey Id { get; set; }
 
     [Column("createdAt")]
@@ -18,6 +18,7 @@ public interface IBaseEntity<TKey> where TKey : IEquatable<TKey>
 public abstract class BaseEntity<TKey> : IBaseEntity<TKey> where TKey : IEquatable<TKey>
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public TKey Id { get; set; }
 
     [Column("createdAt")]

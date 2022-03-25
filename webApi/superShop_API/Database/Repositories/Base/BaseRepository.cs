@@ -121,14 +121,22 @@ public class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey> wher
 
     public virtual async Task<TEntity> UpdateAsync(TEntity entity)
     {
-        return await Task.Run(() =>
-        {
-            Context.Entry(entity).State = EntityState.Detached;
-            Context.Set<TEntity>().Attach(entity);
-            Context.Entry(entity).State = EntityState.Modified;
+        var entry = Context.Entry(entity);
 
-            return entity;
-        });
+        if (entry.State == EntityState.Detached)
+        {
+            var attachedEntity = await GetByIDAsync(entity.Id);
+
+            if (attachedEntity != null)
+            {
+                Context.Entry(attachedEntity).CurrentValues.SetValues(entity);
+            }
+            else
+            {
+                Context.Entry(entry).State = EntityState.Modified;
+            }
+        }
+        return entity;
     }
 
     public virtual async Task<TEntity> UpdateAsync(TEntity entity, TKey id)
@@ -141,12 +149,11 @@ public class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey> wher
 
             if (attachedEntity != null)
             {
-                var attachedEntry = Context.Entry(attachedEntity);
-                attachedEntry.CurrentValues.SetValues(entity);
+                Context.Entry(attachedEntity).CurrentValues.SetValues(entity);
             }
             else
             {
-                entry.State = EntityState.Modified;
+                Context.Entry(entry).State = EntityState.Modified;
             }
         }
         return entity;
@@ -159,6 +166,7 @@ public class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey> wher
             var result = new List<TEntity>();
             foreach (var entity in entities)
             {
+                Context.Entry(entity).State = EntityState.Detached;
                 Context.Set<TEntity>().Attach(entity);
                 Context.Entry(entity).State = EntityState.Modified;
                 result.Add(entity);
