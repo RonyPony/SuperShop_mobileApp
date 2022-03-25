@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using superShop_API.Database.DTOs.Base;
 using superShop_API.Database.Entities;
 using superShop_API.Shared;
@@ -19,7 +20,7 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
         Total = entity.Total;
         Completed = entity.Completed;
         Branch = entity.Branch != null ? new BranchDto(entity.Branch) : new BranchDto();
-        TranssactionDetails = entity.TranssactionDetails;
+        _TranssactionDetails = entity.TranssactionDetails;
         Products = entity.Products != null ? entity.Products.ToList().ConvertAll(po => new ProductDto(po)) : new List<ProductDto>();
     }
 
@@ -39,7 +40,10 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
 
     public BranchDto Branch { get; set; }
 
-    public DataObject TranssactionDetails { get; set; }
+    public string TranssactionDetails { get { return _TranssactionDetails.ToString(); } set { _TranssactionDetails = new DataObject(value); } }
+
+    [JsonIgnore]
+    private DataObject _TranssactionDetails { get; set; }
 
     public IList<ProductDto>? Products { get; set; }
     protected override Order MakeEntity()
@@ -53,7 +57,7 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
             TotalWhitoutTaxes = TotalWhitoutTaxes,
             Total = Total,
             Completed = Completed,
-            TranssactionDetails = TranssactionDetails
+            TranssactionDetails = _TranssactionDetails
         };
     }
 }
@@ -66,7 +70,10 @@ public class NewOrderDto : BaseDto<Order, Guid, OrderSeedParams>
     public bool Completed { get; set; }
     public Guid[] ProductIds { get; set; }
 
-    public DataObject TranssactionDetails { get; set; }
+    public string TranssactionDetails { get { return _TranssactionDetails.ToString(); } set { _TranssactionDetails = new DataObject(value); } }
+
+    [JsonIgnore]
+    private DataObject _TranssactionDetails { get; set; }
 
     public NewOrderDto()
     {
@@ -81,7 +88,7 @@ public class NewOrderDto : BaseDto<Order, Guid, OrderSeedParams>
             UserId = UserId,
             Address = Address,
             Completed = Completed,
-            TranssactionDetails = TranssactionDetails
+            TranssactionDetails = _TranssactionDetails
         };
     }
 }
