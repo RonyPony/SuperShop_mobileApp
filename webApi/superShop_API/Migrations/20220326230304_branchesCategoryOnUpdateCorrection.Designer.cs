@@ -12,8 +12,8 @@ using superShop_API.Database;
 namespace superShop_API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220326224849_branchesCategoryOnDeleteCorrection")]
-    partial class branchesCategoryOnDeleteCorrection
+    [Migration("20220326230304_branchesCategoryOnUpdateCorrection")]
+    partial class branchesCategoryOnUpdateCorrection
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -4,7 +4,7 @@
 
 namespace superShop_API.Migrations
 {
-    public partial class branchesCategoryOnDeleteCorrection : Migration
+    public partial class branchesCategoryOnUpdateCorrection : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,7 +18,8 @@ namespace superShop_API.Migrations
                 column: "categoryId",
                 principalTable: "Categories",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict,
+                onUpdate: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
