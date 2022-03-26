@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -96,20 +95,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IRepositoryConstructor>(factory => new RepositoryConstructor(factory.GetService<DatabaseContext>()));
 builder.Services.AddScoped<IServiceConstructor>(factory => new ServiceConstructor(factory.GetService<IRepositoryConstructor>()));
 
-const string corsPolicyName = "_customCorsName";
-
-builder.Services.AddCors(/*options =>
-{
-    options.AddPolicy(name: corsPolicyName, builder =>
-            builder.AllowAnyOrigin().WithMethods(
-                        HttpMethod.Get.Method,
-                        HttpMethod.Put.Method,
-                        HttpMethod.Post.Method,
-                        HttpMethod.Delete.Method
-                        )
-                    .AllowAnyHeader()
-                    );
-}*/);
+builder.Services.AddCors();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
   options.SerializerSettings.ContractResolver =
