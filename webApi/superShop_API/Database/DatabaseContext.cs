@@ -27,7 +27,7 @@ public class DatabaseContext : IdentityDbContext<User, Role, Guid>
         builder.Entity<Mall>().Navigation(m => m.Branches).AutoInclude();
 
         builder.Entity<Branch>().HasOne(b => b.Mall).WithMany(m => m.Branches).HasForeignKey(b => b.MallId).OnDelete(DeleteBehavior.Restrict);
-        builder.Entity<Branch>().HasOne(b => b.Category).WithMany(c => c.Branches).HasForeignKey(b => b.CategoryId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<Branch>().HasOne(b => b.Category).WithMany(c => c.Branches).HasForeignKey(b => b.CategoryId).OnDelete(DeleteBehavior.Cascade);
         builder.Entity<Branch>().Navigation(b => b.Category).AutoInclude();
         builder.Entity<Branch>().Navigation(b => b.Mall).AutoInclude();
 
