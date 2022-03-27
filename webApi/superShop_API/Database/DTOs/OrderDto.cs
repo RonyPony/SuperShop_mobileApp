@@ -16,6 +16,8 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
         BranchId = entity.BranchId;
         UserId = entity.UserId;
         Address = entity.Address;
+        TotalTax = entity.TotalTax;
+        TotalWhitoutTaxes = entity.TotalWhitoutTaxes;
         Total = entity.Total;
         Completed = entity.Completed;
         Branch = entity.Branch != null ? new BranchDto(entity.Branch) : new BranchDto();

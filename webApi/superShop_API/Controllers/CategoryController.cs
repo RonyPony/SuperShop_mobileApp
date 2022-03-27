@@ -18,6 +18,4 @@ public class CategoryController : BaseController<CategoryService, CategoryDto, C
     {
 
     }
-
-//public async override Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] string Id) => await Service.DeleteAsync(Guid.Parse(Id));
 }
