@@ -29,7 +29,7 @@ public class OrderController : BaseController<OrderService, OrderDto, Order, Gui
             var R = Result.Instance().Fail($"La vista recibida no es de tipo 'NewOrder' ");
             if (view.Id == Guid.Empty)
             {
-                R = await Service.CreateNewOrder((view.UserId, view.BranchId, view.Address, view.Completed, view.ProductIds));
+                R = await Service.CreateNewOrder((view.UserId, view.BranchId, view.Address, view.Completed, view.ProductIds, view.TransactionDetails));
             }
 
             if (R.IsSuccess)
