@@ -50,7 +50,7 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
     {
         try
         {
-            var orderFound = (await this.Repository.GetAsync(o => o.BranchId == entity.BranchId && o.UserId == entity.UserId && o.Completed == false)).FirstOrDefault();
+            var orderFound = (await this.Repository.GetAsync(o => o.BranchId == entity.BranchId && o.UserId == entity.UserId)).FirstOrDefault();
             if (orderFound == null)
             {
                 return Result.Instance().Success("The requested order is valid to be created !");
