@@ -50,7 +50,7 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
     {
         try
         {
-            var orderFound = (await this.Repository.GetAsync(o => o.BranchId == entity.BranchId && o.UserId == entity.UserId && o.Completed == false)).FirstOrDefault();
+            var orderFound = (await this.Repository.GetAsync(o => o.BranchId == entity.BranchId && o.UserId == entity.UserId)).FirstOrDefault();
             if (orderFound == null)
             {
                 return Result.Instance().Success("The requested order is valid to be created !");
@@ -66,7 +66,7 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
         }
     }
 
-    public async Task<Result<Object>> CreateNewOrder((Guid UserId, Guid BranchId, string Address, bool Completed, Guid[] ProductIds) details)
+    public async Task<Result<Object>> CreateNewOrder((Guid UserId, Guid BranchId, string Address, bool Completed, Guid[] ProductIds, TransactionDetails? TransactionDetails) details)
     {
         try
         {
@@ -98,7 +98,8 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
                     UserId = details.UserId,
                     BranchId = details.BranchId,
                     Address = details.Address,
-                    Completed = details.Completed
+                    Completed = details.Completed,
+                    TransactionDetails = details.TransactionDetails
                 };
 
                 foreach (var p in productList)

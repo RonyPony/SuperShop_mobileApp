@@ -12,14 +12,11 @@ namespace superShop_API.Controllers;
 
 [AllowAnonymous]
 [EnableCors]
-//[Authorize(Roles = Roles.Admin)]
 public class BranchController : BaseController<BranchService, BranchDto, Branch, Guid, BranchSeedParams>
 {
     public BranchController(IServiceConstructor _constructor) : base(_constructor)
     {
     }
-
-    //public async override Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] string Id) => await Service.DeleteAsync(Guid.Parse(Id));
 
     [HttpGet]
     [Authorize(Roles = Roles.User)]

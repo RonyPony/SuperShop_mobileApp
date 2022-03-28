@@ -11,14 +11,11 @@ using superShop_API.Shared;
 namespace superShop_API.Controllers;
 
 [AllowAnonymous]
-//[Authorize(Roles = Roles.Admin)]
 public class ProductController : BaseController<ProductService, ProductDto, Product, Guid>
 {
     public ProductController(IServiceConstructor _constructor) : base(_constructor)
     {
     }
-
-    //public async override Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] string Id) => await Service.DeleteAsync(Guid.Parse(Id));
 
     [HttpGet]
     [Authorize(Roles = Roles.User)]

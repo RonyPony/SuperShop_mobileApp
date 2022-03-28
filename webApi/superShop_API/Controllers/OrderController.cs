@@ -17,9 +17,6 @@ public class OrderController : BaseController<OrderService, OrderDto, Order, Gui
     {
     }
 
-    //public async override Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] string Id) => await Service.DeleteAsync(Guid.Parse(Id));
-
-
     [HttpPost]
     [Route("new", Name = "PostSaveNewOrder")]
     public async virtual Task<ActionResult<Result<Object>>> PostSaveNewOrder([FromBody] NewOrderDto view)
@@ -29,7 +26,7 @@ public class OrderController : BaseController<OrderService, OrderDto, Order, Gui
             var R = Result.Instance().Fail($"La vista recibida no es de tipo 'NewOrder' ");
             if (view.Id == Guid.Empty)
             {
-                R = await Service.CreateNewOrder((view.UserId, view.BranchId, view.Address, view.Completed, view.ProductIds));
+                R = await Service.CreateNewOrder((view.UserId, view.BranchId, view.Address, view.Completed, view.ProductIds, view.TransactionDetails));
             }
 
             if (R.IsSuccess)

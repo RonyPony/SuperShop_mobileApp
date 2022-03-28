@@ -18,7 +18,4 @@ public class MallController : BaseController<MallService, MallDto, Mall, Guid>
     public MallController(IServiceConstructor _constructor) : base(_constructor)
     {
     }
-
-    //public async override Task<ActionResult<Result<Object>>> DeleteRemoveChangesAsync([FromRoute(Name = "Id")] string Id) => await Service.DeleteAsync(Guid.Parse(Id));
-
 }

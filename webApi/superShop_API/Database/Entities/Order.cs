@@ -8,6 +8,11 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Entities;
 
+public class TransactionDetails
+{
+    public string PaymentType { get; set; }
+}
+
 public class OrderSeedParams
 {
     public Guid BranchId { get; set; }
@@ -51,7 +56,7 @@ public class Order : BaseEntity<Guid>, ISeeder<Order, Guid, OrderSeedParams>
     public User? User { get; set; }
 
     [Column("transactionDetails")]
-    public DataObject TranssactionDetails { get; set; }
+    public TransactionDetails? TransactionDetails { get; set; }
 
     [NotMapped]
     public List<Product>? Products { get; set; }

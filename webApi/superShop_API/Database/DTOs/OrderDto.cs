@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using superShop_API.Database.DTOs.Base;
 using superShop_API.Database.Entities;
 using superShop_API.Shared;
@@ -17,10 +16,12 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
         BranchId = entity.BranchId;
         UserId = entity.UserId;
         Address = entity.Address;
+        TotalTax = entity.TotalTax;
+        TotalWhitoutTaxes = entity.TotalWhitoutTaxes;
         Total = entity.Total;
         Completed = entity.Completed;
         Branch = entity.Branch != null ? new BranchDto(entity.Branch) : new BranchDto();
-        _TranssactionDetails = entity.TranssactionDetails;
+        TransactionDetails = entity.TransactionDetails;
         Products = entity.Products != null ? entity.Products.ToList().ConvertAll(po => new ProductDto(po)) : new List<ProductDto>();
     }
 
@@ -40,10 +41,7 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
 
     public BranchDto Branch { get; set; }
 
-    public string TranssactionDetails { get { return _TranssactionDetails.ToString(); } set { _TranssactionDetails = new DataObject(value); } }
-
-    [JsonIgnore]
-    private DataObject _TranssactionDetails { get; set; }
+    public TransactionDetails? TransactionDetails { get; set; }
 
     public IList<ProductDto>? Products { get; set; }
     protected override Order MakeEntity()
@@ -57,7 +55,7 @@ public class OrderDto : BaseDto<Order, Guid, OrderSeedParams>
             TotalWhitoutTaxes = TotalWhitoutTaxes,
             Total = Total,
             Completed = Completed,
-            TranssactionDetails = _TranssactionDetails
+            TransactionDetails = TransactionDetails
         };
     }
 }
@@ -70,10 +68,7 @@ public class NewOrderDto : BaseDto<Order, Guid, OrderSeedParams>
     public bool Completed { get; set; }
     public Guid[] ProductIds { get; set; }
 
-    public string TranssactionDetails { get { return _TranssactionDetails.ToString(); } set { _TranssactionDetails = new DataObject(value); } }
-
-    [JsonIgnore]
-    private DataObject _TranssactionDetails { get; set; }
+    public TransactionDetails? TransactionDetails { get; set; }
 
     public NewOrderDto()
     {
@@ -88,7 +83,7 @@ public class NewOrderDto : BaseDto<Order, Guid, OrderSeedParams>
             UserId = UserId,
             Address = Address,
             Completed = Completed,
-            TranssactionDetails = _TranssactionDetails
+            TransactionDetails = TransactionDetails
         };
     }
 }

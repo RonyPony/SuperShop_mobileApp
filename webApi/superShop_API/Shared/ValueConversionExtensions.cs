@@ -27,7 +27,7 @@ public static class ValueConversionExtensions
         propertyBuilder.Metadata.SetValueConverter(converter);
         propertyBuilder.Metadata.SetValueComparer(comparer);
         propertyBuilder.HasColumnType("text");
-        //propertyBuilder.HasColumnType("jsonb");
+        // propertyBuilder.HasColumnType("jsonb");
 
         return propertyBuilder;
     }
