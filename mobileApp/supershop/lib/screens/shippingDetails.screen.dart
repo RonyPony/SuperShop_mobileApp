@@ -2,14 +2,18 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supershop/models/Address.model.dart';
 import 'package:supershop/models/branch.model.dart';
+import 'package:supershop/models/loginResponse.model.dart';
 import 'package:supershop/models/product.model.dart';
 import 'package:supershop/models/userInfo.model.dart';
 import 'package:supershop/providers/authProvider.dart';
 import 'package:supershop/providers/productProvider.dart';
 import 'package:supershop/screens/authentication/login.screen.dart';
 import 'package:supershop/screens/confirmScreen.dart';
+import 'package:supershop/screens/makePayment.dart';
+import 'package:supershop/screens/paypalScreen.dart';
 import 'package:supershop/widgets/sideMenuDrawer.dart';
 
 import 'cart.screen.dart';
@@ -28,6 +32,7 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
   int val = -1;
   List<Product> _productos;
   ScrollController _scrollController = ScrollController();
+  String PAYMENT_STATUS_KEY = "PaypalStatusString";
 
   String _currentSelectedAddress = "";
   @override
@@ -60,188 +65,191 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
       body: SingleChildScrollView(
         // controller: controller,
         child: Padding(
-        padding: EdgeInsets.only(
-            top: screenSize.height * 0.08,
-            left: screenSize.width * 0.05,
-            right: screenSize.width * 0.05),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Datos de envio',
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue),
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: screenSize.width * 0.6, top: 25),
-              child: Text(
-                'Mis lugares',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
+          padding: EdgeInsets.only(
+              top: screenSize.height * 0.08,
+              left: screenSize.width * 0.05,
+              right: screenSize.width * 0.05),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Datos de envio',
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue),
+                  )
+                ],
               ),
-            ),
-            GestureDetector(
-              onTap: () async {
-                String direccion = await getString(
-                    "Registro de direccion",
-                    "Por favor ingrese su direccion completa",
-                    "Direccion",
-                    "Siguiente");
-                String alias;
-                if (direccion != "") {
-                  alias = await getString(
+              Padding(
+                padding:
+                    EdgeInsets.only(right: screenSize.width * 0.6, top: 25),
+                child: Text(
+                  'Mis lugares',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  String direccion = await getString(
                       "Registro de direccion",
-                      "Ahora ingrese un alias para esta direccion",
-                      "Alias",
-                      "Guardar");
-                }
-
-                if (alias != null) {
-                  Address addressToSave =
-                      Address(address: direccion, addressAlias: alias);
-                  bool success =
-                      await _productProvider.addToAddress(addressToSave);
-                  if (success) {
-                    CoolAlert.show(
-                        context: context,
-                        type: CoolAlertType.success,
-                        title: "Guardado !");
-                  } else {
-                    CoolAlert.show(
-                        context: context,
-                        type: CoolAlertType.error,
-                        title: "Ha ocurrido un error",
-                        text:
-                            "Se ha presentado un error, por favor intentelo luego");
+                      "Por favor ingrese su direccion completa",
+                      "Direccion",
+                      "Siguiente");
+                  String alias;
+                  if (direccion != "") {
+                    alias = await getString(
+                        "Registro de direccion",
+                        "Ahora ingrese un alias para esta direccion",
+                        "Alias",
+                        "Guardar");
                   }
-                }
-                setState(() {});
-              },
-              child: Container(
-                height: 60,
-                width: 60,
-                child: CircleAvatar(
-                  backgroundColor: Colors.blue,
-                  child: Icon(
-                    Icons.add,
-                    size: 50,
-                    color: Colors.white,
+
+                  if (alias != null) {
+                    Address addressToSave =
+                        Address(address: direccion, addressAlias: alias);
+                    bool success =
+                        await _productProvider.addToAddress(addressToSave);
+                    if (success) {
+                      CoolAlert.show(
+                          context: context,
+                          type: CoolAlertType.success,
+                          title: "Guardado !");
+                    } else {
+                      CoolAlert.show(
+                          context: context,
+                          type: CoolAlertType.error,
+                          title: "Ha ocurrido un error",
+                          text:
+                              "Se ha presentado un error, por favor intentelo luego");
+                    }
+                  }
+                  setState(() {});
+                },
+                child: Container(
+                  height: 60,
+                  width: 60,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.blue,
+                    child: Icon(
+                      Icons.add,
+                      size: 50,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
-            ),
-            FutureBuilder<List<Address>>(
-              future: _addresses,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    return Text(
-                        "Error Occurred, check your internet connection");
-                  }
+              FutureBuilder<List<Address>>(
+                future: _addresses,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) {
+                      return Text(
+                          "Error Occurred, check your internet connection");
+                    }
 
-                  if (snapshot.hasData) {
-                    return Container(
-                      child: Scrollbar(
-                        controller: _scrollController,
-                        thickness: 5,
-                        radius: Radius.circular(10),
-                        child: ListView.builder(
+                    if (snapshot.hasData) {
+                      return Container(
+                        child: Scrollbar(
                           controller: _scrollController,
-                          itemCount: snapshot.data.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return _buildMyAddresses(snapshot.data[index]);
-                          },
+                          thickness: 5,
+                          radius: Radius.circular(10),
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            itemCount: snapshot.data.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return _buildMyAddresses(snapshot.data[index]);
+                            },
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    }
+                  } else {
+                    return CircularProgressIndicator();
                   }
-                } else {
-                  return CircularProgressIndicator();
-                }
-                return Text('Agrega una direccion');
-              },
-            ),
-            // _buildMyAddresses(),
-            // _buildMyAddresses(),
-            SizedBox(
-              height: screenSize.height * 0.05,
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: screenSize.width * 0.6, top: 20),
-              child: Text(
-                'Tipo de pago',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
-              ),
-            ),
-            ListTile(
-              title: Text("Efectivo"),
-              leading: Radio(
-                value: 1,
-                groupValue: val,
-                onChanged: (value) {
-                  setState(() {
-                    val = value;
-                    if (val == 2) {
-                      _isPaypal = true;
-                    }
-                    if (val == 1) {
-                      _isPaypal = false;
-                    }
-                    print(_isPaypal);
-                  });
+                  return Text('Agrega una direccion');
                 },
-                activeColor: Colors.blue,
               ),
-            ),
-            ListTile(
-              title: Row(
-                children: [
-                  SvgPicture.asset(
-                    'assets/paypal.svg',
-                    height: 30,
-                  ),
-                ],
+              // _buildMyAddresses(),
+              // _buildMyAddresses(),
+              SizedBox(
+                height: screenSize.height * 0.05,
               ),
-              leading: Radio(
-                value: 2,
-                groupValue: val,
-                onChanged: (value) {
-                  setState(() {
-                    val = value;
-                    if (val == 2) {
-                      _isPaypal = true;
-                    }
-                    if (val == 1) {
-                      _isPaypal = false;
-                    }
-                    print(_isPaypal);
-                  });
-                },
-                activeColor: Colors.blue,
+              Padding(
+                padding:
+                    EdgeInsets.only(right: screenSize.width * 0.6, top: 20),
+                child: Text(
+                  'Tipo de pago',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
               ),
-            ),
-            _currentSelectedAddress.length >= 1
-                ? Text('Su pedido se enviara a ' + _currentSelectedAddress)
-                : Text('Seleccione una direccion'),
-            SizedBox(
-              height: screenSize.height * 0.1,
-            ),
-            _payButton(),
-          ],
+              ListTile(
+                title: Text("Efectivo"),
+                leading: Radio(
+                  value: 1,
+                  groupValue: val,
+                  onChanged: (value) {
+                    setState(() {
+                      val = value;
+                      if (val == 2) {
+                        _isPaypal = true;
+                      }
+                      if (val == 1) {
+                        _isPaypal = false;
+                      }
+                      print(_isPaypal);
+                    });
+                  },
+                  activeColor: Colors.blue,
+                ),
+              ),
+              ListTile(
+                title: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/paypal.svg',
+                      height: 30,
+                    ),
+                  ],
+                ),
+                leading: Radio(
+                  value: 2,
+                  groupValue: val,
+                  onChanged: (value) {
+                    setState(() {
+                      val = value;
+                      if (val == 2) {
+                        _isPaypal = true;
+                      }
+                      if (val == 1) {
+                        _isPaypal = false;
+                      }
+                      print(_isPaypal);
+                    });
+                  },
+                  activeColor: Colors.blue,
+                ),
+              ),
+              _currentSelectedAddress.length >= 1
+                  ? Text('Su pedido se enviara a ' + _currentSelectedAddress)
+                  : Text('Seleccione una direccion'),
+              SizedBox(
+                height: screenSize.height * 0.1,
+              ),
+              // makePayment(),
+              _payButton(),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -309,27 +317,65 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
               type: CoolAlertType.warning);
           return;
         }
-
+        Result r = Result();
         final _productProvider =
             Provider.of<ProductProvider>(context, listen: false);
         final _authProvider = Provider.of<AuthProvider>(context, listen: false);
         UserInfo currentUser = await _authProvider.getLocalActiveUser();
-        if (currentUser!=null) {
-          bool created = await _productProvider.createOrder(_productos,
-            _productos.first.branchId, _currentSelectedAddress, currentUser.id);
-        if (created) {
-          Navigator.pushNamed(context, ConfirmScreen.routeName);
+        if (currentUser != null) {
+          bool created = false;
+          if (!_isPaypal) {
+            created = await _productProvider.createOrder(
+                _productos,
+                _productos.first.branchId,
+                _currentSelectedAddress,
+                currentUser.id);
+            if (created) {
+              r.exception = null;
+              r.isSuccess = true;
+              r.message = "Created";
+            }
+          } else {
+            //TODO paypalScreen
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            double total = 0;
+            _productos.forEach((element) {
+              total+=element.price;
+            });
+            await prefs.setDouble("orderTotal", total);
+            await Navigator.pushNamed(context, PaypalPayment.routeName);
+            if (await validatePaymentStatus()) {
+              created = await _productProvider.createPaypalOrder(
+                  _productos,
+                  _productos.first.branchId,
+                  _currentSelectedAddress,
+                  currentUser.id);
+            } else {
+              //TODO do nothing
+            }
+          }
+          if (created) {
+            Navigator.pushNamed(context, ConfirmScreen.routeName);
+          } else {
+            CoolAlert.show(
+                context: context,
+                type: CoolAlertType.error,
+                title: "Error",
+                text:
+                    "Error creando la orden, asugurate de no tener alguna otra orden pendiente e intentar mas tarde");
+          }
         } else {
           CoolAlert.show(
+              onCancelBtnTap: () {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, LoginScreen.routeName, (route) => false);
+              },
+              showCancelBtn: true,
+              cancelBtnText: "Iniciar Sesion",
               context: context,
-              type: CoolAlertType.error,
-              title: "Error",
-              text: "Error creando la orden, favor intentar mas tarde");
-        }
-        }else{
-          CoolAlert.show(onCancelBtnTap: () {
-            Navigator.pushNamedAndRemoveUntil(context, LoginScreen.routeName, (route) => false);
-          },showCancelBtn:true ,cancelBtnText: "Iniciar Sesion",context: context, type: CoolAlertType.info,title: "Inicia Sesion",text: "Para poder realizar compras debes iniciar sesion");
+              type: CoolAlertType.info,
+              title: "Inicia Sesion",
+              text: "Para poder realizar compras debes iniciar sesion");
         }
       },
     );
@@ -372,5 +418,15 @@ class _ShoppingDetailScreenState extends State<ShoppingDetailScreen> {
         Provider.of<ProductProvider>(context, listen: false);
     _productProvider.deleteAddress(address.addressAlias);
     setState(() {});
+  }
+
+  Future<bool> validatePaymentStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String data = await prefs.getString(PAYMENT_STATUS_KEY);
+    if (data != null && data == "true") {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

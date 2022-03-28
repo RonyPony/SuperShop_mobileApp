@@ -233,8 +233,9 @@ class ProductService implements ProductServiceContract {
         'branchId': tiendaId,
         'userId': userId,
         'address': address,
-        'completed': true,
-        'productIds': productsId
+        'completed': false,
+        'productIds': productsId,
+        "transactionDetails": {"paymentType": "Efectivo"},
       };
       // client.options.baseUrl="https://5000-ronypony-supershopmobile-ao0i4py39kx.ws-us38.gitpod.io/api/";
       final response = await client.post("/Order/new", data: queryParam);
@@ -246,6 +247,35 @@ class ProductService implements ProductServiceContract {
       }
     } catch (e) {
       return false;
+    }
+  }
+
+  @override
+  Future<bool> createPaypalOrder(List<Product> products, String address, String tiendaId, String userId) async {
+    try {
+      List<String> productsId = [];
+      products.forEach((element) {
+        productsId.add(element.id);
+      });
+      final client = RequestsManager.requester();
+      final queryParam = {
+        'branchId': tiendaId,
+        'userId': userId,
+        'address': address,
+        'completed': false,
+        'productIds': productsId,
+        "transactionDetails": {"paymentType": "Paypal"},
+      };
+      // client.options.baseUrl="https://5000-ronypony-supershopmobile-ao0i4py39kx.ws-us38.gitpod.io/api/";
+      final response = await client.post("/Order/new", data: queryParam);
+
+      if (response.statusCode < 400) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return null;
     }
   }
 }

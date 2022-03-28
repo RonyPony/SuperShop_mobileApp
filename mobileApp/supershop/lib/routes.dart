@@ -1,7 +1,6 @@
 // We use name route
 // All our routes will be available here
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:supershop/screens/authentication/forgottenPassword.screen.dart';
 import 'package:supershop/screens/authentication/login.screen.dart';
@@ -11,7 +10,9 @@ import 'package:supershop/screens/cart.screen.dart';
 import 'package:supershop/screens/confirmScreen.dart';
 import 'package:supershop/screens/home.screen.dart';
 import 'package:supershop/screens/info.screen.dart';
+import 'package:supershop/screens/makePayment.dart';
 import 'package:supershop/screens/malls.screen.dart';
+import 'package:supershop/screens/paypalScreen.dart';
 import 'package:supershop/screens/productDetails.screen.dart';
 import 'package:supershop/screens/shippingDetails.screen.dart';
 import 'package:supershop/screens/storeDetails.screen.dart';
@@ -33,4 +34,6 @@ final Map<String, WidgetBuilder> routes = {
   InfoScreen.routeName:(context)=>InfoScreen(),
   ShoppingDetailScreen.routeName:(context)=>ShoppingDetailScreen(),
   ConfirmScreen.routeName:(context)=>ConfirmScreen(),
+  PaypalPayment.routeName:(context)=>PaypalPayment(),
+  makePayment.routeName:(context)=>makePayment(),
 };

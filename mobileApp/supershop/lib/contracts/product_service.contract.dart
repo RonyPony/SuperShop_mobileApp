@@ -1,5 +1,6 @@
 import 'package:supershop/models/Address.model.dart';
 import 'package:supershop/models/branch.model.dart';
+import 'package:supershop/models/loginResponse.model.dart';
 import 'package:supershop/models/mall.model.dart';
 import 'package:supershop/models/product.model.dart';
 
@@ -17,5 +18,6 @@ abstract class ProductServiceContract {
   Future<List<Product>>getProductsByStore(Branch store);
   Future<String> getCategory(String categoryId);
 Future<bool> createOrder(List<Product> products,String address,String tiendaId,String userId);
+Future<bool> createPaypalOrder(List<Product> products,String address,String tiendaId,String userId);
   Future<bool>cleanCart();
 }

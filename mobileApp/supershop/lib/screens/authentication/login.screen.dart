@@ -6,17 +6,25 @@ import 'package:provider/provider.dart';
 import 'package:supershop/constants.dart';
 import 'package:supershop/models/loginResponse.model.dart';
 import 'package:supershop/models/userCredentials.model.dart';
+import 'package:supershop/models/userInfo.model.dart';
 import 'package:supershop/providers/authProvider.dart';
 import 'package:supershop/screens/authentication/forgottenPassword.screen.dart';
 import 'package:supershop/screens/authentication/register.screen.dart';
 import 'package:supershop/screens/home.screen.dart';
 import 'package:supershop/widgets/customTextField.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key}) : super(key: key);
   static String routeName = "/loginScreen";
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
+  
     return Scaffold(
       body: MyStatefulWidget(),
     );
@@ -34,9 +42,17 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   TextEditingController _emailController = TextEditingController(text: "");
   TextEditingController _passwordController = TextEditingController(text: "");
   bool _rememberMe = false;
+ initState() {
+  print("Validando sesion");
+  
+  final _authProvider = Provider.of<AuthProvider>(context, listen: false);
+  
+  _authProvider.canSkipLogin(context);
+}
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+    
     return Scaffold(
       backgroundColor: Colors.blue.shade600,
       body: Padding(

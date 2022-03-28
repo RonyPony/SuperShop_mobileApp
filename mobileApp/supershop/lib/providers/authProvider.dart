@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:supershop/contracts/auth_service.contract.dart';
 import 'package:supershop/models/loginResponse.model.dart';
 import 'package:supershop/models/userCredentials.model.dart';
 import 'package:supershop/models/userInfo.model.dart';
 import 'package:supershop/models/userToRegisterInfo.model.dart';
+import 'package:supershop/screens/home.screen.dart';
 import 'package:supershop/services/auth.service.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -54,5 +56,15 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       throw e;
     }
+  }
+
+  canSkipLogin(BuildContext ctx) async {
+        UserInfo currentUser = await getLocalActiveUser();
+        if (currentUser == null) {
+          return null;
+        }else{
+          // BuildContext ctx = Get;
+          Navigator.pushNamedAndRemoveUntil(ctx, HomeScreen.routeName, (route) => false);
+        }
   }
 }

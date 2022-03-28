@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supershop/contracts/product_service.contract.dart';
 import 'package:supershop/models/Address.model.dart';
 import 'package:supershop/models/branch.model.dart';
+import 'package:supershop/models/loginResponse.model.dart';
 import 'package:supershop/models/mall.model.dart';
 import 'package:supershop/models/product.model.dart';
 
@@ -22,6 +24,12 @@ class ProductProvider with ChangeNotifier {
       List<Product> productos, String tienda, String direccion,String userId) async {
     bool resp =
         await _productContract.createOrder(productos, direccion, tienda,userId);
+        return resp;
+  }
+    Future<bool> createPaypalOrder(
+      List<Product> productos, String tienda, String direccion,String userId) async {
+    var resp =
+        await _productContract.createPaypalOrder(productos, direccion, tienda,userId);
         return resp;
   }
 
@@ -104,4 +112,10 @@ class ProductProvider with ChangeNotifier {
     Future<String> resp = _productContract.getCategory(storeId);
     return resp;
   }
+
+  Future<double> getCurrentOrderTotal(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     return prefs.getDouble("orderTotal");
+  }
+
 }
