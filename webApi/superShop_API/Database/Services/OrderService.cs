@@ -50,7 +50,7 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
     {
         try
         {
-            var orderFound = (await this.Repository.GetAsync(o => o.BranchId == entity.BranchId && o.UserId == entity.UserId)).FirstOrDefault();
+            var orderFound = (await this.Repository.GetAsync(o => o.BranchId == entity.BranchId && o.UserId == entity.UserId && o.Completed == false)).FirstOrDefault();
             if (orderFound == null)
             {
                 return Result.Instance().Success("The requested order is valid to be created !");
@@ -141,14 +141,16 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>
         }
     }
 
-    public override async Task<Result<Object>> DeleteAsync(Guid id){
+    public override async Task<Result<Object>> DeleteAsync(Guid id)
+    {
         try
         {
-           var r = await poService.DeleteRangeAsync(await poService.GetByOrderId(id));
-           if(r.IsSuccess){
-               r = await base.DeleteAsync(id);
-           }
-           return r;
+            var r = await poService.DeleteRangeAsync(await poService.GetByOrderId(id));
+            if (r.IsSuccess)
+            {
+                r = await base.DeleteAsync(id);
+            }
+            return r;
         }
         catch (Exception e)
         {
