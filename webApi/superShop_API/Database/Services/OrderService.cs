@@ -7,12 +7,22 @@ using superShop_API.Shared;
 
 namespace superShop_API.Database.Services;
 
-public class OrderService : BaseService<Order, Guid, OrderSeedParams>
+public interface IOrderService : IBaseService<Order, Guid, OrderSeedParams>
+{
+    Task<List<Order>> GetOrdersByUser(Guid userId, bool completed = false);
+}
+
+public class OrderService : BaseService<Order, Guid, OrderSeedParams>, IOrderService
 {
     private ProductOrderService poService { get; set; }
     public OrderService(IRepositoryConstructor constructor) : base(constructor)
     {
         poService = new ServiceConstructor(Constructor).GetService<ProductOrderService, ProductOrder, Guid>();
+    }
+
+    public async Task<List<Order>> GetOrdersByUser(Guid userId, bool completed = false)
+    {
+        return (await Repository.GetAsync(o => o.UserId == userId && o.Completed == completed)).ToList();
     }
 
     public override async Task<List<Order>> GetAllAsync()

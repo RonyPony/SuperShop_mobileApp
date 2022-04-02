@@ -17,6 +17,34 @@ public class OrderController : BaseController<OrderService, OrderDto, Order, Gui
     {
     }
 
+    [HttpGet]
+    [Route("/by-user/{userId}")]
+    public async Task<ActionResult<List<OrderDto>>> GetOrdersByUser([FromRoute(Name = "userId")] Guid userId, [FromQuery] bool completed = false)
+    {
+        try
+        {
+            return (await Service.GetOrdersByUser(userId, completed)).ConvertAll(o => new OrderDto(o));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
+    }
+
+    [HttpGet]
+    [Route("/validate/by-user/{userId}")]
+    public async Task<ActionResult<Result<Object>>> GetHasOrdersByUser([FromRoute(Name = "userId")] Guid userId, [FromQuery] bool completed = false)
+    {
+        try
+        {
+            return Result.Instance().Success("validation executed !", new { hasProducts = (await Service.GetOrdersByUser(userId, completed)).Count() > 0 });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, Result.Instance().Fail("These occurred an error on this request", exception: e));
+        }
+    }
+
     [HttpPost]
     [Route("new", Name = "PostSaveNewOrder")]
     public async virtual Task<ActionResult<Result<Object>>> PostSaveNewOrder([FromBody] NewOrderDto view)
