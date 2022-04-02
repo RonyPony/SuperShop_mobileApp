@@ -19,11 +19,11 @@ public class OrderController : BaseController<OrderService, OrderDto, Order, Gui
 
     [HttpGet]
     [Route("/by-user/{userId}")]
-    public async Task<ActionResult<List<OrderDto>>> GetOrdersByUser([FromRoute(Name = "userId")] Guid userId, [FromQuery] bool completed = false)
+    public async Task<ActionResult<List<OrderDto>>> GetOrdersByUser([FromRoute(Name = "userId")] Guid userId)
     {
         try
         {
-            return (await Service.GetOrdersByUser(userId, completed)).ConvertAll(o => new OrderDto(o));
+            return (await Service.GetOrdersByUser(userId)).ConvertAll(o => new OrderDto(o));
         }
         catch (Exception e)
         {
@@ -32,12 +32,12 @@ public class OrderController : BaseController<OrderService, OrderDto, Order, Gui
     }
 
     [HttpGet]
-    [Route("/validate/by-user/{userId}")]
+    [Route("/validate-by-user/{userId}")]
     public async Task<ActionResult<Result<Object>>> GetHasOrdersByUser([FromRoute(Name = "userId")] Guid userId, [FromQuery] bool completed = false)
     {
         try
         {
-            return Result.Instance().Success("validation executed !", new { hasProducts = (await Service.GetOrdersByUser(userId, completed)).Count() > 0 });
+            return Result.Instance().Success("validation executed !", new { hasOrders = (await Service.GetOrdersByUser(userId)).Count() > 0 });
         }
         catch (Exception e)
         {

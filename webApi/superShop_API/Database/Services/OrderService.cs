@@ -9,7 +9,7 @@ namespace superShop_API.Database.Services;
 
 public interface IOrderService : IBaseService<Order, Guid, OrderSeedParams>
 {
-    Task<List<Order>> GetOrdersByUser(Guid userId, bool completed = false);
+    Task<List<Order>> GetOrdersByUser(Guid userId);
 }
 
 public class OrderService : BaseService<Order, Guid, OrderSeedParams>, IOrderService
@@ -20,9 +20,9 @@ public class OrderService : BaseService<Order, Guid, OrderSeedParams>, IOrderSer
         poService = new ServiceConstructor(Constructor).GetService<ProductOrderService, ProductOrder, Guid>();
     }
 
-    public async Task<List<Order>> GetOrdersByUser(Guid userId, bool completed = false)
+    public async Task<List<Order>> GetOrdersByUser(Guid userId)
     {
-        return (await Repository.GetAsync(o => o.UserId == userId && o.Completed == completed)).ToList();
+        return (await Repository.GetAsync(o => o.UserId == userId)).ToList();
     }
 
     public override async Task<List<Order>> GetAllAsync()
